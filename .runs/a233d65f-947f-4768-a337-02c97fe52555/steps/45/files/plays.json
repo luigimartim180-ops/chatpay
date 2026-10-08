@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo seu ponto. Para avançarmos com base nessa sua observação, veja este detalhe: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está pesando os prós e contras cuidadosamente. O que é mais importante para você nesse momento?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que impediria você de começar a colher esses benefícios ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas em situações similares à sua estão operando agora: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, veja o retorno potencial em produtividade que você terá: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o status quo tem um custo invisível diário. Se estiver pronto para mudar, aqui está o caminho: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Podemos dar um passo pequeno e seguro para você ganhar confiança no processo? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é prioridade; por isso, oferecemos garantias claras sobre o seu investimento: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Como cortesia para sua análise, liberei este guia prático de orientação: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Minha disponibilidade para novos acompanhamentos é limitada pela agenda de projetos atuais: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros focados no seu crescimento, desenhamos este processo para ser fluido: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é baseada em resultados de mercado comprovados e verificáveis: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Ao decidir agora, evitamos que o problema se arraste por mais tempo. Se estiver pronto, siga por aqui: {link}"}
+]

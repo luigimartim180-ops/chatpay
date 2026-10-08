@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendi perfeitamente. Se esse é o seu objetivo principal, o próximo passo ideal é este: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Sinto que você está analisando cuidadosamente os riscos, e isso é um sinal de boa gestão. Qual o principal ponto que ainda te impede de avançar?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como você imagina que sua operação estaria hoje se esse desafio já estivesse 100% resolvido?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira os resultados reais de parceiros que enfrentavam esse mesmo desafio que você: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de falarmos sobre investimento, veja quanto tempo e energia você recupera ao automatizar esse processo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia a mais no processo manual é um dia de crescimento perdido. Se quiser estancar essa perda hoje: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com um passo simples para você validar os primeiros resultados na prática? Se sim: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é prioridade: o trial de 30 dias e a garantia total protegem seu teste. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, separei este guia prático focado exatamente no seu cenário: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa fila de implementação técnica é limitada para manter a qualidade. Veja se ainda há vagas para hoje: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós também buscamos escala com controle. Vamos levar sua operação para o próximo nível juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é construída sobre anos de experiência e resultados validados. Confira nossas credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já tem todas as informações. Para garantir sua ativação na nossa fila técnica de hoje e evitar esperas, conclua por aqui: {link}"}
+]

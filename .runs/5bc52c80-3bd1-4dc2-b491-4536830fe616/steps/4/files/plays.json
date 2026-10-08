@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você destacou {mirror}, o que faz todo sentido no seu contexto. Veja como podemos agir sobre isso: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está sendo cuidadoso para escolher a melhor opção. É uma abordagem muito sensata para esse tipo de decisão."},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que você se sentisse confiante em avançar hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios parecidos aos seus alcançaram resultados reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de analisar o investimento, considere o custo de manter o problema atual por mais um mês: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Enquanto a decisão é adiada, o problema que discutimos continua. Se quiser mudar isso: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para testar a solução? O acesso está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é nossa prioridade. O período de garantia protege totalmente sua decisão: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Como você mencionou esse interesse, preparei este material prático para te ajudar agora: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como reservamos horários específicos para novas implementações, este link garante sua posição na fila: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo time aqui: nosso objetivo é gerar eficiência com o máximo de segurança: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por resultados auditáveis no mercado. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com todas as dúvidas sanadas, o próximo passo para garantirmos sua implementação sem atrasos é este: {link}"}
+]

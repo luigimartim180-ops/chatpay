@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que seu foco atual está em {mirror}. Para facilitar sua análise e dar o primeiro passo com clareza, aqui está o caminho: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se o esforço de implementação compensa o retorno imediato. Validando essa preocupação, o que seria decisivo para você avançar hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução definitiva do desafio em {mirror} impactaria seus resultados e sua rotina nos próximos meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Empresas que enfrentavam os mesmos gargalos em {mirror} alcançaram resultados auditáveis com nossa solução. Veja os detalhes: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de considerarmos o investimento, veja o valor do tempo e dos recursos que sua equipe economiza ao automatizar {mirror}: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual em {mirror} gera um custo invisível que se acumula diariamente. Se estiver pronto para estancar essa perda, o link é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com um teste controlado de 30 dias para validar a solução na sua prática? O link seguro é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é prioridade: a garantia informada protege seu período de adaptação e teste. Confira como funciona: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Como você está explorando {mirror}, preparei este guia prático que você pode aplicar agora mesmo para obter resultados rápidos: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como nosso processo de onboarding assistido é personalizado para garantir seu sucesso, as vagas por ciclo de suporte são limitadas: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Compartilhamos o objetivo de tornar a gestão de {mirror} mais eficiente e menos burocrática. Veja como construiremos isso juntos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"A solidez da nossa entrega é sustentada por dados reais e certificações do setor. Confira os fundamentos da nossa tecnologia: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantir que consigamos incluir sua configuração no cronograma de suporte e implementação desta semana, você pode concluir sua adesão aqui: {link}"}
+]

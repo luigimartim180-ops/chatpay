@@ -1,0 +1,13 @@
+{
+  "name": "chatpay-worker",
+  "version": "19.1.0",
+  "description": "ChatPay - Pix dentro do chat com confirmacao automatica + Hunter Agent",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@tidbcloud/serverless": "^0.2.0"
+  }
+}

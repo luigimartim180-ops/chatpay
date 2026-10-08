@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"'{mirror}'? Entendi. Faz sentido eu te mostrar o próximo passo focado exatamente nisso? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está sentindo que ainda falta algum detalhe para essa solução ser a ideal agora. Faz sentido?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria acontecer hoje para você se sentir totalmente seguro em tomar essa decisão?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Pessoas com desafios parecidos com '{mirror}' já validaram este método. Veja os resultados: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o preço, veja quanto custa para sua operação continuar sem essa automação: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução significa manter o prejuízo diário de tempo e recursos. Se quiser mudar isso: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar de um jeito simples para você validar os ganhos rapidamente? O link é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem 7 dias de garantia total. O risco de testar é todo nosso, veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar com '{mirror}', liberei este guia prático de presente para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Mantemos um limite de novas ativações para garantir suporte de excelência. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros que buscam eficiência, sabemos que cada minuto conta. Veja como estamos aplicando isso: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa infraestrutura é reconhecida pela segurança e escalabilidade técnica. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"A estrutura para seu acesso já está preparada. Se decidir avançar agora, já ativamos sua conta imediatamente: {link}"}
+]

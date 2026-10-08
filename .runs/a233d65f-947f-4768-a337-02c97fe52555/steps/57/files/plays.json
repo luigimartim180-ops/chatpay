@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"\"{mirror}\"? Entendo perfeitamente o seu ponto. Geralmente, quem enfrenta isso busca este caminho: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando a segurança da sua escolha. É natural querer validar tudo antes. O que mais te preocupa agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria acontecer para que resolver este desafio se tornasse sua prioridade absoluta hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira os resultados reais e verificáveis que outros clientes alcançaram: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o preço, considere o valor do tempo que você está perdendo hoje. Veja o comparativo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução mantém o prejuízo atual. Se você quer estancar essa perda, o momento é agora: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo simples e seguro hoje? O checkout é por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem total segurança com nossa garantia de satisfação. Veja os detalhes do seu teste: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar nessa fase inicial, preparei este material prático sem custo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de novos clientes para garantir a qualidade da entrega. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós compartilhamos o mesmo objetivo: simplificar sua rotina com segurança. Vamos avançar juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por resultados auditáveis e reconhecimento do setor. Veja: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"As condições atuais garantem seu início imediato. Se estiver pronto para transformar esse cenário, o link é este: {link}"}
+]

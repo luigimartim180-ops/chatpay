@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Posso te mostrar o próximo passo lógico para resolver isso: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se o investimento se paga rápido. O que é essencial para você se sentir seguro?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que aconteceria com seus resultados se esse problema continuasse exatamente como está hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja os números reais e resultados verificáveis de quem já passou por isso: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o preço, compare o valor de recuperar o tempo que você perde hoje: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera é um dia mantendo o prejuízo atual. Se quiser estancar isso: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo simples para validar a solução na prática? O link é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem garantia total para testar e validar os resultados com segurança. Veja as regras: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar na sua análise, preparei este material prático e gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Mantenho o suporte para grupos pequenos para garantir a qualidade. Veja se ainda há vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui acreditamos que eficiência se constrói com as ferramentas certas. Vamos juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os resultados auditados que validam nossa metodologia antes de decidir: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se você sente que as condições fazem sentido para seu momento, pode concluir com segurança aqui: {link}"}
+]

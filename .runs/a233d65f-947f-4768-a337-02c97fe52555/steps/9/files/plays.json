@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo perfeitamente. Personalizei o próximo passo considerando esse contexto que você trouxe: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando cuidadosamente cada detalhe antes de decidir. É fundamental ter essa clareza. O que mais pesa na sua balança agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como você avalia o impacto financeiro e operacional de manter o cenário atual pelos próximos seis meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja os resultados reais e métricas verificáveis de clientes que enfrentavam o mesmo desafio: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de analisar o investimento, considere quanto o desperdício de tempo atual custa para sua operação: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera é um dia mantendo o problema atual sem solução. Se faz sentido resolver, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo simples para validar a solução na prática? Comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão é protegida por nossa garantia de satisfação. Confira os termos de transparência aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise inicial, preparei este guia prático de orientações: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de suporte personalizado é limitada por turma. Verifique se ainda há vagas para este ciclo: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós compartilhamos do mesmo objetivo: eficiência total. Vamos trabalhar juntos para chegar lá? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira nossas certificações e o reconhecimento técnico que valida nossa entrega: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantir sua prioridade no cronograma de ativação e suporte desta semana, você pode concluir por aqui: {link}"}
+]

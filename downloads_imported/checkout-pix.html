@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Checkout Torra Norte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: coluna de celular (430px) com régua grossa, lista tabular e um QR em esqueleto que abre com mola. */
+  :root {
+    --bg: #F9F9FA;
+    --ground: #E6E6EA;
+    --surface: #FFFFFF;
+    --fg: #0A0A0A;
+    --muted: #5A5A62;
+    --line: #0A0A0A;
+    --hair: #D6D6DC;
+    --em: #00C27A;
+    --em-ink: #00774C;
+    --on-em: #0A0A0A;
+    --sk: #E4E4E9;
+    --sk-hi: #C6C6CE;
+    --shadow: #0A0A0A;
+    --f-display: 'Outfit', system-ui, sans-serif;
+    --f-body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    --spring: cubic-bezier(.34, 1.56, .64, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0A0A0A; --ground: #000000; --surface: #151517; --fg: #F4F4F5; --muted: #9C9CA6;
+      --line: #F4F4F5; --hair: #28282D; --em: #2BE59A; --em-ink: #2BE59A; --on-em: #0A0A0A;
+      --sk: #1E1E22; --sk-hi: #3A3A42; --shadow: #2A2A30;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0A0A0A; --ground: #000000; --surface: #151517; --fg: #F4F4F5; --muted: #9C9CA6;
+    --line: #F4F4F5; --hair: #28282D; --em: #2BE59A; --em-ink: #2BE59A; --on-em: #0A0A0A;
+    --sk: #1E1E22; --sk-hi: #3A3A42; --shadow: #2A2A30;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-block: 40px;
+    padding-inline: 16px;
+    background: var(--ground);
+    color: var(--fg);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .35s ease, color .35s ease;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--em-ink); outline-offset: 3px; }
+  h1, h2, p, ul, ol { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  svg { display: block; }
+
+  .phone {
+    width: 100%;
+    max-width: 430px;
+    min-width: 0;
+    padding-inline: 20px;
+    padding-block: 18px 28px;
+    background: var(--bg);
+    border: 2px solid var(--line);
+    border-radius: 32px;
+    box-shadow: 10px 10px 0 var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    transition: background-color .35s ease, border-color .35s ease;
+  }
+  @media (max-width: 470px) {
+    body { padding: 0; background: var(--bg); }
+    .phone { border: 0; border-radius: 0; box-shadow: none; min-height: 100%; }
+  }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Barra superior */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: -.01em; }
+  .mark { width: 20px; height: 20px; background: var(--fg); display: grid; place-items: center; }
+  .mark::after { content: ''; width: 8px; height: 8px; background: var(--em); }
+
+  .theme {
+    position: relative;
+    width: 64px; height: 36px;
+    padding: 0;
+    border: 2px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: space-between;
+    padding-inline: 7px;
+    color: var(--muted);
+    transition: background-color .35s ease, border-color .35s ease;
+  }
+  .theme svg { width: 16px; height: 16px; position: relative; z-index: 1; }
+  .theme .thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--fg);
+    transition: transform .55s var(--spring), background-color .35s ease;
+  }
+  .theme[aria-checked="true"] .thumb { transform: translateX(28px); }
+  .theme .sun { color: var(--bg); }
+  .theme[aria-checked="true"] .sun { color: var(--muted); }
+  .theme[aria-checked="true"] .moon { color: var(--bg); }
+  .theme:active .thumb { width: 32px; }
+  .theme[aria-checked="true"]:active .thumb { transform: translateX(22px); }
+
+  /* Total */
+  .hero { display: flex; flex-direction: column; gap: 6px; }
+  .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px 4px 8px;
+    border: 2px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .chip svg { width: 13px; height: 13px; color: var(--em-ink); }
+  .amount {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(54px, 17vw, 72px);
+    line-height: 1;
+    letter-spacing: -.045em;
+    font-variant-numeric: tabular-nums;
+    display: flex; align-items: baseline; gap: 6px;
+    padding-top: 6px;
+  }
+  .amount .cur { font-size: .34em; letter-spacing: 0; font-weight: 600; color: var(--muted); transform: translateY(-.55em); }
+  .amount .cents { font-size: .5em; letter-spacing: -.02em; margin-left: -2px; }
+  .save { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-size: 13px; color: var(--muted); }
+  .save s { text-decoration-thickness: 1.5px; }
+  .save b {
+    background: var(--em); color: var(--on-em);
+    padding: 1px 7px; border-radius: 4px;
+    font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .02em;
+  }
+
+  /* Confiança */
+  .trust {
+    display: grid; grid-template-columns: 52px 1fr; align-items: stretch;
+    border: 2px solid var(--line);
+    border-radius: 12px; overflow: hidden;
+    background: var(--surface);
+    transition: background-color .35s ease, border-color .35s ease;
+  }
+  .shield { background: var(--em); color: var(--on-em); display: grid; place-items: center; }
+  .shield svg { width: 26px; height: 26px; }
+  .trust div { padding: 12px 14px; display: flex; flex-direction: column; min-width: 0; }
+  .trust strong { font-family: var(--f-display); font-weight: 600; font-size: 16px; letter-spacing: -.01em; }
+  .trust span { font-size: 13px; color: var(--muted); }
+
+  /* Lista */
+  .list-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .list-head h2 { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: -.02em; }
+  .items { border-bottom: 2px solid var(--line); }
+  .item { border-top: 2px solid var(--line); }
+  .row {
+    width: 100%;
+    display: grid; grid-template-columns: 48px minmax(0, 1fr) auto 16px; align-items: center; gap: 12px;
+    padding: 14px 0;
+    min-height: 80px;
+    background: none; border: 0; text-align: left;
+    transition: transform .25s var(--spring);
+  }
+  .row:active { transform: scale(.985); }
+  .pico {
+    width: 48px; height: 48px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    display: grid; place-items: center;
+    transition: background-color .3s ease, color .3s ease, transform .5s var(--spring);
+  }
+  .pico svg { width: 24px; height: 24px; }
+  .item.sel .pico { background: var(--em); color: var(--on-em); }
+  .item.open .pico { transform: rotate(-6deg); }
+  .pname { display: block; font-weight: 600; font-size: 15px; line-height: 1.25; }
+  .pdesc { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .pprice { text-align: right; font-family: var(--f-display); font-weight: 600; font-size: 17px; letter-spacing: -.01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pprice small { display: block; font-family: var(--f-body); font-weight: 400; font-size: 12px; color: var(--muted); text-decoration: line-through; letter-spacing: 0; }
+  .chev { width: 16px; height: 16px; color: var(--muted); transition: transform .5s var(--spring); }
+  .item.open .chev { transform: rotate(180deg); color: var(--fg); }
+
+  .panel { height: 0; overflow: hidden; }
+  .panel-in { padding-bottom: 22px; display: flex; flex-direction: column; gap: 16px; }
+  .reveal { opacity: 0; transform: translateY(10px); transition: opacity .25s ease, transform .4s ease; }
+  .item.open .reveal {
+    opacity: 1; transform: none;
+    transition: opacity .35s ease, transform .6s var(--spring);
+    transition-delay: calc(var(--i) * 55ms + 80ms);
+  }
+
+  .qrwrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .qr {
+    position: relative; overflow: hidden;
+    width: min(100%, 232px); aspect-ratio: 1;
+    padding: 14px;
+    background: var(--surface);
+    border: 2px solid var(--line);
+    border-radius: 14px;
+  }
+  .qr svg { width: 100%; height: 100%; }
+  .qr .m { fill: var(--sk-hi); animation: wave 1.7s ease-in-out infinite; animation-delay: var(--d); }
+  .qr .fp { animation: wave 1.7s ease-in-out infinite; animation-delay: var(--d); }
+  .qr .fp rect { stroke: var(--sk-hi); fill: var(--sk-hi); }
+  .qr .fp rect:first-child { fill: none; }
+  .qr .scan {
+    position: absolute; left: 0; right: 0; top: 0; height: 2px;
+    background: var(--em);
+    animation: scan 2.2s ease-in-out infinite alternate;
+  }
+  @keyframes wave { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+  @keyframes scan { from { top: 0; } to { top: calc(100% - 2px); } }
+  .status { display: flex; align-items: center; gap: 8px; font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+  .dots { display: inline-flex; gap: 3px; }
+  .dots i { width: 4px; height: 4px; background: var(--em-ink); animation: blink 1.2s infinite; }
+  .dots i:nth-child(2) { animation-delay: .2s; }
+  .dots i:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 100% { opacity: .2; } 40% { opacity: 1; } }
+
+  .timer-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 14px;
+    border: 2px dashed var(--line);
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  .timer-row time { font-family: var(--f-mono); font-weight: 500; font-size: 15px; font-variant-numeric: tabular-nums; }
+
+  .codebox { display: flex; flex-direction: column; gap: 6px; }
+  .code {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font-family: var(--f-mono); font-size: 12px; line-height: 1.55; word-break: break-all;
+    user-select: all;
+  }
+
+  .copy {
+    display: grid; width: 100%; min-height: 58px;
+    padding: 0 18px;
+    background: var(--fg); color: var(--bg);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 4px 4px 0 var(--em);
+    transition: transform .3s var(--spring), box-shadow .3s var(--spring), background-color .3s ease, color .3s ease;
+  }
+  .copy:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--em); }
+  .copy .s { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--f-display); font-weight: 600; font-size: 17px; letter-spacing: -.01em; transition: opacity .25s ease, transform .5s var(--spring); }
+  .copy .s svg { width: 20px; height: 20px; }
+  .copy .done { opacity: 0; transform: translateY(16px); }
+  .copy[data-state="done"] { background: var(--em); color: var(--on-em); border-color: var(--line); box-shadow: 4px 4px 0 var(--fg); animation: pop .6s var(--spring); }
+  .copy[data-state="done"] .idle { opacity: 0; transform: translateY(-16px); }
+  .copy[data-state="done"] .done { opacity: 1; transform: none; }
+  .copy .tick { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .45s ease .12s; }
+  .copy[data-state="done"] .tick { stroke-dashoffset: 0; }
+  @keyframes pop { 0% { transform: scale(1); } 35% { transform: scale(1.035); } 100% { transform: scale(1); } }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
+  .steps li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font-size: 14px; counter-increment: s; }
+  .steps li::before {
+    content: counter(s);
+    width: 24px; height: 24px; border: 2px solid var(--line); border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--f-mono); font-size: 11px; font-weight: 500;
+  }
+
+  /* Motivos */
+  .why { display: flex; flex-direction: column; gap: 12px; }
+  .why ul { display: flex; flex-direction: column; gap: 12px; }
+  .why li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; font-size: 14px; }
+  .why li svg { width: 22px; height: 22px; color: var(--em-ink); }
+  .why li b { font-weight: 600; }
+  .legal { font-family: var(--f-mono); font-size: 11px; line-height: 1.6; color: var(--muted); padding-top: 14px; border-top: 1px solid var(--hair); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+<style>
+  html { color-scheme: light; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="phone">
+  <header class="topbar">
+    <div class="brand"><span class="mark" aria-hidden="true"></span>Torra Norte</div>
+    <button class="theme" id="theme" type="button" role="switch" aria-checked="false" aria-label="Modo escuro">
+      <span class="thumb" aria-hidden="true"></span>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+    </button>
+  </header>
+
+  <section class="hero" aria-label="Total a pagar">
+    <div class="hero-top">
+      <span class="eyebrow">Total a pagar</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Pix · na hora</span>
+    </div>
+    <p class="amount" id="amount"></p>
+    <p class="save"><s id="orig"></s><b>−5% no Pix</b><span id="econ"></span></p>
+  </section>
+
+  <div class="trust">
+    <span class="shield" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.6"/></svg></span>
+    <div>
+      <strong>Ambiente 100% criptografado</strong>
+      <span>Seus dados ficam protegidos de ponta a ponta.</span>
+    </div>
+  </div>
+
+  <section aria-labelledby="h-pedido">
+    <div class="list-head">
+      <h2 id="h-pedido">Seu pedido</h2>
+      <span class="eyebrow">Toque para pagar</span>
+    </div>
+    <ul class="items" id="items"></ul>
+  </section>
+
+  <section class="why" aria-labelledby="h-why">
+    <h2 class="eyebrow" id="h-why">Por que pagar com Pix aqui</h2>
+    <ul>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span><b>Aprovação em segundos,</b> 24 horas por dia, inclusive feriados.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span><b>Nada de taxa extra.</b> O desconto de 5% já está no valor.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span><b>Seus dados bancários não passam por nós.</b> Você paga direto no app do seu banco.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span><b>Compra protegida.</b> Se o pedido não chegar, devolvemos o valor integral.</span></li>
+    </ul>
+  </section>
+
+  <p class="legal">Pix é um arranjo de pagamentos instantâneos do Banco Central do Brasil. Protótipo de design: produtos, valores e código Pix são fictícios.</p>
+</main>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+  const num = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const ICONS = {
+    press: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v9M8.5 2h7"/><path d="M6 8h12l-1 13H7z"/><path d="M6.6 14h10.8"/></svg>',
+    grinder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1.4 6H8.4z"/><path d="M9 10v7h6v-7"/><path d="M5 21h14"/><path d="M17 4h3v3"/></svg>',
+    bags: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l1 13H4z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M9 14h6"/></svg>'
+  };
+
+  // preços em centavos; o valor do Pix já tem 5% de desconto
+  const PRODUCTS = [
+    { name: 'Prensa Francesa em Aço 600 ml', desc: 'Inox 304, parede dupla', orig: 20000, price: 19000, icon: 'press', key: 'd3m0a1b2-c3d4-4e5f-8a9b-0c1d2e3f4a5b' },
+    { name: 'Moedor Manual Cerâmico', desc: '18 cliques de regulagem', orig: 24000, price: 22800, icon: 'grinder', key: 'd3m0b2c3-d4e5-4f6a-9b0c-1d2e3f4a5b6c' },
+    { name: 'Kit Safra: 3 Cafés Especiais', desc: '3 × 250 g, torra recente', orig: 13000, price: 12350, icon: 'bags', key: 'd3m0c3d4-e5f6-4a7b-8c1d-2e3f4a5b6c7d' }
+  ];
+  const pixCode = (p) => {
+    const amt = (p.price / 100).toFixed(2);
+    return '00020126580014br.gov.bcb.pix0136' + p.key + '5204000053039865406' + amt + '5802BR5911TORRA NORTE6009SAO PAULO62070503***6304' + 'F4C1';
+  };
+
+  // QR em esqueleto
+  function qrSvg(seed) {
+    const N = 25; let s = seed;
+    const rnd = () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const inFinder = (x, y) => (x < 8 && y < 8) || (x >= N - 8 && y < 8) || (x < 8 && y >= N - 8);
+    let out = '';
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      if (!inFinder(x, y) && rnd() > 0.52) out += `<rect class="m" x="${x}" y="${y}" width="1" height="1" style="--d:${(x + y) * 45}ms"/>`;
+    }
+    [[0, 0], [N - 7, 0], [0, N - 7]].forEach(([x, y], i) => {
+      out += `<g class="fp" style="--d:${i * 180}ms"><rect x="${x + .5}" y="${y + .5}" width="6" height="6" stroke-width="1"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" stroke="none"/></g>`;
+    });
+    return `<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" aria-hidden="true">${out}</svg>`;
+  }
+
+  const list = $('#items');
+  list.innerHTML = PRODUCTS.map((p, i) => `
+    <li class="item" id="item-${i}">
+      <button class="row" id="row-${i}" type="button" aria-expanded="false" aria-controls="panel-${i}">
+        <span class="pico">${ICONS[p.icon]}</span>
+        <span><span class="pname">${p.name}</span><span class="pdesc">${p.desc}</span></span>
+        <span class="pprice">${brl.format(p.price / 100)}<small>${brl.format(p.orig / 100)}</small></span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="panel" id="panel-${i}" role="region" aria-labelledby="row-${i}" inert>
+        <div class="panel-in">
+          <div class="reveal qrwrap" style="--i:0">
+            <div class="qr">${qrSvg(7 + i * 31)}<i class="scan"></i></div>
+            <p class="status"><span>Gerando seu QR Code</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></p>
+          </div>
+          <div class="reveal timer-row" style="--i:1"><span>Este código expira em</span><time id="timer-${i}">30:00</time></div>
+          <div class="reveal codebox" style="--i:2">
+            <span class="eyebrow">Pix Copia e Cola</span>
+            <div class="code" id="code-${i}">${pixCode(p)}</div>
+          </div>
+          <div class="reveal" style="--i:3">
+            <button class="copy" id="copy-${i}" type="button" data-state="idle">
+              <span class="s idle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>Copiar Código Pix</span>
+              <span class="s done" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="tick" d="m5 12.5 4.5 4.5L19 7.5"/></svg><span class="lbl-done">Copiado!</span></span>
+            </button>
+          </div>
+          <ol class="reveal steps" style="--i:4">
+            <li>Abra o app do seu banco e vá em Pix.</li>
+            <li>Escolha Pix Copia e Cola e cole o código.</li>
+            <li>Confira o valor e confirme. A aprovação é imediata.</li>
+          </ol>
+        </div>
+      </div>
+    </li>`).join('');
+
+  // preço no topo
+  const amountEl = $('#amount');
+  let shown = PRODUCTS[0].price, tw;
+  const renderAmount = (c) => {
+    const [i, d] = num.format(c / 100).split(',');
+    amountEl.innerHTML = `<span class="cur">R$</span><span>${i}<span class="cents">,${d}</span></span>`;
+  };
+  const tweenAmount = (to) => {
+    cancelAnimationFrame(tw);
+    const from = shown;
+    if (reduce || from === to) { shown = to; renderAmount(to); return; }
+    const t0 = performance.now(), D = 560;
+    const f = (t) => {
+      const p = Math.min((t - t0) / D, 1);
+      shown = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 4)));
+      renderAmount(shown);
+      if (p < 1) tw = requestAnimationFrame(f);
+    };
+    tw = requestAnimationFrame(f);
+  };
+  const setSelected = (i) => {
+    const p = PRODUCTS[i];
+    $('#orig').textContent = brl.format(p.orig / 100);
+    $('#econ').textContent = 'Você economiza ' + brl.format((p.orig - p.price) / 100);
+    document.querySelectorAll('.item').forEach((el, j) => el.classList.toggle('sel', j === i));
+    tweenAmount(p.price);
+  };
+
+  // mola na altura
+  const springs = new WeakMap();
+  function springHeight(el, target, done) {
+    const st = springs.get(el) || { v: 0, raf: 0 };
+    cancelAnimationFrame(st.raf);
+    if (reduce) { el.style.height = target ? 'auto' : '0px'; done && done(); return; }
+    let x = el.getBoundingClientRect().height, v = st.v || 0, last = performance.now();
+    el.style.height = x + 'px';
+    const k = 260, c = 21;
+    const tick = (t) => {
+      const dt = Math.min((t - last) / 1000, 1 / 30); last = t;
+      v += (-k * (x - target) - c * v) * dt;
+      x += v * dt;
+      if (x < 0) { x = 0; v = 0; }
+      el.style.height = x + 'px';
+      if (Math.abs(v) < 2 && Math.abs(x - target) < 0.4) {
+        el.style.height = target ? 'auto' : '0px'; st.v = 0; done && done(); return;
+      }
+      st.v = v; st.raf = requestAnimationFrame(tick);
+    };
+    springs.set(el, st);
+    st.raf = requestAnimationFrame(tick);
+  }
+
+  // contagem regressiva
+  let timerId, secs = 1800;
+  function startTimer(el) {
+    clearInterval(timerId); secs = 1800;
+    const paint = () => { el.textContent = secs > 0 ? String(secs / 60 | 0).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0') : 'Expirado'; };
+    paint();
+    timerId = setInterval(() => { secs--; paint(); if (secs <= 0) clearInterval(timerId); }, 1000);
+  }
+
+  let open = -1;
+  function setOpen(i, on) {
+    const item = $('#item-' + i), panel = $('#panel-' + i), inner = panel.firstElementChild;
+    item.classList.toggle('open', on);
+    $('#row-' + i).setAttribute('aria-expanded', String(on));
+    if (on) {
+      panel.inert = false;
+      springHeight(panel, inner.offsetHeight, () => {
+        const r = panel.getBoundingClientRect();
+        if (r.bottom > innerHeight - 16) scrollBy({ top: r.bottom - innerHeight + 24, behavior: reduce ? 'auto' : 'smooth' });
+      });
+    } else {
+      panel.inert = true;
+      springHeight(panel, 0);
+    }
+  }
+  list.addEventListener('click', (e) => {
+    const row = e.target.closest('.row');
+    if (!row) return;
+    const i = Number(row.id.split('-')[1]);
+    if (open === i) { setOpen(i, false); open = -1; clearInterval(timerId); return; }
+    if (open > -1) setOpen(open, false);
+    open = i;
+    setSelected(i);
+    setOpen(i, true);
+    startTimer($('#timer-' + i));
+  });
+
+  // copiar
+  const resetTimers = new Map();
+  list.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.copy');
+    if (!btn) return;
+    const i = Number(btn.id.split('-')[1]);
+    const codeEl = $('#code-' + i), text = pixCode(PRODUCTS[i]);
+    const select = () => { const r = document.createRange(); r.selectNodeContents(codeEl); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; }
+    catch (err) { select(); try { ok = document.execCommand('copy'); } catch (e2) { ok = false; } }
+    const lbl = btn.querySelector('.lbl-done');
+    lbl.textContent = ok ? 'Copiado!' : 'Código selecionado';
+    if (!ok) select();
+    btn.dataset.state = 'done';
+    clearTimeout(resetTimers.get(btn));
+    resetTimers.set(btn, setTimeout(() => { btn.dataset.state = 'idle'; }, 2600));
+  });
+
+  // tema
+  const root = document.documentElement, sw = $('#theme'), mq = matchMedia('(prefers-color-scheme: dark)');
+  let stored = null;
+  try { stored = localStorage.getItem('tn-theme'); } catch (e) {}
+  if (stored === 'dark' || stored === 'light') root.dataset.theme = stored;
+  const current = () => root.dataset.theme || (mq.matches ? 'dark' : 'light');
+  const syncSwitch = () => sw.setAttribute('aria-checked', String(current() === 'dark'));
+  syncSwitch();
+  mq.addEventListener && mq.addEventListener('change', syncSwitch);
+  sw.addEventListener('click', () => {
+    const next = current() === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    syncSwitch();
+    try { localStorage.setItem('tn-theme', next); } catch (e) {}
+  });
+
+  setSelected(0);
+  renderAmount(shown);
+})();
+</script>
+</body>
+</html>

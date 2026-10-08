@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Entendo que seu foco atual é {mirror}. Faz sentido explorarmos como levar isso para o próximo nível agora? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está ponderando se o investimento trará o retorno esperado no curto prazo. O que mais pesa na sua balança de decisão hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que avançar com esta solução fosse a sua prioridade número um hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios similares ao seu alcançaram resultados mensuráveis através deste método: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de analisar o investimento, considere o custo de manter o gargalo operacional atual. Veja o comparativo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Permanecer no cenário atual tem um custo de oportunidade crescente. Se decidir que é hora de evoluir, este é o caminho: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo simplificado para você validar os ganhos na prática? O checkout está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é nossa prioridade: a garantia informada permite que você teste a solução com segurança. Detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise inicial, aqui está uma orientação prática sobre os primeiros passos: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para garantir a excelência no suporte ao novo cliente, limitamos as ativações semanais. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos juntos no objetivo de tornar sua operação mais eficiente. Veja como iniciamos essa parceria: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é construída sobre resultados verificáveis e sólida experiência no setor. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantirmos que sua implementação comece na janela de tempo planejada, podemos formalizar os detalhes finais aqui: {link}"}
+]

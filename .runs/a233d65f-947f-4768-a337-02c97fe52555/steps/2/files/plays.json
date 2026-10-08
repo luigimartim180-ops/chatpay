@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Entendo que seu foco agora é {mirror}. Para te ajudar a avançar com clareza, aqui está o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está analisando cuidadosamente os riscos envolvidos. Qual critério é fundamental para você tomar essa decisão com segurança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria mudar na nossa proposta para que ela se tornasse a escolha óbvia para o seu cenário atual?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como outros clientes em situações similares alcançaram resultados verificáveis através deste link: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de falarmos de preço, veja o quanto de produtividade sua equipe recupera ao resolver esse gargalo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia com o processo atual é um custo de oportunidade para sua empresa. Se estiver pronto para estancar essa perda, podemos avançar: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com um passo simples para validar o resultado? Se sim, este é o link: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é nossa prioridade. A garantia informada permite que você valide a solução na prática sem riscos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar desde já, preparei este material com orientações práticas para seu desafio atual: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As condições de suporte para novos projetos são limitadas para garantir a qualidade. Verifique a disponibilidade técnica atual aqui: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui trabalhamos juntos para simplificar sua rotina. Vamos dar o primeiro passo com segurança? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Baseado na nossa experiência com casos reais, validamos este caminho como o mais eficiente. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Tudo pronto para começarmos. Para garantir que sua implementação seja priorizada na fila técnica disponível hoje, finalize aqui: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendi perfeitamente. Para facilitar sua análise técnica, preparei este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se este é o momento ideal para investir. O que exatamente falta para você ter total clareza?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que impediria você de alcançar seus objetivos se começássemos a implementar essa solução hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados verificáveis de clientes que enfrentavam o mesmo desafio que o seu: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de falarmos de investimento, compare o valor do tempo poupado com o custo de não agir: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual tem um custo invisível de produtividade. Se quiser resolver isso agora, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com uma etapa simplificada para validar o valor? O acesso está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão é protegida por nossa garantia. Você tem total segurança para testar e decidir: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar no seu planejamento inicial, preparei esta orientação gratuita: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de novos projetos por mês para garantir a qualidade do suporte. Verifique a vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui focamos no que é simples e seguro para o seu crescimento. Veja como funcionamos por dentro: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira nossas credenciais e o histórico de resultados comprovados antes de decidir: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já conhece todos os detalhes. Para garantirmos seu suporte personalizado nesta rodada, finalize por aqui: {link}"}
+]

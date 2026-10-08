@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você comentou: '{mirror}'. Faz sentido. Para avançarmos exatamente nesse ponto, este é o link: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está buscando segurança e previsibilidade antes de decidir. O que mais te ajudaria a validar esse caminho?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como você acredita que estaria sua situação daqui a três meses se decidisse não agir agora?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios similares aos seus alcançaram resultados reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Considere o investimento comparado ao custo de continuar perdendo tempo com processos manuais: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual tem um custo invisível. Se quiser estancar essa perda, veja aqui: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido resolver a parte mais urgente primeiro? Se sim, comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão é segura: você tem um período de garantia total para testar e validar os resultados: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este guia prático que você já pode aplicar: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa equipe de especialistas atende um número limitado de clientes por vez para garantir a qualidade. Veja a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como profissionais que buscam excelência, sabemos que a ferramenta certa faz a diferença. Vamos nessa? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira as certificações e os resultados auditados que validam nossa entrega técnica: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para que possamos honrar o prazo de entrega que você espera, a finalização segura do processo é por aqui: {link}"}
+]

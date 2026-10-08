@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"\"{mirror}\"? Entendo. Se eu te mostrar como avançar exatamente nesse ponto agora, ajudaria? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está analisando os riscos com cautela. Essa prudência é fundamental para o sucesso. O que falta para você sentir total segurança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria mudar na sua situação atual para que resolver esse problema se tornasse sua prioridade número um hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Empresas com desafios similares aos seus já validaram este método. Veja os resultados reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliar o investimento, compare-o com o valor do tempo e recursos que sua equipe recuperará: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual tem um custo diário invisível. Se estiver pronto para estancar essa perda, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido dar um passo pequeno e seguro primeiro? Se sim, este é o link para o setup inicial: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem a segurança da nossa garantia para testar a solução na prática. Confira todos os detalhes aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a clarear a visão sobre o problema, preparei este guia prático sem custo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para manter a qualidade do suporte, limitamos os novos acessos semanais. Verifique se o link ainda está ativo: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como alguém que busca eficiência, você entende por que priorizamos este método. Veja como nossa comunidade aplica: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é baseada em dados auditados e anos de experiência no mercado. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"O planejamento está pronto. Para garantir que sua implementação ocorra dentro do cronograma desta semana, conclua seu acesso aqui: {link}"}
+]

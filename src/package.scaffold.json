@@ -1,0 +1,15 @@
+{
+  "name": "chatpay-integrations",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Estrutura futura: Voice AI, Multimodal, Spatial — NÃO importado pelo worker.js em produção",
+  "type": "module",
+  "status": "scaffold-only",
+  "activateWhen": "pedido explícito do usuário (fases 2-5 do ROADMAP)",
+  "providers": {
+    "voice": ["vapi", "bland", "iflytek"],
+    "ai": ["baidu-ernie"],
+    "spatial": ["xreal"],
+    "channels": ["telegram-shared", "whatsapp", "instagram", "tiktok"]
+  }
+}

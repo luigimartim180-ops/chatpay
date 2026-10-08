@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo seu ponto. Para avançarmos com precisão, veja o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você busca segurança na transição. Qual critério é o mais decisivo para você agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como você avalia o impacto de manter o processo atual por mais seis meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas do seu segmento alcançaram resultados verificáveis: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o custo da ineficiência com o valor de automatizar este processo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem essa solução é um desperdício de recursos. Se estiver pronto para mudar: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido resolver o ponto mais crítico primeiro? O checkout está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia protege seu período de teste inicial. Veja as condições: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Preparei este guia prático para você já ter um ganho imediato hoje: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"O suporte para novos parceiros tem limite mensal. Se fizer sentido, reserve sua vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui trabalhamos juntos para garantir que a implementação seja suave: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por dados e especialistas do setor. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com os detalhes alinhados, finalizar agora garante sua prioridade na janela de implementação: {link}"}
+]

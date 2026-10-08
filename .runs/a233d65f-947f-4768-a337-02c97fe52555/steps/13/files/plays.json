@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente sua preocupação. Veja como podemos endereçar esse ponto específico: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando a segurança e o alinhamento total antes de decidir. É uma postura correta. O que mais pesa na sua escolha?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que você se sentisse totalmente confiante em avançar com este projeto agora?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira os resultados reais e métricas alcançadas por quem já resolveu desafios similares aos seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olharmos o investimento, veja o impacto financeiro de recuperar as horas perdidas da sua equipe: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o problema atual tem um custo diário invisível para sua operação. Se você quer estancar essa perda, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial focado apenas no seu maior gargalo hoje? Se sim, comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Toda a segurança da nossa garantia está detalhada para sua total tranquilidade. Pode conferir os termos aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este guia prático que resolve a primeira etapa do seu desafio: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos os novos projetos mensais para garantir a excelência na implementação. Verifique se ainda há vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como profissionais que buscam eficiência, sabemos que o tempo é o recurso mais valioso. Vamos otimizar o seu? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa solução é validada por especialistas e segue os mais altos padrões técnicos do mercado. Veja: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com os detalhes alinhados, o próximo passo é garantir sua vaga no cronograma de implementação atual: {link}"}
+]

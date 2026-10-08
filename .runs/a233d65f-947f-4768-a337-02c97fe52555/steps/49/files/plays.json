@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Faz sentido. Para darmos o próximo passo com foco nisso que você trouxe, veja aqui: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está pesando o risco da mudança agora. O que precisaria acontecer para termos total clareza?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como seria para você se esse problema deixasse de existir definitivamente ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios idênticos aos seus alcançaram resultados mensuráveis: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olharmos o preço, veja o quanto de produtividade estamos recuperando com esta solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia a mais sem essa solução é um dia a mais perdendo eficiência. Se quiser mudar isso hoje, aqui está: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo menor para validar a solução na prática? Se sim, comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é nossa prioridade. Nossa garantia protege integralmente seu período de teste: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise técnica, preparei este guia prático focado no seu desafio: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos os novos setups semanais para manter nosso padrão de qualidade. Garanta sua janela aqui: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo time para fazer sua operação crescer com segurança. Vamos avançar juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa abordagem é validada por anos de experiência e resultados auditáveis no setor. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"A estrutura está pronta. Para mantermos o cronograma de implementação e evitar atrasos no seu projeto, conclua aqui: {link}"}
+]

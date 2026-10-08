@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente sua perspectiva. Para facilitar o seu próximo passo, veja aqui: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando a segurança e o retorno sobre o investimento. O que exatamente traria a clareza que você precisa agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a sua operação seria impactada positivamente se resolvêssemos esse desafio definitivamente hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja os resultados reais e verificáveis que empresas do seu setor alcançaram: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, veja o valor do tempo e dos recursos que você recuperará: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar essa solução apenas mantém o custo do problema atual. Se fizer sentido resolver hoje, este é o caminho: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo simplificado para validar os resultados rapidamente? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é garantida durante todo o período de teste. Confira os detalhes da proteção: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise inicial, preparei este material exclusivo para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos nossas novas implementações mensais para garantir a qualidade total. Se estiver pronto, garanta sua vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos focados em construir essa solução junto com você, como parceiros. Veja como trabalhamos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa expertise é validada por resultados sólidos e reconhecidos no mercado. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com os pontos validados, o próximo passo seguro para você colher os frutos é por aqui: {link}"}
+]

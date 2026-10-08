@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que seu foco é {mirror}. É exatamente onde nossos clientes mais têm resultados. Como você está lidando com esse desafio hoje? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está refletindo se o investimento de R$97 realmente compensa o risco neste momento. Faz sentido essa preocupação?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como seria sua operação se você pudesse delegar toda a parte chata de {mirror} para nossa automação?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Vários clientes que enfrentavam o desafio de {mirror} conseguiram escala em menos de 30 dias. Veja os resultados: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o valor de R$97 com o prejuízo de perder um único cliente por falta de resposta rápida. Veja a lógica: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o processo atual tem um custo invisível de tempo e produtividade. Se quiser estancar essa perda, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar com um teste simples de 30 dias para validarmos os resultados juntos? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem 7 dias de garantia total. Se não gostar, o estorno é imediato. O que resta de dúvida para testarmos? {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar com {mirror}, preparei esse guia rápido de otimização, mesmo que não sigamos juntos agora: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para garantir a qualidade do suporte, limitamos o número de novos usuários por semana. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós, que vivemos de vendas digitais, sabemos que cada minuto conta. Vamos agilizar sua operação juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa tecnologia é a mesma usada por grandes operações de checkout do mercado. Confira os detalhes: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para eu conseguir te dar atenção total no suporte inicial, o ideal seria fecharmos agora. Se estiver de acordo: {link}"}
+]

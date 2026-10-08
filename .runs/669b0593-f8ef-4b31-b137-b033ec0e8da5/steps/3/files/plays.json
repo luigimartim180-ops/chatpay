@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Entendi perfeitamente sua busca por {mirror}. Para darmos o próximo passo com clareza, veja este caminho: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você valoriza decisões seguras e bem fundamentadas. O que mais te daria confiança para avançar agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que aconteceria com seus resultados se o desafio que discutimos não fosse resolvido nos próximos 30 dias?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira como outros profissionais superaram desafios similares aos seus com resultados reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de pensar no investimento, compare o impacto de resolver o problema com o custo de manter o cenário atual: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"A inércia tem um custo invisível que se acumula. Se estiver pronto para mudar esse ciclo, o momento é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um pequeno passo hoje para validar o valor na prática? Comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão é protegida por uma garantia de teste, para que você avalie os resultados com total segurança: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise inicial, preparei este recurso gratuito que pode te orientar: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Mantemos grupos pequenos para garantir a qualidade do nosso suporte individual. Verifique a disponibilidade atual: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos juntos no objetivo de simplificar seus processos. Veja como nossa comunidade aplica isso: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é baseada em dados e experiência prática de mercado. Veja as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se os termos fazem sentido para você, o checkout seguro está disponível para iniciarmos a transformação agora: {link}"}
+]

@@ -1,0 +1,917 @@
+{
+  "phase": "G",
+  "seed": 20260910,
+  "provider": "openrouter",
+  "personas_run": 6,
+  "max_turns": 5,
+  "scenarios": [
+    {
+      "persona_id": "ana-curiosa",
+      "turns": [
+        {
+          "turn": 1,
+          "prompt": "parece interessante",
+          "reply": "Que bom 😊  \nDo que você está falando? Posso te ajudar a entender melhor, comparar opções, planejar algo ou transformar essa ideia em um passo a passo.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 39,
+            "total_tokens": 51,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 2,
+          "prompt": "como funciona?",
+          "reply": "Funciona assim: você me envia uma mensagem com uma pergunta, tarefa ou ideia, e eu respondo com base no que você pediu.\n\nVocê pode usar para coisas como:\n\n- explicar conceitos;\n- escrever, revisar ou traduzir textos;\n- criar códigos;\n- resolver problemas passo a passo;\n- planejar projetos;\n- resumir informações;\n- gerar ideias;\n- ajudar com estudos, trabalho ou decisões.\n\nQuanto mais contexto você me der, melhor eu consigo ajudar. Por exemplo, em vez de “ajuda comigo”, você pode dizer: “estou com dificuldade em entender funções em JavaScript, explique como se eu fosse iniciante”.\n\nSe quiser, diga o que você precisa e eu começo.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 157,
+            "total_tokens": 169,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 3,
+          "prompt": "quanto custa?",
+          "reply": "Depende do que você quer dizer com “quanto custa”.\n\nPode me dar mais contexto? Por exemplo:\n- Um produto/serviço específico?\n- Uma consulta, consultoria ou projeto?\n- Frete, manutenção, assinatura ou implantação?\n\nSe você me disser **o que está cotando** e, se possível, **quantidade/tamanho**, eu tento estimar ou montar uma faixa de preço.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 91,
+            "total_tokens": 103,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 4,
+          "prompt": "tem suporte?",
+          "reply": "Sim — tenho suporte. Posso ajudar com dúvidas, explicações, análise de código, escrita, tradução, planejamento e resolução de problemas.\n\nSe você estiver falando de um produto, sistema ou integração específico, me diga qual e o que precisa.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 54,
+            "total_tokens": 66,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 5,
+          "prompt": "quero comprar agora",
+          "reply": "Claro! Posso te ajudar — você está querendo comprar algum produto específico?\n\nMe diga:\n1. **Qual produto** você quer comprar  \n2. **Quantidade**\n3. Se você quer **pagar por PIX, cartão ou boleto**\n4. Seu **CEP** ou cidade, se for entrega\n\nAssim eu te ajudo com os próximos passos.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 13,
+            "completion_tokens": 84,
+            "total_tokens": 97,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        }
+      ]
+    },
+    {
+      "persona_id": "bruno-direto",
+      "turns": [
+        {
+          "turn": 1,
+          "prompt": "parece interessante",
+          "reply": "Que bom que achou interessante! 🚀 Como posso aprofundar isso para você? Precisa de mais exemplos, detalhes sobre um conceito específico ou até mesmo ideias de aplicação prática? Estou à disposição!",
+          "provider": "groq",
+          "usage": {
+            "queue_time": 0.218175888,
+            "prompt_tokens": 74,
+            "prompt_time": 0.00359482,
+            "completion_tokens": 184,
+            "completion_time": 0.212887885,
+            "total_tokens": 258,
+            "total_time": 0.216482705,
+            "completion_tokens_details": {
+              "reasoning_tokens": 135
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 2,
+          "prompt": "como funciona?",
+          "reply": "¡Claro! Pero necesitaría un poquito más de contexto para poder explicarte con precisión.  \n\n- ¿Te refieres a cómo funciona este chat (ChatGPT)?\n- ¿O a algún dispositivo, software o proceso en particular?\n- ¿O quizá a algo que viste o escuchaste recientemente?\n\nDame más detalle y con gusto te explico paso a paso.",
+          "provider": "groq",
+          "usage": {
+            "queue_time": 0.216985931,
+            "prompt_tokens": 74,
+            "prompt_time": 0.003839615,
+            "completion_tokens": 235,
+            "completion_time": 0.274408136,
+            "total_tokens": 309,
+            "total_time": 0.278247751,
+            "completion_tokens_details": {
+              "reasoning_tokens": 153
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 3,
+          "prompt": "achei caro",
+          "reply": "Entendi. Se quiser, posso ajudar a achar uma opção mais barata ou uma alternativa com melhor custo-benefício.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 29,
+            "total_tokens": 41,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 4,
+          "prompt": "tem garantia?",
+          "reply": "Depende do produto/serviço. Posso te ajudar a verificar, mas preciso saber:\n\n- qual é o produto/serviço?\n- onde você comprou?\n- há quanto tempo comprou?\n- tem nota fiscal ou comprovante?\n- qual é o problema?\n\nSe for compra online no Brasil, em geral vale a regra dos **7 dias corridos** para arrependimento, desde que não seja exceção. Para garantia contra defeito, a regra geral é de **90 dias** para bens duráveis, mas posso confirmar melhor se você me disser o que comprou.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 130,
+            "total_tokens": 142,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 5,
+          "prompt": "me manda o link para pagar",
+          "reply": "Claro — qual é o valor, o nome da empresa/pessoa que vai receber e qual forma de pagamento você quer usar (PIX, cartão, boleto etc.)?\n\nSe for um link de pagamento real, envie o link que eu te ajudo a conferir antes de pagar.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 15,
+            "completion_tokens": 61,
+            "total_tokens": 76,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        }
+      ]
+    },
+    {
+      "persona_id": "carla-preco",
+      "turns": [
+        {
+          "turn": 1,
+          "prompt": "vou pensar",
+          "reply": "Claro — pense com calma. Estou por aqui se quiser continuar depois.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 11,
+            "completion_tokens": 19,
+            "total_tokens": 30,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 2,
+          "prompt": "o que está incluído?",
+          "reply": "Depende do produto/serviço. Pode incluir:\n\n- **Design**: logo, identidade visual, materiais gráficos\n- **Conteúdo**: textos, roteiros, imagens, vídeos\n- **Tecnologia**: site, landing page, sistema, integração\n- **Marketing**: anúncios, redes sociais, SEO, e-mail marketing\n- **Suporte**: manutenção, atualizações, atendimento\n- **Entrega**: arquivos finais, documentação, treinamento\n\nSe você me disser **qual produto ou serviço** está olhando, eu posso listar o que está incluído com mais precisão.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 16,
+            "completion_tokens": 128,
+            "total_tokens": 144,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 3,
+          "prompt": "quanto custa?",
+          "reply": "Depende do que você quer. Pode me dizer qual produto ou serviço?\n\nSe for comigo, posso ajudar com tarefas como escrever textos, programar, analisar documentos, criar planos, resumir conteúdo etc. Se você me disser o que precisa, eu te ajudo a estimar prazo/esforço e, se for algo vendável, monto uma proposta de preço.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 79,
+            "total_tokens": 91,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 4,
+          "prompt": "serve para iniciantes?",
+          "reply": "Sim, pode servir para iniciantes — mas depende do assunto.\n\nEm geral, é bom para quem está começando se tiver:\n\n- explicações passo a passo;\n- exemplos simples;\n- vocabulário fácil;\n- exercícios ou prática;\n- menos pressupostos técnicos.\n\nMe diga do que você está falando — uma ferramenta, curso, linguagem, jogo, aplicativo etc. — que eu digo com mais precisão se serve para iniciantes.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 14,
+            "completion_tokens": 289,
+            "total_tokens": 303,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 214,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 5,
+          "prompt": "quero comprar",
+          "reply": "Claro! O que você quer comprar?\n\nPode me dizer:\n- o produto ou serviço,\n- seu orçamento,\n- se prefere novo ou usado,\n- onde você está localizado,\n- e se quer opções online ou em loja.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 113,
+            "total_tokens": 125,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 62,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        }
+      ]
+    },
+    {
+      "persona_id": "diego-iniciante",
+      "turns": [
+        {
+          "turn": 1,
+          "prompt": "parece interessante",
+          "reply": "Glad you think so! What specifically caught your interest — the idea, the use case, the technical approach, or something else?",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 31,
+            "total_tokens": 43,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 2,
+          "prompt": "serve para quem começa do zero?",
+          "reply": "Sim — depende do que você quer dizer com “começa do zero”, mas, em geral, dá para começar sem conhecimento prévio.\n\nSe for para aprender algo novo, eu recomendo seguir uma ordem simples:\n\n1. **Entender o objetivo**\n   - O que você quer fazer no final?\n   - Exemplo: criar um site, programar, editar vídeos, usar IA, estudar inglês etc.\n\n2. **Aprender o básico primeiro**\n   - Termos principais.\n   - Ferramentas essenciais.\n   - Conceitos fundamentais.\n\n3. **Fazer projetos pequenos**\n   - Não tente aprender tudo antes.\n   - Comece com algo simples e vá aumentando a dificuldade.\n\n4. **Praticar todos os dias**\n   - 20 ou 30 minutos por dia já ajudam muito.\n   - A constância é mais importante que estudar muito de uma vez.\n\n5. **Corrigir erros**\n   - Testar, errar, ajustar e repetir.\n   - Errar faz parte do processo.\n\nSe você me disser **qual assunto você quer começar do zero** — por exemplo programação, design, marketing, IA, inglês, finanças, edição de vídeo — eu posso montar um roteiro simples para você começar.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 16,
+            "completion_tokens": 275,
+            "total_tokens": 291,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 3,
+          "prompt": "não tenho dinheiro agora",
+          "reply": "Sinto muito. Posso te ajudar a pensar em alternativas:\n\n- separar o que é urgente vs. pode esperar;\n- montar um orçamento apertado;\n- procurar opções gratuitas ou mais baratas;\n- pensar em parcelamento/renegociação, se for uma dívida;\n- listar formas de gerar renda rápida.\n\nVocê pode me dizer o que está acontecendo: é para pagar algo específico, ficar sem dinheiro no mês, dívida, aluguel, comida, saúde ou outra coisa?",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 13,
+            "completion_tokens": 259,
+            "total_tokens": 272,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 177,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 4,
+          "prompt": "tem suporte?",
+          "reply": "Sim — posso te ajudar com suporte técnico.\n\nPode me passar o que está acontecendo? Por exemplo:\n- erro exibido na tela,\n- produto/plataforma/sistema,\n- o que você estava tentando fazer,\n- se aconteceu depois de alguma atualização ou instalação.\n\nSe for algo urgente, envie também uma mensagem curta tipo: “preciso resolver agora”.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 83,
+            "total_tokens": 95,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 5,
+          "prompt": "vou pagar agora",
+          "reply": "Ótimo — segue o link/QR Code para pagamento: **[inserir link ou QR Code]**\n\nSe quiser, envie o comprovante aqui e eu confirmo para você.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 40,
+            "total_tokens": 52,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        }
+      ]
+    },
+    {
+      "persona_id": "elisa-cetica",
+      "turns": [
+        {
+          "turn": 1,
+          "prompt": "vou avaliar",
+          "reply": "Claro — envie o que quer que eu avalie.  \nPode mandar o texto, código, ideia, projeto ou qualquer coisa, e eu posso avaliar com foco em qualidade, clareza, erros, melhorias ou pontos fortes.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 11,
+            "completion_tokens": 125,
+            "total_tokens": 136,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 75,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 2,
+          "prompt": "isso funciona mesmo?",
+          "reply": "Sim — funciona, sim. Pode me fazer uma pergunta, pedir ajuda com texto/código/planejamento, ou usar aqui como ferramenta de raciocínio e escrita.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 13,
+            "completion_tokens": 38,
+            "total_tokens": 51,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 3,
+          "prompt": "parece caro",
+          "reply": "Sí, puede parecerlo. Depende de qué producto/servicio estés comparando, pero muchas veces el precio sube por la calidad, garantía, instalación, mantenimiento o marca.\n\nSi quieres, dime qué estás viendo y te ayudo a evaluar si vale la pena o a buscar alternativas más económicas.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 67,
+            "total_tokens": 79,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 4,
+          "prompt": "tem garantia?",
+          "reply": "Depende do produto ou serviço.\n\nSe você estiver falando de uma compra específica, me envie o nome da loja/produto ou a foto da garantia, que eu te ajudo a verificar o que está previsto.\n\nNo Brasil, em geral:\n\n- **Produtos novos**: têm garantia legal de **90 dias** contra defeitos.\n- **Serviços**: a garantia mínima costuma ser de **30 dias** para defeitos de execução.\n- **Produtos usados**: a garantia pode variar conforme a loja, mas o fornecedor ainda deve responder por defeitos relevantes.\n- **Recondicionados/semi-novos**: geralmente há garantia comercial, mas vale conferir o prazo no comprovante.\n\nSe quiser, diga qual é o produto/serviço e a loja que vendeu.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 171,
+            "total_tokens": 183,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 5,
+          "prompt": "quero comprar agora",
+          "reply": "Claro! Me diga qual produto ou serviço você quer comprar agora, e eu te ajudo a comparar opções, verificar preço ou te orientar no passo a passo.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 13,
+            "completion_tokens": 149,
+            "total_tokens": 162,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 124,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        }
+      ]
+    },
+    {
+      "persona_id": "fabio-ocupado",
+      "turns": [
+        {
+          "turn": 1,
+          "prompt": "me explica depois",
+          "reply": "Claro! Quando você estiver pronto, é só me dizer sobre qual assunto você gostaria que eu explicasse e eu te ajudo. 🚀",
+          "provider": "groq",
+          "usage": {
+            "queue_time": 0.25024068,
+            "prompt_tokens": 74,
+            "prompt_time": 0.005255996,
+            "completion_tokens": 189,
+            "completion_time": 0.238367203,
+            "total_tokens": 263,
+            "total_time": 0.243623199,
+            "completion_tokens_details": {
+              "reasoning_tokens": 152
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 2,
+          "prompt": "responde rápido: como funciona?",
+          "reply": "¿Cómo funciona qué? Dime el producto, servicio o proceso que quieres que explique y te respondo rápido.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 16,
+            "completion_tokens": 27,
+            "total_tokens": 43,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 3,
+          "prompt": "qual o preço?",
+          "reply": "Qual produto ou serviço você está perguntando?  \nMe diga o nome/valor do que quer saber e eu te respondo com o preço.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 13,
+            "completion_tokens": 34,
+            "total_tokens": 47,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 4,
+          "prompt": "tem suporte?",
+          "reply": "Sim — posso te apoiar com suporte técnico, dúvidas, configuração, troubleshooting, automações, código, documentação e análise de problemas.\n\nSe for sobre algum produto/serviço específico, me diga qual é e o que está acontecendo.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 12,
+            "completion_tokens": 52,
+            "total_tokens": 64,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "turn": 5,
+          "prompt": "pode me mandar o link de pagamento",
+          "reply": "Claro — posso te ajudar, mas preciso de mais uma informação:\n\nQual é o valor, a descrição do produto/serviço ou o link/loja de onde deve ser gerado o pagamento?\n\nSe você já tiver um link de pagamento, me envie aqui que eu posso te orientar a verificar ou reenviar.",
+          "provider": "openrouter",
+          "usage": {
+            "prompt_tokens": 17,
+            "completion_tokens": 72,
+            "total_tokens": 89,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        }
+      ]
+    }
+  ],
+  "llm_telemetry": {
+    "calls": 0,
+    "tokens": 3875,
+    "cost_r$": 0,
+    "cache_hits": 30,
+    "unavailable": false,
+    "providers": {
+      "openrouter": 0,
+      "groq": 0
+    }
+  }
+}

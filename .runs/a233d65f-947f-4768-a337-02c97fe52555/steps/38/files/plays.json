@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Como você vê o impacto de resolver esse ponto na sua operação hoje? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está hesitando porque quer ter certeza absoluta do suporte e do ROI. Essa percepção faz sentido para você?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que o ChatPay fosse sua prioridade número um hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como operações com desafios parecidos aos seus alcançaram resultados reais em 15 dias: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o preço, considere quanto custa manter o gargalo atual por mais um mês. Veja o comparativo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem automação é um dia perdendo escala. Se decidir mudar esse cenário agora, este é o caminho: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com uma validação prática de 30 dias para você ver o ganho na real? Checkout: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem 7 dias de garantia total. Se não ver valor, devolvemos seu investimento sem perguntas: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise, preparei este guia prático com os primeiros passos para sua automação: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para garantir a qualidade do suporte no onboarding, limitamos os novos acessos semanais. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros, nosso foco é tornar sua operação mais eficiente. Veja como iniciamos essa jornada: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por mais de 5.000 operações ativas no mercado. Confira os resultados: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantirmos que sua equipe receba o suporte de configuração ainda nesta janela, você pode concluir aqui: {link}"}
+]

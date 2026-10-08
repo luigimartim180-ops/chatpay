@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"\"{mirror}\"? Entendi. Para te ajudar a chegar nesse resultado, este é o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está ponderando se o retorno compensa o investimento de tempo agora. O que tornaria essa escolha óbvia para você?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria nos seus resultados se conseguíssemos resolver esse problema de forma definitiva agora?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios similares ao seu alcançaram resultados reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de falarmos de investimento, veja quanto custa para sua operação manter o processo atual: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução apenas prolonga o desafio atual. Se você busca uma mudança real, o ponto de partida é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Podemos começar com um passo simples e validado? Se sim, aqui está o acesso: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é prioridade. Você tem a garantia total para testar e validar os resultados: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para gerar valor imediato, aqui está um recurso prático que você já pode aplicar: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Trabalho com um número limitado de implementações por vez para manter a qualidade. Confira se há vagas: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nossa missão é caminhar ao seu lado para simplificar esse processo. Vamos começar? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa solução é fundamentada em metodologias validadas por resultados reais e consistentes no mercado. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se o caminho está claro para você, este é o link seguro para garantir sua vaga e iniciarmos: {link}"}
+]

@@ -1,0 +1,13 @@
+{
+  "type": "step_code_snapshot",
+  "created_at": "2026-10-06T19:53:07.421583",
+  "file_count": 1,
+  "files": [
+    {
+      "path": "plays.json",
+      "artifact_path": "plays.json",
+      "bytes": 2659
+    }
+  ],
+  "step": 16
+}

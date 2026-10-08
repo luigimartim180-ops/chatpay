@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que seu foco é {mirror}. Faz sentido eu te mostrar o caminho exato para resolver isso agora? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você sente que algo ainda não está encaixando perfeitamente. O que seria o fator decisivo para sua confiança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que esta solução fosse a escolha óbvia para você hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios idênticos aos seus alcançaram resultados mensuráveis: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, considere quanto custa manter o processo atual por mais seis meses: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera é uma oportunidade de melhoria perdida. Se o problema persiste, o custo aumenta. Vamos resolver? {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo prático para validar o resultado? Comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para sua total segurança, você tem um período de garantia para testar tudo na prática. Veja os termos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar no diagnóstico, preparei este guia prático que você pode aplicar hoje mesmo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de implementação imediata depende da fila técnica atual. Garanta sua posição aqui: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros, nosso objetivo é o mesmo: eficiência máxima com o menor esforço possível. Veja como: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira a certificação e os dados técnicos que validam a eficácia deste método: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já validou os pontos principais. Finalizar agora garante que sua implementação comece sem atrasos desnecessários: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Vi que seu objetivo principal é {mirror}. Faz sentido. Posso te mostrar como encurtar esse caminho? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está ponderando o risco envolvido. É prudente agir assim. O que te ajudaria a decidir com mais clareza agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução desse problema afetaria suas metas para este trimestre?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Empresas com o seu perfil alcançaram resultados sólidos. Veja os depoimentos reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliarmos custos, veja o valor das horas que sua operação vai ganhar: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem essa solução é um custo invisível que você continua pagando. Vamos resolver? {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para testar? Aqui está o caminho: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é prioridade: veja como nossa garantia protege seu investimento: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este guia prático sem custo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de atendimento para este mês está próxima do limite. Se fizer sentido, garanta sua vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Trabalhamos como parceiros do seu negócio para garantir que tudo funcione. Veja como: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira nossa certificação e resultados validados por auditorias independentes: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantirmos que a implementação ocorra dentro do seu cronograma de metas, este é o link para concluir: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Entendi que seu foco principal é {mirror}. Posso te mostrar como o próximo passo ajuda a destravar exatamente isso? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se o retorno compensa o investimento agora. O que te daria a confiança total para avançar?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a sua rotina seria impactada se esse desafio fosse resolvido definitivamente ainda este mês?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira como outros clientes com desafios similares aos seus alcançaram resultados reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de analisar o preço, veja o valor do tempo e dos recursos que você economizará ao implementar isso: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera é um dia a mais convivendo com o problema atual. Se fizer sentido mudar isso hoje, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo simples e seguro para começar? Se sim, preparei este link para você: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão é protegida por nossa garantia, permitindo que você teste com total segurança. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a dar o primeiro passo, separei este guia prático com uma orientação gratuita: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Mantenho as condições atuais enquanto houver disponibilidade na agenda de implementação. Confira aqui: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos juntos no objetivo de simplificar seus processos. Veja como nossa metodologia facilita sua jornada: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa experiência é validada por resultados verificáveis no mercado. Confira nossas credenciais aqui: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já validou todos os pontos importantes. Ao concluir agora, você antecipa seus resultados em vez de adiar a solução. Podemos seguir? {link}"}
+]

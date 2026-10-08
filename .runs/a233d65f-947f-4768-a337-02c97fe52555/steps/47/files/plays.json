@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendi perfeitamente. Para alinhar com seu objetivo de {mirror}, preparei este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você tem uma preocupação real com o retorno desse investimento. O que exatamente te daria a segurança necessária para avançarmos agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Qual seria o impacto nos seus resultados se conseguíssemos resolver esse desafio de {mirror} ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como outros profissionais superaram exatamente o mesmo desafio que você descreveu: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Pense no valor das horas que sua equipe economizará comparado ao investimento. Veja este comparativo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar essa decisão significa aceitar o custo do problema por mais tempo. Se estiver pronto para mudar isso, o link é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para você validar os resultados na prática? Comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"O risco está do nosso lado com a garantia de 7 dias. Você testa tudo e decide se fica. Detalhes aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a ter clareza antes mesmo de decidir, liberei este guia prático: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como priorizamos o suporte individualizado, as vagas por ciclo são limitadas. Verifique a disponibilidade aqui: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui no nosso grupo, focamos no que traz resultado rápido e sem complicação. Veja como funciona: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa solução é validada por quem já escalou grandes operações. Confira os dados: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já tem todas as informações. Se estiver pronto para transformar seus resultados, este é o acesso final: {link}"}
+]

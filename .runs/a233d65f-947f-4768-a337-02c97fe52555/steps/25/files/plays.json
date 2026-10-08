@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo. Se o seu foco é esse, este próximo passo vai te ajudar exatamente nessa direção: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando cuidadosamente a melhor forma de encaixar isso na sua rotina agora. Faz sentido?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a sua operação seria impactada se esse desafio fosse resolvido definitivamente hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Clientes que enfrentavam exatamente esse mesmo desafio alcançaram estes resultados: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Considere o custo de manter o problema atual versus o investimento para resolvê-lo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução significa aceitar a continuidade desse gargalo por mais tempo. Se preferir agir: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar com um teste prático de 30 dias para validar a ferramenta? Se sim: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem 7 dias de garantia total para testar sem qualquer risco. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar seu início, preparei este guia prático de cortesia para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos os novos acessos para garantir a qualidade do nosso suporte individual. Confira: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui nós trabalhamos como seus parceiros para simplificar sua operação. Veja como: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira as credenciais e os resultados verificáveis que validam nossa metodologia: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para que você possa começar a colher os frutos ainda esta semana, aqui está o caminho para ativação imediata: {link}"}
+]

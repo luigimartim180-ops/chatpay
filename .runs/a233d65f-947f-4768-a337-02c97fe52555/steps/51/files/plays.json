@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Se esse é o seu foco atual, este próximo passo vai te ajudar exatamente nessa direção: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando o risco e a segurança antes de decidir. Faz sentido essa percepção?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a sua operação seria impactada se esse desafio fosse resolvido definitivamente ainda hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Clientes que enfrentavam exatamente esse mesmo desafio alcançaram estes resultados verificáveis: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de pensar no investimento, considere quanto custa manter o problema atual por mais um mês: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução significa aceitar a continuidade desse gargalo. Se preferir agir para resolver: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar com um teste prático para validar a ferramenta no seu dia a dia? Se sim: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão está protegida por nossa garantia total de satisfação. Veja como funciona: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar seu início, preparei este guia prático de cortesia para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As vagas com suporte individualizado são limitadas para garantirmos a máxima qualidade. Confira: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui nós trabalhamos como parceiros para simplificar sua operação. Veja como jogamos no seu time: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira as credenciais e os resultados verificáveis que validam nossa metodologia: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já tem todas as informações. Se estiver pronto para começar a colher os frutos, o caminho seguro é este: {link}"}
+]

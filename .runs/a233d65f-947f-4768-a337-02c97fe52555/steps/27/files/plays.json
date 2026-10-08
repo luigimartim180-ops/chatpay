@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo seu ponto. Para avançarmos com clareza, veja este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está preocupado em como isso se encaixa na sua realidade atual. O que mais te gera dúvida?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Qual seria o maior impacto de resolver esse desafio definitivamente nos próximos dias?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja os resultados reais que empresas no seu setor alcançaram: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Considere o custo de manter o processo atual versus a eficiência desta solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem essa solução é um dia de perda de produtividade. Se estiver pronto para mudar: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar com este pequeno passo para validar os resultados? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem total segurança para testar. Confira aqui os detalhes da nossa garantia: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a entender melhor o cenário, preparei este guia prático gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para manter a qualidade do suporte, limitamos o número de novas implementações. Confira a vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros focados em eficiência, buscamos o caminho mais simples para você: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira nossas certificações e resultados auditados que sustentam nossa entrega: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para evitar que esse desafio continue tomando seu tempo, podemos concluir sua adesão agora? {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Geralmente, esse é o ponto de partida de quem busca escala e eficiência. Posso te mostrar o próximo passo? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando a segurança e o retorno sobre o investimento antes de avançar. O que exatamente falta para termos essa confiança hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria acontecer nos próximos 30 dias para você sentir que o teste do ChatPay foi a melhor decisão para o seu negócio?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Entendo. Veja resultados reais e métricas de quem já resolveu desafios idênticos aos seus usando nossa solução: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, considere quanto vale recuperar 10 horas da sua equipe todos os meses com a nossa automação: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem a ferramenta é um dia a mais convivendo com o gargalo atual. Se quiser estancar essa perda e avançar hoje: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples com o teste de 30 dias para você validar os resultados na prática? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"O risco é todo nosso: você tem 7 dias de garantia total. Se não gostar, devolvemos seu investimento sem burocracia. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este guia prático que resolve o primeiro passo do seu desafio de atendimento: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos as vagas de onboarding semanal para garantir que nosso suporte humano consiga te acompanhar de perto. Verifique se ainda há vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como profissionais focados em otimização, sabemos que tempo é o nosso recurso mais caro. Vamos resolver isso juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira por que nossa metodologia é validada por especialistas e segue os padrões técnicos mais rigorosos do mercado: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Já alinhamos os pontos essenciais. Se você finalizar sua inscrição agora, consigo garantir sua vaga na fila de ativação prioritária de hoje. Podemos seguir? {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você mencionou {mirror}, e isso é um ponto central. Para seguirmos com clareza, veja este material: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você preza por segurança antes de avançar. Validando essa preocupação, o que é mais decisivo para você agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a falta de uma solução para esse problema impactará seus resultados no próximo trimestre?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com o mesmo desafio de {mirror} obtiveram retorno: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, veja o tempo que sua equipe deixará de desperdiçar: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o status quo tem um custo diário. Se estiver pronto para estancar essa perda, use este link: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo simples para validar a solução? O checkout está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é prioridade. A garantia protege seu período de teste. Detalhes aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise sobre {mirror}, aqui está um guia prático gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As condições atuais refletem nosso planejamento de entrega. Para garantir seu início imediato, acesse: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós compartilhamos o objetivo de simplificar seus processos. Veja como faremos isso juntos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Como especialista nessa área, recomendo que valide estes resultados antes de decidir: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para mantermos o cronograma de implementação discutido e evitar atrasos, finalize por aqui: {link}"}
+]

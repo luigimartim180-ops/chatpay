@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendi perfeitamente. Para facilitar seu progresso, preparei este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está ponderando o risco versus o retorno. O que traria mais clareza para sua decisão agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que exatamente precisaria ser verdade para você se sentir confortável em avançar hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Resultados práticos valem mais que promessas. Veja casos reais de quem já resolveu isso: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o custo de manter o problema com o valor de resolvê-lo agora. Veja a análise: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem solução é um custo acumulado. Se fizer sentido interromper isso, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial pequeno e seguro? Se sim, aqui está o acesso: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é nossa prioridade. Nossa garantia protege seu teste inicial. Detalhes aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para apoiar sua jornada inicial, aqui está um recurso prático e gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de suporte individual é limitada. Garanta sua vaga enquanto há disponibilidade técnica: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como profissionais focados em eficiência, buscamos o que é simples e seguro. Veja nossa abordagem: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por resultados técnicos consistentes e verificáveis. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"As informações estão claras. Finalizar agora permite que você comece a implementar a solução imediatamente: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo perfeitamente sua perspectiva. Muitos clientes começam com esse mesmo foco. Para avançarmos exatamente nessa linha, veja o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando cuidadosamente o custo-benefício antes de decidir. Faz total sentido. O que exatamente falta para você se sentir 100% confortável com essa escolha?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que aconteceria com seus resultados se você conseguisse automatizar esse processo e eliminar esse gargalo ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Empresas com desafios idênticos aos seus já validaram este caminho com sucesso. Confira os resultados reais aqui: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de pensar no investimento, considere o custo de oportunidade de manter sua operação como está hoje. Veja a comparação: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o problema atual custa mais caro do que resolvê-lo. Se estiver pronto para destravar esse resultado, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para você validar o valor na prática? Se sim, o checkout é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é prioridade. A garantia informada protege seu teste para que você avalie sem riscos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise agora, preparei este guia prático e gratuito que mostra o método por dentro: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como priorizamos um suporte individual de alta qualidade, as vagas para este ciclo são limitadas. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo barco e nosso objetivo é simplificar sua jornada. Podemos começar a construir esse resultado juntos por aqui: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é fundamentada em resultados técnicos verificáveis. Confira nossa credencial antes de decidir: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Os detalhes estão alinhados e o suporte está pronto para te receber. Se este for o momento de agir com segurança, aqui está o link final: {link}"}
+]

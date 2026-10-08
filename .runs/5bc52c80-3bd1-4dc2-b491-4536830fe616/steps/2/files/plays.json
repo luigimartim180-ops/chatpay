@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Pelo que entendi, {mirror}. Faz sentido te mostrar como daremos o próximo passo agora? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Notei que você está analisando cuidadosamente as opções. O que é mais importante para você garantir que essa seja a escolha certa?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que exatamente impede você de resolver esse problema ainda hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Aqui estão resultados reais e verificáveis de quem enfrentou o mesmo desafio: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, compare com o volume de tempo e recursos que você economiza na prática: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera é um dia mantendo o gargalo atual. Se o caminho está claro, vamos avançar? {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Podemos começar pelo passo mais simples para você validar a solução? Aqui está o acesso: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança está garantida pelo período de teste e garantia informados. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a decidir com clareza, preparei esta orientação inicial gratuita: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As condições de atendimento seguem o cronograma de disponibilidade técnica desta semana. Confira aqui: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nosso objetivo é o mesmo: simplificar sua operação com segurança. Veja como começamos juntos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Esta solução é validada por resultados técnicos e credenciais que você pode verificar aqui: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se os termos atendem sua necessidade, concluir agora permite que nossa equipe inicie sua implementação hoje mesmo: {link}"}
+]

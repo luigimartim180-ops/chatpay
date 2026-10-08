@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? É um ponto fundamental. Geralmente, quem foca nisso busca resultados consistentes. Quer ver o plano que preparei para você? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se este é o momento certo para delegar essa parte da sua operação. Faz sentido ou estou enganado?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para você decidir que o ChatPay é a ferramenta certa para o seu negócio hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"É natural querer ver resultados. Confira aqui como operações similares à sua estão performando com a gente: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Considere: o valor do trial é menor que o custo de apenas uma hora sua perdida em tarefas manuais. Veja a comparação: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem automação é um dia de escala e receita desperdiçados. Se fizer sentido retomar esse crescimento: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo seguro com o trial de 30 dias para você validar a eficiência na prática? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é prioridade: você tem 7 dias de garantia total para testar tudo sem risco. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Antes de mais nada, aqui está um checklist estratégico para sua primeira automação como um presente: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para manter a qualidade do suporte humano, as novas vagas são liberadas em lotes limitados. Se estiver pronto, garanta a sua: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós falamos a língua de quem busca escala com eficiência. Vamos colocar essa tecnologia para trabalhar por você? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa plataforma é validada por quem entende de alta conversão e segurança de dados. Confira nossas credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já conhece o potencial. Para garantir seu acesso com o suporte individualizado desta rodada, finalize aqui: {link}"}
+]

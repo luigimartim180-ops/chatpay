@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Faz sentido. Muitos dos nossos parceiros de sucesso começaram exatamente com esse foco. Veja como o próximo passo funciona: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está ponderando se este é o momento ideal para investir na operação. Acertei na leitura? O que mais te ajudaria a decidir com convicção agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria nos resultados do seu negócio se você pudesse automatizar sua recuperação de vendas e o checkout ainda hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Compreendo sua cautela. Veja aqui os resultados reais e depoimentos de quem já resolveu desafios idênticos aos seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliar o investimento, considere quanto custa manter os processos manuais atuais em comparação à escala que a automação permite: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem automação é um dia de vendas perdidas e tempo desperdiçado. Se quiser estancar essa perda hoje, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo simples com o trial de 30 dias para você validar os ganhos na prática? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é garantida com 7 dias de arrependimento total. Você testa a ferramenta e, se não gostar, devolvemos o valor: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise inicial, liberei este guia exclusivo sobre como escalar sua operação com automação: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos as novas ativações semanais para garantir que nosso suporte humano consiga dar atenção total a cada novo parceiro. Garanta sua vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós trabalhamos como parceiros do seu crescimento, focados em transformar sua tecnologia em uma máquina de vendas. Veja como: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa infraestrutura é validada por centenas de operações ativas que processam pagamentos com segurança total todos os dias: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com todos os pontos validados, o próximo passo seguro é garantir seu acesso. Como o suporte inicial é limitado por turma, se estiver pronto, finalize aqui: {link}"}
+]

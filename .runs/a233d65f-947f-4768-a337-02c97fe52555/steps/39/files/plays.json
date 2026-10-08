@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que sua prioridade agora é {mirror}. Para te dar clareza sobre os próximos passos, veja isso: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você valoriza a segurança antes de tomar uma decisão. O que mais te preocupa em relação a este investimento?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução definitiva desse problema impactaria seus resultados nos próximos meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como outros clientes no mesmo setor validaram nossa entrega: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliar o preço, veja o valor do tempo e dos recursos desperdiçados no modelo atual: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual tem um custo invisível diário. Se estiver pronto para mudar isso, avance por aqui: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido resolver a parte mais crítica primeiro? Podemos começar por este link: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para sua tranquilidade, a garantia protege sua fase de teste e adaptação. Confira: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Antes de falarmos de negócios, aqui está um guia prático para ajudar no seu desafio: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de implementação é limitada para garantir a qualidade. Verifique a disponibilidade para este período: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros, nosso objetivo é simplificar sua jornada desde o primeiro dia. Veja como: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira as certificações e resultados auditados que sustentam nossa metodologia: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se os pontos conversados atendem suas expectativas, este é o momento ideal para concluir: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Entendi que seu foco principal é {mirror}. Posso te mostrar o caminho mais curto para isso? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando segurança na escolha. O que é fundamental para você tomar essa decisão com clareza?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que impediria você de começar a resolver esse desafio ainda hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja os resultados reais de quem enfrentava o mesmo que você: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de considerar o preço, compare com o custo de manter o problema atual: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem uma solução é um custo de oportunidade. Se fizer sentido, avance agora: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com um passo seguro? Aqui está o link para o checkout: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia protege sua decisão. Veja como funciona o período de teste: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Preparei este guia prático para te ajudar a dar o primeiro passo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossas janelas de onboarding são limitadas para garantir qualidade. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Sabemos exatamente como é o seu dia a dia e criamos isso para te apoiar: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os reconhecimentos e validações que sustentam nossa entrega: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se você está de acordo, finalize sua adesão agora para iniciarmos seu setup imediatamente: {link}"}
+]

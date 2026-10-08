@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você destacou '{mirror}'. Isso é fundamental para o sucesso do projeto. Posso te apresentar o próximo passo focado justamente nisso? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando o risco desse investimento. É uma preocupação legítima em momentos de decisão. O que falta para você ter total segurança no retorno?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Qual seria o maior impacto positivo na sua operação se resolvêssemos esse problema hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Empresas com desafios idênticos aos seus alcançaram resultados expressivos. Veja os cases detalhados aqui: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de focarmos no custo, veja o valor do tempo e dos recursos que sua equipe economizará com esta solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o processo atual custa caro em produtividade todos os dias. Se estiver pronto para estancar essa perda, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com uma etapa piloto para você validar os ganhos rapidamente? Se sim, por aqui iniciamos: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é nossa prioridade. Oferecemos garantia sobre a implementação para que você teste sem receios: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para agregar valor à sua análise inicial, liberei este material estratégico que resolve uma parte do seu desafio agora: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para garantir a qualidade máxima na entrega, limitamos o número de novos projetos por ciclo. Verifique a disponibilidade atual: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós também buscamos eficiência máxima no dia a dia. Desenvolvemos esta ferramenta pensando em quem preza por agilidade real: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por resultados auditados e reconhecimento técnico no mercado. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"O planejamento está pronto e os benefícios são claros. Para garantir que essa transformação comece sem atrasar seu cronograma de resultados, finalize aqui: {link}"}
+]

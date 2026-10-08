@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você mencionou '{mirror}'? Entendo perfeitamente o seu ponto. Posso te mostrar como o próximo passo resolve exatamente essa questão? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se o esforço agora trará o retorno esperado. O que mais te impede de avançar com total confiança hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução definitiva desse desafio impactaria a sua produtividade e seus resultados nos próximos 30 dias?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados reais e depoimentos verificáveis de quem já utiliza nossa solução: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de considerarmos o investimento, veja o quanto de tempo e recursos você economiza ao automatizar este processo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem uma solução é um dia de progresso perdido. Se você busca uma mudança real, o caminho seguro é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos por uma solução simples e validada para o seu caso? Se sim, aqui está o checkout: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão está protegida por nossa garantia oficial. Você pode testar tudo sem riscos. Confira os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise inicial, aqui está um guia prático que preparei para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de novos clientes semanalmente para assegurar a qualidade do suporte. Se estiver de acordo, reserve sua vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós acreditamos em simplificar o que é complexo. Vamos construir esse resultado juntos e do jeito certo? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os dados e as certificações que comprovam a eficiência da nossa metodologia no mercado: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com todas as suas dúvidas sanadas, este é o momento ideal para configurar sua estrutura. Conclua sua inscrição com segurança aqui: {link}"}
+]

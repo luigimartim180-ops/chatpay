@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Faz sentido. Geralmente, quem traz esse ponto está buscando eficiência, e este é o caminho: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando a segurança da sua escolha agora. É prudente validar cada ponto antes de avançar. O que mais pesa na sua decisão?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para você sentir que este é o momento ideal para resolver esse desafio?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Resultados reais dizem mais do que qualquer promessa. Veja o que nossos clientes alcançaram na prática: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliar o investimento, considere quanto custa manter o processo atual parado por mais um mês. Veja este comparativo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução mantém o prejuízo atual. Se você quer estancar essa perda e resolver isso de forma definitiva, o link é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para você validar a ferramenta na prática? O acesso é por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"A garantia de 7 dias permite que você teste tudo sem riscos financeiros. Se não gostar, devolvemos o valor integral. Detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a visualizar o potencial dessa solução, preparei este guia prático sem custo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos as novas adesões semanais para garantir a excelência do nosso suporte. Verifique se o acesso ainda está disponível: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos focados no mesmo objetivo: simplificar sua rotina com total segurança. Vamos construir esse resultado juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por resultados auditáveis e reconhecimento do setor. Confira nossas credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já viu os detalhes. Se estiver pronto para transformar seu cenário com nosso apoio e segurança, o link de checkout é este: {link}"}
+]

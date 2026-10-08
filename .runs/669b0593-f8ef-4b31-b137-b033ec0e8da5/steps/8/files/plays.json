@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que você mencionou '{mirror}'. Para seguirmos exatamente nessa linha, veja o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está buscando o máximo de segurança antes de decidir, o que é fundamental. O que falta para essa clareza ser total?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria nos seus resultados se esse problema fosse resolvido ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como outros clientes em situações similares à sua validaram este caminho: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de pensar no investimento, veja o volume de horas que você recupera com esta solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução mantém o gargalo atual consumindo seus recursos. Se fizer sentido interromper isso hoje, avance aqui: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo focado e seguro agora? Se sim, este é o caminho: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"A garantia protege sua experiência. Você testa o valor real antes de qualquer compromisso definitivo: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este material inicial gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As vagas para implementação acompanhada são limitadas pela nossa capacidade de suporte. Veja a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui focamos em resultados práticos e diretos, assim como você busca. Confira: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira a certificação e os resultados técnicos que sustentam nossa entrega: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já tem todas as informações. Se estiver de acordo, finalize com segurança aqui: {link}. O acesso imediato garante sua vaga no ciclo atual."}
+]

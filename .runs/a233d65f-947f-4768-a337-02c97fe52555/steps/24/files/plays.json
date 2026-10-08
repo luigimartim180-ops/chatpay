@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Entendi que seu foco principal é {mirror}. Faz sentido darmos o próximo passo para transformar esse plano em resultado prático? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Entendo perfeitamente sua cautela. Decisões estratégicas exigem clareza e segurança. O que mais pesa na sua avaliação hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Qual seria o impacto no seu dia a dia se você pudesse automatizar esse processo agora?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Muitos começaram com essa mesma dúvida. Veja como resultados reais de quem já implementou validam o que estamos conversando: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o preço, considere o quanto custa continuar com o processo manual. Veja como o investimento se paga: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o status quo tem um custo invisível de tempo e progresso estagnado. Se estiver pronto para mudar isso, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Podemos começar pelo passo mais simples para você validar o valor agora? O link de acesso é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para você testar com total tranquilidade, a garantia de 7 dias protege sua decisão. Confira os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Quero que você tome a melhor decisão possível. Preparei este guia prático para te ajudar no início: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como prezo pela qualidade do suporte individual, as vagas de implementação são limitadas. Verifique a disponibilidade para hoje: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo lado da mesa para fazer seu negócio crescer. Vamos iniciar essa parceria por aqui: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa entrega é baseada em métodos validados e anos de experiência. Confira as evidências técnicas aqui: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"As informações principais já estão na mesa. Se fizer sentido para o seu momento, o link para iniciarmos com segurança é este: {link}"}
+]

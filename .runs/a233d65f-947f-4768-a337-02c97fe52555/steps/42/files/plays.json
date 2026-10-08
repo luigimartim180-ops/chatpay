@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você mencionou {mirror}, e isso faz todo sentido. Veja como podemos estruturar o próximo passo para atender a isso: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Notei que a segurança do investimento é sua prioridade agora. Validando esse ponto, qual outro fator pesa na sua escolha?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Se pudéssemos resolver apenas um problema crítico hoje, qual deles traria o maior retorno imediato para você?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como outros no seu setor resolveram exatamente o que você descreveu: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o impacto financeiro de não agir nos próximos meses antes de analisar o investimento: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a decisão mantém o custo operacional atual. Se estiver pronto para mudar esse cenário, aqui está o atalho: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar pela etapa mais simples para validarmos os resultados juntos? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança está garantida pelo nosso compromisso de satisfação técnica. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise inicial, separei esta orientação prática para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa agenda para novas implementações esta semana está quase completa. Para garantir sua vaga, o link é este: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui no nosso time, focamos em resolver isso de forma simples e segura. O primeiro passo da nossa parceria é este: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira nossos resultados auditados e entenda por que somos referência técnica no setor: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Os detalhes estão revisados. Concluir agora garante que seu projeto entre na nossa fila de prioridade para implementação imediata: {link}"}
+]

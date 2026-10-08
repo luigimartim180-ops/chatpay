@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente sua perspectiva. Para facilitar sua análise, preparei este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que a segurança do investimento é o que mais importa agora. É um ponto fundamental. O que falta para termos total confiança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria na sua rotina se conseguíssemos eliminar esse gargalo ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Clientes com desafios idênticos aos seus já validaram este caminho. Veja os resultados verificáveis: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o custo de oportunidade de manter o problema atual vs. o valor da solução. Veja o comparativo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução significa manter os custos ocultos do problema. Se estiver pronto para mudar isso, avance aqui: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples e seguro hoje? O caminho é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para sua total tranquilidade, nossa garantia protege seu período de teste. Confira os termos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a decidir com base em dados, aqui está um diagnóstico técnico gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Garantimos o suporte dedicado para quem ingressar nesta janela de implementação. Se for seu momento: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós compartilhamos do mesmo objetivo de simplificar seus processos. Veja como trabalhamos juntos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é fundamentada em resultados técnicos e práticos. Veja as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já revisou os detalhes essenciais. Para aproveitar o timing da sua estratégia e começar agora, o link seguro é: {link}"}
+]

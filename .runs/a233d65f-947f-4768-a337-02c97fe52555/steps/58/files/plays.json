@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você comentou sobre {mirror}. Se faz sentido avançar, preparei este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está preocupado com o ajuste da solução ao seu cenário atual. O que exatamente falta validarmos para você se sentir seguro?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria nos seus resultados se resolvêssemos esse desafio específico ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas no seu segmento alcançaram resultados similares: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de analisar o investimento, veja o impacto financeiro de manter o problema atual: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem uma solução é um custo acumulado. Se estiver pronto para estancar isso, aqui está o caminho: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Concorda que dar um pequeno passo agora é melhor do que adiar a solução? Podemos começar por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"O risco fica do nosso lado com a nossa garantia de satisfação. Confira como funciona: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar na sua análise, liberei este guia prático sem custo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de acompanhamento personalizado é limitada. Se fizer sentido para você, o link de reserva é este: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros focados no seu crescimento, estruturamos este plano juntos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por especialistas do setor. Confira nossas certificações: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantir que teremos foco total na sua implementação e os recursos reservados, podemos concluir agora? {link}"}
+]

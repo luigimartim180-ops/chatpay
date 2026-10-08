@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você destacou '{mirror}'. Entendo perfeitamente. Para focarmos nisso agora, aqui está o caminho: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está buscando mitigar riscos antes de decidir. Faz sentido. O que traria mais segurança para você agora? {link}"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que esta solução se tornasse sua prioridade hoje? {link}"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira os resultados reais de quem enfrentou desafios idênticos aos seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Avalie o custo de oportunidade de manter o problema vs. o investimento na solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem uma solução é um dia mantendo custos e gargalos. Se quiser resolver isso agora: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos por uma etapa simples para você validar o valor na prática? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão é protegida por nossa garantia, permitindo um teste seguro da solução. Veja como: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise, preparei este guia prático focado no seu cenário: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de onboarding é limitada semanalmente para garantir qualidade. Verifique as vagas: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos alinhados no mesmo objetivo de eficiência. Veja como facilitamos sua jornada: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por indicadores de mercado e resultados comprovados: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para assegurar os termos atuais e sua prioridade na implementação, o link seguro é este: {link}"}
+]

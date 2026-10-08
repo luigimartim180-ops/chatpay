@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que seu foco principal é {mirror}. Posso te mostrar o caminho para estruturar isso? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando cuidadosamente o risco e o benefício. O que precisaria acontecer para você se sentir 100% seguro?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Qual seria o impacto na sua operação se esse problema continuasse sem solução pelos próximos seis meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja os resultados auditados de empresas que enfrentavam o mesmo desafio que o seu: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de analisar o investimento, considere o custo real de manter sua ineficiência atual: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera mantém o custo do problema ativo. Se faz sentido resolver, aqui está o caminho: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para validar os resultados? Aqui está o acesso: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança vem primeiro: a garantia informada protege sua fase de testes. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar seu planejamento, preparei este guia prático focado na sua necessidade: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de novos projetos para garantir o padrão de suporte técnico. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nosso objetivo é crescer junto com você, simplificando sua rotina desde o primeiro dia: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira as credenciais e certificações que validam nossa metodologia de entrega: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Tudo pronto. Para mantermos o cronograma de implementação discutido, você pode concluir o processo com segurança aqui: {link}"}
+]

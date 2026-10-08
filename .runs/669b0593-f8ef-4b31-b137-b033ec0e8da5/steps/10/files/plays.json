@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendi. Faz sentido darmos o próximo passo com base nesse ponto? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está analisando cada detalhe antes de decidir, o que faz sentido. O que falta para termos clareza total?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como você avalia o impacto de manter esse desafio sem solução pelos próximos seis meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados reais e verificáveis de clientes que enfrentavam desafios parecidos com os seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, quanto a ineficiência atual está custando para o seu negócio? {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a decisão apenas prolonga o problema que você já tem. Se estiver pronto para mudar, o link é: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos por um passo menor para você validar os resultados rapidamente? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia remove o peso da decisão. Se não funcionar como esperado, você está protegido: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise, aqui está um guia prático gratuito que preparei para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Nossa capacidade de onboarding é limitada para garantir a qualidade de entrega neste ciclo. Link: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos focados no mesmo objetivo que você. Vamos construir essa solução em conjunto? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é fundamentada em dados e reconhecida no mercado. Veja as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se os detalhes atendem sua necessidade, aqui está o link para começarmos e você não perder mais tempo: {link}"}
+]

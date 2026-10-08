@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você mencionou {mirror}. Faz total sentido focar nisso agora. Posso te mostrar como estruturamos o próximo passo para esse resultado? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando o risco versus o retorno. É uma preocupação legítima. O que exatamente traria a segurança que você precisa agora?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que impediria você de começar a resolver esse desafio e colher resultados ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados verificáveis de clientes que enfrentavam desafios exatamente como os seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, considere o custo de manter o problema atual por mais um ano. Veja o comparativo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem a solução é um dia mantendo o gargalo atual. Se estiver pronto para mudar esse cenário, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar pelo que é mais simples e seguro primeiro? Se sim, este é o checkout: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia protege sua decisão, permitindo que você valide os resultados na prática sem riscos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Preparei este guia prático com os primeiros passos para facilitar sua análise agora: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Mantemos um limite de novos clientes por período para garantir a excelência na entrega. Garanta sua vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros no seu crescimento, focamos no que traz retorno real para você. Vamos dar o próximo passo? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por resultados concretos e autoridade no mercado. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Tudo o que conversamos nos trouxe até aqui. Se estiver pronto para resolver essa pendência com segurança, finalize aqui: {link}"}
+]

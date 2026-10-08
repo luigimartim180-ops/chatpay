@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Para ajudar você a visualizar o próximo passo de forma prática, veja aqui: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está sendo cauteloso com a mudança. É natural querer total segurança; o que precisaria acontecer para você se sentir pronto?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que aconteceria com os resultados do seu negócio se esse desafio continuasse sem solução nos próximos meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Empresas com desafios similares aos seus já alcançaram resultados reais. Veja os casos de sucesso: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliar o investimento, considere o custo de manter o processo atual. A economia compensa aqui: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera é um dia mantendo o prejuízo ou a ineficiência atual. Se quer mudar isso, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo simples para validar os resultados? Comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia de satisfação protege sua decisão para que você teste sem riscos. Confira os termos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para agregar valor à sua busca, preparei este guia prático sem custo que pode te ajudar agora: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de novos clientes para garantir a excelência no suporte técnico. Caso tenha interesse, o link é este: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo barco para otimizar seus processos. Veja como iniciamos essa parceria: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os dados e resultados verificáveis que validam nossa metodologia antes de sua escolha: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para assegurar que consigamos manter o cronograma de implementação discutido, você pode finalizar com segurança aqui: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo. Com base exatamente nisso que você disse, veja o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está buscando segurança na implementação. Faz sentido essa preocupação?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria no seu dia a dia se você não tivesse mais que lidar com esse desafio?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados reais e verificáveis de quem enfrentava o mesmo desafio: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, veja o custo de oportunidade de continuar como está: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera mantém o problema ativo. Se quiser estancar essa perda, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo simples e seguro hoje? Link de acesso: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia protege sua experiência. Confira os detalhes e teste com segurança: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Quero facilitar seu caminho. Aqui está um guia prático gratuito para você começar: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As vagas com suporte individual são limitadas para garantirmos a qualidade da entrega: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como alguém que também busca eficiência, acredito que este caminho é o mais sólido: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os fundamentos técnicos e as certificações que validam nossa entrega: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se os detalhes fazem sentido, este é o link. As vagas com bônus de implementação são limitadas: {link}"}
+]

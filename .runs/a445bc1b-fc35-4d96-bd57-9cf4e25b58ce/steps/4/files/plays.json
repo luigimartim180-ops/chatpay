@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendi seu ponto. Se faz sentido darmos o próximo passo para resolver isso, veja como: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Compreendo sua preocupação, faz sentido. Parece que você está priorizando a segurança antes de avançar. O que te traria essa certeza?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que essa solução fizesse sentido total para você hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios idênticos aos seus alcançaram resultados reais: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, veja o valor do tempo e recurso que você deixará de perder: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o status quo tem um custo diário. Se estiver pronto para mudar essa realidade, o link é: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar com uma etapa simples para validar os ganhos? O caminho é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia protege seu teste para que você avance sem riscos. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Preparei este guia prático como cortesia para te ajudar a diagnosticar o problema: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos os novos projetos para garantir a máxima qualidade na entrega. Confira a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo barco buscando eficiência. Este plano foi feito para chegarmos lá juntos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os dados técnicos e resultados validados que comprovam nossa expertise: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Ao decidir agora, você interrompe o problema de vez. Se estiver de acordo, este é o link seguro: {link}"}
+]

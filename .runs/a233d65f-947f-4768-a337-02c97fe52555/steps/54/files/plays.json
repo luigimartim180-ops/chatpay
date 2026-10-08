@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Quem prioriza isso geralmente busca escala rápida. Posso te mostrar o caminho para chegar lá? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está ponderando se este é o melhor momento para investir na sua operação. Acertei na leitura? O que mais pesa na sua decisão?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que você se sentisse totalmente seguro em avançar com a automação hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"É natural ter dúvidas. Veja os resultados verificáveis de quem já enfrentou desafios parecidos com os seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Considere o custo de oportunidade de cada venda perdida hoje versus o investimento acessível na automação: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia de espera é um dia de receita que não volta mais. Se faz sentido estancar essa perda hoje, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar pelo trial de 30 dias para você sentir a diferença na sua operação antes de decidir o próximo passo? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é prioridade. Com a nossa garantia de 7 dias, o risco de testar a ferramenta é todo nosso: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Preparei este material exclusivo para te ajudar a estruturar sua primeira automação, independentemente da sua decisão: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As vagas com suporte humano dedicado são limitadas por período para garantir qualidade. Garanta seu acesso enquanto a turma está aberta: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós jogamos no seu time. Nosso objetivo é que a tecnologia trabalhe para você e traga lucro real. Veja como: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa plataforma é validada por centenas de operações ativas que buscam máxima segurança e estabilidade. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já validou os detalhes. Como o acompanhamento inicial é limitado por turma para garantir seu sucesso, se estiver pronto, conclua aqui: {link}"}
+]

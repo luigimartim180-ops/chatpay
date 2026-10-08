@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendi perfeitamente. Geralmente, esse é o ponto de partida de quem busca eficiência. Posso te mostrar o caminho? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando cada detalhe com muito critério antes de decidir. O que mais pesa na sua escolha hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para você considerar que o teste de 30 dias foi o melhor investimento do seu mês?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados reais e métricas de quem já resolveu desafios idênticos aos seus usando nossa solução: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, considere o valor do tempo recuperado para sua equipe todos os meses: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem a ferramenta é um dia a mais convivendo com o gargalo atual. Se quiser estancar essa perda: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para você validar os resultados na prática? O checkout é aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Você tem 7 dias de garantia total. O teste é real, mas o risco é todo nosso. Confira os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este guia prático que resolve o primeiro passo do seu desafio: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos os novos acessos semanais para garantir a excelência no suporte. Verifique se ainda há vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como profissionais que buscam otimização, sabemos que as ferramentas certas poupam nosso recurso mais caro: o tempo. {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira por que nossa metodologia é validada por especialistas e segue os padrões técnicos do mercado: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Já revisamos os pontos principais. Se estiver de acordo, podemos reservar sua vaga no cronograma de implementação? {link}"}
+]

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/qwen2.5-coder:7b",
+  "small_model": "ollama/qwen2.5-coder:7b",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "qwen2.5-coder:7b": {
+          "name": "Qwen2.5-Coder 7B (local)",
+          "limit": {
+            "context": 32768,
+            "output": 8192
+          }
+        },
+        "qwen3:8b": {
+          "name": "Qwen3 8B (local)",
+          "limit": {
+            "context": 40960,
+            "output": 8192
+          }
+        },
+        "qwen2.5:7b": {
+          "name": "Qwen2.5 7B (local)",
+          "limit": {
+            "context": 32768,
+            "output": 8192
+          }
+        },
+        "deepseek-r1:7b": {
+          "name": "DeepSeek-R1 7B (local)",
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
+        }
+      }
+    }
+  }
+}

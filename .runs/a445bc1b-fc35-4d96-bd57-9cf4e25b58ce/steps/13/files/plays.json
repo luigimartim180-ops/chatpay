@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você mencionou '{mirror}', e isso é central para o que fazemos. Veja como podemos avançar exatamente nesse ponto: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você sente que ainda há riscos a considerar. É uma preocupação legítima. O que traria a clareza necessária para você decidir?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria na sua operação se esse problema deixasse de existir nos próximos 30 dias?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Clientes com desafios similares aos seus já validaram este caminho com resultados mensuráveis. Veja aqui: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o custo, considere o impacto financeiro de manter o processo como está hoje. Compare aqui: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Adiar a solução significa aceitar a continuidade desse gargalo. Se estiver pronto para estancar essa perda, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial focado apenas no seu maior gargalo? Se sim, comece por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua transição é protegida por nossa garantia de satisfação, eliminando o risco da sua decisão. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar imediatamente, preparei este guia prático com os primeiros passos para sua solução: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para manter a qualidade do suporte, limitamos o número de novos projetos por ciclo. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como profissionais que buscam excelência, sabemos que a eficiência é o que nos diferencia. Veja nossa visão: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é embasada em anos de experiência e resultados auditáveis no mercado. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Tudo o que analisamos indica que este é o momento ideal para agir. Se estiver pronto para avançar com segurança e exclusividade, acesse: {link}"}
+]

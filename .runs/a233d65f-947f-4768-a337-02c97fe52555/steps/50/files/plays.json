@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que você mencionou {mirror}. Como nosso objetivo é facilitar esse processo para você, veja este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está sentindo que o momento ou o esforço de mudança pode ser um desafio. O que mais te preocupa hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução definitiva desse problema impactaria os resultados da sua equipe nos próximos meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados reais e verificáveis de empresas que enfrentavam desafios similares aos seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de pensar no investimento, considere o custo de manter o cenário atual inalterado por mais um semestre: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem uma solução é um dia mantendo o gargalo operacional. Se estiver pronto para mudar, avance aqui: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo focado e seguro hoje? Se sim, este é o caminho: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é prioridade. Todos os detalhes da nossa garantia de entrega estão aqui para você conferir: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise, preparei este material prático que você pode aplicar imediatamente: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As vagas para início imediato na implementação são preenchidas por ordem de chegada. Se estiver decidido: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo barco: nosso sucesso depende de simplificar sua operação. Vamos juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os dados e a metodologia que validam nossa eficácia em casos complexos: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantir sua prioridade neste ciclo e começar a colher os benefícios o quanto antes, finalize aqui: {link}"}
+]

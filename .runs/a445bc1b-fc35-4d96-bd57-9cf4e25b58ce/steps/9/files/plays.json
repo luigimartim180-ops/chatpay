@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo seu ponto. Para facilitar sua análise e seguirmos com clareza, veja o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você sente que ainda falta uma peça para ter total segurança na decisão. O que exatamente pesa mais na sua avaliação hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que resolver este problema se tornasse sua prioridade agora?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Entendo a importância de resultados reais. Veja casos verificáveis de quem enfrentava o mesmo desafio: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de considerarmos o investimento, veja o impacto de manter o processo como está hoje: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual tem um custo invisível diário. Se estiver pronto para mudar isso, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo pequeno e seguro para validar a solução? Se sim, este é o link: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é fundamental. A garantia informada protege sua experiência de teste. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para agregar valor à sua busca, aqui está uma orientação prática para você aplicar agora: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como prezamos pela qualidade da implementação, as vagas são limitadas conforme a disponibilidade do time. Confira aqui: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Acreditamos que a simplicidade e a segurança são os melhores caminhos para o seu resultado. Veja como atuamos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira as credenciais e marcos técnicos que validam nossa entrega antes de sua decisão: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com as principais dúvidas resolvidas, este é o momento ideal para oficializar sua escolha com segurança: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Pelo que entendi, seu foco é {mirror}. Com base nisso, este próximo passo faz sentido: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está buscando máxima segurança antes de decidir. O que é fundamental para você avançar com confiança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que impediria você de começar a colher os resultados dessa mudança ainda hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira resultados reais e verificáveis de clientes com desafios similares aos seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o custo de oportunidade de manter o problema atual versus o investimento na solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Enquanto você aguarda, o problema continua consumindo recursos. Se estiver pronto para mudar, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar pelo passo mais simples e direto? O checkout está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia protege sua experiência para que você teste sem riscos. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este guia prático como cortesia inicial: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de implementações semanais para garantir a qualidade técnica. Link ativo: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros no seu crescimento, estruturamos este processo para ser o mais fluido possível: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Veja os certificados e resultados auditados que sustentam nossa metodologia: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantirmos sua implementação no cronograma discutido, finalize sua adesão por aqui: {link}"}
+]

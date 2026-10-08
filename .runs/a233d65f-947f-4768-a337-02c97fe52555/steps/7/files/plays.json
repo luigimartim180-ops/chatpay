@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que você mencionou {mirror}. Faz sentido darmos o próximo passo para resolver isso agora? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está analisando cuidadosamente suas opções, o que é fundamental. O que seria o fator decisivo para você hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução desse desafio impactaria seus resultados nos próximos meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Muitos na sua situação tiveram resultados positivos. Veja este caso real e verificável: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Considere o custo de manter o problema atual versus o investimento na solução. Faz sentido comparar? {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o status quo tem um custo invisível de tempo e recursos. Se estiver pronto para mudar isso: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo simples e direto agora? Se sim, aqui está o link: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para sua total segurança, oferecemos uma garantia clara para você testar sem riscos. Confira: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar na sua análise, preparei este guia prático de cortesia: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Mantemos um limite de atendimentos para garantir a qualidade. Se fizer sentido para você agora: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós valorizamos a transparência e a eficiência acima de tudo. Vamos resolver isso juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por resultados consistentes no mercado. Veja as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"As condições apresentadas garantem o melhor suporte para sua decisão agora. Se estiver de acordo, finalize aqui: {link}"}
+]

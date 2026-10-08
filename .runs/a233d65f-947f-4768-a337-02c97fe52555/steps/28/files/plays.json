@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Você mencionou {mirror}. Para seguir exatamente nessa linha, veja o que preparei para você: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está ponderando o risco dessa mudança. Qual seria o cenário ideal para você se sentir totalmente seguro?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução desse desafio agora impactaria seus resultados ou sua rotina nos próximos meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Para sua segurança, veja resultados verificáveis de quem enfrentava o mesmo desafio: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de falarmos de investimento, veja o valor do tempo e dos recursos que seriam poupados: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o problema atual tem um custo contínuo. Se fizer sentido interromper isso hoje, avance por aqui: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo simples para validar a solução? O ponto de partida é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é prioridade. Confira como nossa garantia protege sua experiência de teste: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Como cortesia para facilitar sua análise inicial, aqui está um guia prático: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Trabalhamos com limites operacionais para garantir a qualidade. Se estiver pronto, garanta seu acesso: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros, nosso objetivo é simplificar sua jornada. Podemos começar pelo que é essencial: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Baseamos nossa entrega em métodos validados. Confira as credenciais que sustentam nossos resultados: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com todos os pontos validados, este é o momento de agir para evitar que o gargalo persista. Conclua com segurança: {link}"}
+]

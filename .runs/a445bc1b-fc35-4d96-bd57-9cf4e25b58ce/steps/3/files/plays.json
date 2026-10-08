@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Preparei este roteiro para facilitar o seu próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está preocupado em tomar a melhor decisão possível. É prudente agir assim. O que exatamente te traria mais segurança para avançar?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria na sua operação se você conseguisse resolver esse desafio de forma definitiva ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira resultados reais e verificáveis de quem já trilhou esse caminho com sucesso: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliar o investimento, considere quanto a persistência deste problema custa para você: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem essa melhoria é uma oportunidade perdida. Se fizer sentido mudar isso, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos por uma etapa de validação simples para você ver o valor? Aqui está o acesso: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é nossa prioridade. Conheça nossa política de transparência e garantia de satisfação: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te apoiar agora, liberei este material prático exclusivo sobre o seu desafio: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de novos clientes para garantir a qualidade do nosso suporte. Veja a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui focamos em resultados reais e eficiência. Vamos construir essa solução juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por especialistas e fundamentada em dados do mercado. Veja aqui: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com tudo pronto para começar, este link garante sua vaga na nossa próxima janela de implementação: {link}"}
+]

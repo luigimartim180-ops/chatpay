@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo seu ponto. Veja como podemos avançar com clareza a partir daqui: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando a segurança na escolha, o que é fundamental. O que exatamente traria total tranquilidade para você prosseguir?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução definitiva deste desafio impactaria o alcance das suas metas para este trimestre?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira os indicadores de sucesso e resultados mensuráveis alcançados por empresas do seu segmento: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o custo acumulado da ineficiência atual com o ganho de produtividade imediato que propomos: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem uma solução é um custo de oportunidade que não volta. Se estiver pronto para mudar esse cenário: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial controlado para você validar os ganhos na prática? O ponto de partida é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Nossa garantia de satisfação remove o risco da sua decisão, permitindo que você teste a solução com segurança: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para agregar valor à sua análise agora, preparei este guia prático que costumamos liberar apenas para clientes: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos o número de novas implementações semanais para garantir a qualidade do suporte. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo barco, focados em maximizar sua eficiência operacional. Veja como facilitamos esse caminho: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é fundamentada em padrões técnicos rigorosos e validada por especialistas. Veja os detalhes: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já tem todos os elementos para decidir. Se os benefícios fazem sentido para o seu momento, finalize aqui com segurança: {link}"}
+]

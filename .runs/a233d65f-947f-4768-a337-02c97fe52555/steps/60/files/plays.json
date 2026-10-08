@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Muitos clientes nos procuram justamente com esse foco em otimização. Posso te mostrar o próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está sentindo que a mudança pode trazer mais complexidade do que solução neste momento. Faz sentido?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que exatamente mudaria na sua rotina se esse gargalo fosse resolvido definitivamente ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Confira como outros profissionais enfrentaram e superaram exatamente esses mesmos desafios técnicos: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olharmos o investimento, veja o quanto de tempo manual você recupera com a automação: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem a solução é um dia a mais perdendo produtividade operacional. Se quiser mudar isso: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para você validar os benefícios na prática? {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua decisão é segura. Nossa garantia de satisfação protege integralmente seu período de teste: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para facilitar sua análise, preparei este guia prático focado no desafio que você mencionou: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Mantemos um limite de novos setups semanais para garantir a qualidade total do suporte. Veja se há vaga: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos focados no mesmo objetivo: tornar sua operação mais eficiente e lucrativa. Vamos juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa abordagem é baseada em dados reais e anos de experiência comprovada no mercado. Confira: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para você começar a colher resultados ainda esta semana e evitar que essas pendências se acumulem: {link}"}
+]

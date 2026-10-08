@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Compreendo perfeitamente. Para facilitar sua jornada e dar o próximo passo, veja isto: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você busca uma solução que traga segurança e resultados claros. O que é mais determinante na sua escolha hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria acontecer para que essa solução se tornasse sua prioridade agora?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como outros profissionais com desafios idênticos aos seus alcançaram o sucesso: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliar o investimento, veja o volume de horas que você vai recuperar semanalmente: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o processo atual tem um custo invisível de tempo e energia. Se quiser mudar isso, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial focado em resolver seu gargalo? O acesso está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança vem primeiro. Veja como nossa garantia protege seu teste e elimina seus riscos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua análise inicial, preparei este guia prático sem custo para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As condições para novos acessos dependem da nossa capacidade de suporte atual. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui trabalhamos juntos para simplificar o que é complexo no seu dia a dia. Veja como: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira a base técnica e os resultados validados que sustentam nossa metodologia: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Para garantir seu início imediato e assegurar sua vaga no fluxo de hoje, finalize com segurança aqui: {link}"}
+]

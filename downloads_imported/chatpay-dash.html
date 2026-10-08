@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ChatPay Painel</title>
+<!--
+  ChatPay · Dashboard administrativo (arquivo único)
+
+  INTEGRAÇÃO COM O BACKEND
+  - Todos os ids e onclick do briefing estão no HTML. Seus scripts podem preencher os elementos por id.
+  - As funções chamadas nos onclick (saveSwarm, saveReplies, loadUsageMetrics, etc.) têm uma versão de
+    demonstração no final deste arquivo. Cada uma só é criada se a sua versão ainda não existir em window.
+    Se o seu backend carregar depois, a sua função substitui a de demonstração sem conflito.
+  - Para desligar os dados de exemplo, defina window.CHATPAY_LIVE = true antes deste script.
+  - Os ids um-cost-today e um-tokens-today aparecem uma vez (card KPI). A aba "Custos" espelha esses
+    valores automaticamente (data-mirror), porque ids duplicados quebram getElementById.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: cabeçalho fixo, faixa de 4 KPIs, abas em pílula com marcador deslizante e painéis em grade de cards de vidro. */
+  :root {
+    color-scheme: dark;
+    --bg: #0A0A0A;
+    --surface: #131315;
+    --surface-2: #1B1B1F;
+    --glass: rgba(19, 19, 21, .74);
+    --border: #27272B;
+    --fg: #F4F4F2;
+    --muted: #9E9EA6;
+    --y: #FAFF00;
+    --on-y: #0A0A0A;
+    --accent-ink: #FAFF00;
+    --btn-border: #FAFF00;
+    --ok: #2BE59A;
+    --ok-fill: #2BE59A;
+    --ok-soft: rgba(43, 229, 154, .12);
+    --warn: #FFB84D;
+    --warn-soft: rgba(255, 184, 77, .12);
+    --bad: #FF6B6B;
+    --bad-soft: rgba(255, 107, 107, .12);
+    --input: #0E0E10;
+    --hi: rgba(255, 255, 255, .05);
+    --grid: rgba(244, 244, 242, .09);
+    --spot: rgba(250, 255, 0, .065);
+    --ring: rgba(250, 255, 0, .18);
+    --glow-a: rgba(250, 255, 0, .07);
+    --glow-b: rgba(43, 229, 154, .06);
+    --shadow: 0 24px 48px -28px rgba(0, 0, 0, .9);
+    --f-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    --f-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-mono: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace;
+    --spring: cubic-bezier(.34, 1.56, .64, 1);
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg: #F5F5F2;
+    --surface: #FFFFFF;
+    --surface-2: #EFEFEB;
+    --glass: rgba(255, 255, 255, .8);
+    --border: #DCDCE0;
+    --fg: #0A0A0A;
+    --muted: #5A5A62;
+    --accent-ink: #0A0A0A;
+    --btn-border: #0A0A0A;
+    --ok: #00774C;
+    --ok-fill: #00A86B;
+    --ok-soft: rgba(0, 119, 76, .1);
+    --warn: #8A5200;
+    --warn-soft: rgba(138, 82, 0, .1);
+    --bad: #C62828;
+    --bad-soft: rgba(198, 40, 40, .08);
+    --input: #FAFAF8;
+    --hi: rgba(255, 255, 255, .9);
+    --grid: rgba(10, 10, 10, .09);
+    --spot: rgba(10, 10, 10, .045);
+    --ring: rgba(10, 10, 10, .12);
+    --glow-a: rgba(250, 255, 0, .35);
+    --glow-b: rgba(0, 168, 107, .08);
+    --shadow: 0 24px 48px -30px rgba(10, 10, 10, .25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .35s ease, color .35s ease;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(900px 480px at 8% -8%, var(--glow-a), transparent 60%),
+      radial-gradient(800px 520px at 100% 108%, var(--glow-b), transparent 60%);
+  }
+  h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  svg { display: block; }
+  :focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+  .mono { font-family: var(--f-mono); }
+  .eyebrow { font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 1360px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 40px); }
+
+  /* Cabeçalho */
+  .top {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .top-in { display: flex; align-items: center; gap: 12px 28px; flex-wrap: wrap; padding-block: 14px; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--f-display); font-size: 30px; line-height: 1; letter-spacing: -.01em; color: var(--fg); text-decoration: none; margin-right: auto; }
+  .live { width: 9px; height: 9px; border-radius: 50%; background: var(--ok-fill); position: relative; flex: none; }
+  .live::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid var(--ok-fill); animation: ping 2s ease-out infinite; }
+  @keyframes ping { 0% { transform: scale(.5); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
+  .demo { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border: 1px dashed var(--muted); border-radius: 999px; color: var(--muted); }
+  .demo[hidden] { display: none; }
+  .meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .meta-line { display: flex; align-items: baseline; gap: 8px; min-width: 0; font-size: 14px; }
+  .meta-line strong { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 22ch; }
+  .meta-line .mono { font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 26ch; }
+  #token-display { color: var(--fg); }
+  .theme {
+    position: relative; width: 66px; height: 36px; flex: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 8px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  }
+  .theme svg { width: 16px; height: 16px; position: relative; z-index: 1; transition: color .3s ease; }
+  .theme .thumb { position: absolute; top: 3px; left: 3px; width: 28px; height: 28px; border-radius: 50%; background: var(--y); border: 1px solid var(--btn-border); transition: transform .55s var(--spring); }
+  .theme[aria-checked="true"] .thumb { transform: translateX(30px); }
+  .theme .moon { color: var(--on-y); }
+  .theme[aria-checked="true"] .moon { color: var(--muted); }
+  .theme[aria-checked="true"] .sun { color: var(--on-y); }
+  @media (max-width: 720px) {
+    .top-in { gap: 10px 16px; }
+    .meta-line strong { max-width: 14ch; }
+    .meta-line .mono { max-width: 16ch; }
+  }
+
+  main { padding-block: 28px 56px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* Cards de vidro */
+  .card {
+    position: relative; min-width: 0;
+    background:
+      radial-gradient(420px circle at var(--px, 50%) var(--py, 0%), var(--spot), transparent 62%),
+      linear-gradient(180deg, var(--hi), transparent 46%),
+      var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px;
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: var(--shadow);
+    transition: border-color .3s ease, background-color .35s ease;
+  }
+  .card:hover { border-color: color-mix(in srgb, var(--fg) 24%, var(--border)); }
+  .card-h { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
+  .card-h h3 { font-family: var(--f-display); font-weight: 400; font-size: 26px; line-height: 1.1; letter-spacing: -.01em; }
+  .card-h p { color: var(--muted); font-size: 14px; max-width: 52ch; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); align-items: start; }
+  .span-all { grid-column: 1 / -1; }
+  .cols { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+
+  /* KPIs */
+  .kpis { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 1180px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .kpis { grid-template-columns: minmax(0, 1fr); } }
+  .kpi { display: flex; flex-direction: column; gap: 6px; padding-bottom: 18px; }
+  .kpi-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .big { font-family: var(--f-display); font-size: clamp(36px, 4.2vw, 52px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .kpi .big:not(.mid) { font-size: clamp(32px, 2.9vw, 44px); white-space: nowrap; }
+  @media (max-width: 1180px) { .kpi .big:not(.mid) { font-size: clamp(34px, 5vw, 48px); } }
+  .big.mid { font-size: clamp(30px, 3vw, 38px); line-height: 1.08; }
+  .kpi-sub { display: flex; align-items: baseline; gap: 8px; color: var(--muted); font-size: 13.5px; }
+  .kpi-sub b { font-family: var(--f-mono); font-weight: 500; font-size: 14px; color: var(--fg); font-variant-numeric: tabular-nums; }
+  .delta { font-family: var(--f-mono); font-size: 11.5px; font-weight: 500; padding: 3px 9px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); }
+  .spark { position: relative; height: 64px; margin-top: 10px; }
+  .spark svg { width: 100%; height: 100%; overflow: visible; }
+  .spark-tip { position: absolute; top: 0; left: 0; pointer-events: none; transform: translate(-50%, -115%); background: var(--fg); color: var(--bg); font-family: var(--f-mono); font-size: 11px; padding: 4px 9px; border-radius: 8px; white-space: nowrap; opacity: 0; transition: opacity .15s ease; z-index: 3; }
+
+  /* Abas */
+  .tabs { margin-inline: calc(clamp(16px, 4vw, 40px) * -1); padding-inline: clamp(16px, 4vw, 40px); overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs.at-end, .tabs.no-scroll { -webkit-mask-image: none; mask-image: none; }
+  .tabs-in { position: relative; display: flex; gap: 2px; width: max-content; padding: 5px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; transition: background-color .35s ease; }
+  .tab-pill { position: absolute; top: 5px; left: 0; height: calc(100% - 10px); width: 0; border-radius: 999px; background: var(--y); border: 1px solid var(--btn-border); transition: transform .55s var(--spring), width .45s var(--ease); z-index: 0; }
+  .tab { position: relative; z-index: 1; height: 42px; padding: 0 15px; border: 0; background: none; border-radius: 999px; color: var(--muted); font-weight: 500; font-size: 14px; white-space: nowrap; transition: color .25s ease; }
+  .tab:hover { color: var(--fg); }
+  .tab[aria-selected="true"] { color: var(--on-y); font-weight: 600; }
+  .tab:focus-visible { outline-offset: 0; }
+
+  .panel { display: flex; flex-direction: column; gap: 20px; animation: in .5s var(--ease) both; }
+  .panel[hidden] { display: none; }
+  @keyframes in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .panel-h { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; }
+  .panel-h h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(32px, 4vw, 44px); line-height: 1.05; letter-spacing: -.02em; }
+  .panel-h p { color: var(--muted); max-width: 58ch; margin-top: 6px; }
+
+  /* Formulários */
+  .field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .field label, .lbl { font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+  .field input:not([type="checkbox"]), .field select, .field textarea {
+    width: 100%; min-width: 0; height: 46px; padding: 0 14px;
+    background: var(--input); color: var(--fg);
+    border: 1px solid var(--border); border-radius: 12px;
+    font-size: 15px;
+    transition: border-color .2s ease, box-shadow .2s ease, background-color .35s ease;
+  }
+  .field textarea { height: auto; min-height: 96px; padding: 12px 14px; line-height: 1.5; resize: vertical; }
+  .field select { -webkit-appearance: none; appearance: none; padding-right: 40px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238A8A93' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--muted); opacity: .6; }
+  .field input:hover, .field select:hover, .field textarea:hover { border-color: color-mix(in srgb, var(--fg) 30%, var(--border)); }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent-ink); box-shadow: 0 0 0 3px var(--ring); }
+  .field .hint { font-size: 12.5px; color: var(--muted); }
+  .mono-in { font-family: var(--f-mono) !important; font-size: 13.5px !important; letter-spacing: .01em; }
+  .form-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+  .form-grid .wide { grid-column: 1 / -1; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
+
+  .switch { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 500; }
+  .switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .switch .track { position: relative; width: 48px; height: 28px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); transition: background-color .25s ease, border-color .25s ease; flex: none; }
+  .switch .track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--muted); transition: transform .45s var(--spring), background-color .25s ease; }
+  .switch input:checked + .track { background: var(--y); border-color: var(--btn-border); }
+  .switch input:checked + .track::after { transform: translateX(20px); background: var(--on-y); }
+  .switch input:focus-visible + .track { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+
+  /* Botões */
+  .btn {
+    --mx: 0px; --my: 0px;
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    height: 46px; padding: 0 22px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--fg);
+    font-weight: 600; font-size: 14.5px; letter-spacing: -.005em;
+    transform: translate(var(--mx), var(--my));
+    transition: transform .3s var(--ease), background-color .2s ease, border-color .2s ease, box-shadow .3s ease, color .2s ease;
+  }
+  .btn:hover { border-color: var(--fg); }
+  .btn:active { transform: translate(var(--mx), var(--my)) scale(.97); }
+  .btn.primary { background: var(--y); color: var(--on-y); border-color: var(--btn-border); }
+  .btn.primary:hover { box-shadow: 0 10px 28px -10px rgba(250, 255, 0, .55); }
+  :root[data-theme="light"] .btn.primary:hover { box-shadow: 0 10px 0 -5px #0A0A0A; }
+  .btn.primary::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .7) 50%, transparent 65%); transform: translateX(-130%); pointer-events: none; }
+  .btn.primary:hover::after { transform: translateX(130%); transition: transform .8s var(--ease); }
+  .btn.danger { color: var(--bad); border-color: var(--bad); background: var(--bad-soft); }
+  .btn.danger:hover { background: var(--bad); color: #0A0A0A; }
+  .btn.sm { height: 38px; padding: 0 16px; font-size: 13.5px; }
+
+  /* Selos, avisos, listas */
+  .pill { display: inline-flex; align-items: center; gap: 7px; font-family: var(--f-mono); font-size: 11.5px; font-weight: 500; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+  .pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+  .pill.ok { color: var(--ok); background: var(--ok-soft); border-color: transparent; }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
+  .pill.bad { color: var(--bad); background: var(--bad-soft); border-color: transparent; }
+  .notice { margin-top: 14px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); font-size: 14px; }
+  .notice:empty { display: none; }
+  .notice.err { border-color: var(--bad); background: var(--bad-soft); color: var(--bad); }
+  .notice.okk { border-color: transparent; background: var(--ok-soft); color: var(--ok); }
+  .notice.warn { border-color: transparent; background: var(--warn-soft); color: var(--warn); }
+  .result { margin-top: 0; min-height: 120px; }
+  .empty { color: var(--muted); font-size: 14px; padding: 6px 0; }
+
+  .rows { display: flex; flex-direction: column; }
+  .rows > li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 14px; padding: 13px 0; border-top: 1px solid var(--border); }
+  .rows > li:first-child { border-top: 0; padding-top: 0; }
+  .rows .name { font-weight: 500; min-width: 0; overflow-wrap: anywhere; }
+  .rows .sub { color: var(--muted); font-size: 13px; }
+  .rows .val { font-family: var(--f-mono); font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; }
+
+  .tile { padding: 16px 18px; border: 1px solid var(--border); border-radius: 16px; background: color-mix(in srgb, var(--surface-2) 70%, transparent); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .tile .big { font-size: 36px; }
+  .tile .sub { color: var(--muted); font-size: 13px; }
+  .tile-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .tile .mono-v { font-family: var(--f-mono); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+
+  .bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 10px 0; }
+  .bar .name { font-weight: 500; overflow-wrap: anywhere; }
+  .bar .val { font-family: var(--f-mono); font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; }
+  .bar .rail { grid-column: 1 / -1; height: 8px; background: var(--grid); border-radius: 0 4px 4px 0; overflow: hidden; }
+  .bar .fill { height: 100%; width: var(--w); background: var(--ok-fill); border-radius: 0 4px 4px 0; transform-origin: left; animation: grow .9s var(--ease) both; }
+  @keyframes grow { from { transform: scaleX(0); } to { transform: none; } }
+  .alert { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 11px 13px; border-radius: 12px; font-size: 14px; }
+  .alert + .alert { margin-top: 8px; }
+  .alert.warn { background: var(--warn-soft); color: var(--warn); }
+  .alert.ok { background: var(--ok-soft); color: var(--ok); }
+  .alert b { font-family: var(--f-mono); font-weight: 500; }
+  .chan-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+  .chan-head h3 { font-family: var(--f-display); font-weight: 400; font-size: 26px; line-height: 1.1; }
+  .step-list { counter-reset: s; display: flex; flex-direction: column; gap: 12px; }
+  .step-list li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; font-size: 14px; color: var(--muted); counter-increment: s; }
+  .step-list li::before { content: counter(s); width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); display: grid; place-items: center; font-family: var(--f-mono); font-size: 11.5px; color: var(--fg); }
+  .step-list b { color: var(--fg); font-weight: 500; }
+  .sim-intent { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .sim-intent .big { font-size: 40px; }
+  .bubble { margin-top: 12px; padding: 14px 16px; border-radius: 16px 16px 16px 4px; background: var(--surface-2); border: 1px solid var(--border); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 30px); max-width: min(92vw, 460px); padding: 12px 18px; border-radius: 14px; background: var(--fg); color: var(--bg); font-size: 14px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .5s var(--spring); z-index: 50; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .foot { padding-top: 12px; font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="logo" href="#" aria-label="ChatPay"><span>ChatPay</span><i class="live" aria-hidden="true"></i><span class="demo" id="demo-pill">dados de exemplo</span></a>
+    <div class="meta">
+      <span class="eyebrow">Loja</span>
+      <div class="meta-line"><strong><span id="dash-brand">Minha Loja</span></strong><span class="mono"><span id="dash-domain">minhaloja.com</span></span></div>
+    </div>
+    <div class="meta">
+      <span class="eyebrow">Token da sessão</span>
+      <div class="meta-line"><span class="mono" id="token-display">token...</span></div>
+    </div>
+    <button class="theme" id="theme" type="button" role="switch" aria-checked="false" aria-label="Tema claro" onclick="toggleTheme()">
+      <span class="thumb" aria-hidden="true"></span>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="kpis" aria-label="Indicadores principais">
+    <article class="card kpi">
+      <div class="kpi-h"><span class="eyebrow">Receita total</span><span class="delta" id="rev-delta">+0%</span></div>
+      <p class="big" id="metric-rev">R$ 0,00</p>
+      <div class="spark" data-spark="rev"></div>
+    </article>
+    <article class="card kpi">
+      <div class="kpi-h"><span class="eyebrow">Leads totais</span><span class="delta" id="leads-delta">+0%</span></div>
+      <p class="big" id="metric-leads">0</p>
+      <div class="spark" data-spark="leads"></div>
+    </article>
+    <article class="card kpi">
+      <div class="kpi-h"><span class="eyebrow">Custo LLM hoje</span><span class="pill" id="cost-pill">no teto</span></div>
+      <p class="big" id="um-cost-today">US$ 0,00</p>
+      <p class="kpi-sub"><b id="um-tokens-today">0</b> tokens hoje</p>
+      <div class="spark" data-spark="cost"></div>
+    </article>
+    <article class="card kpi">
+      <div class="kpi-h"><span class="eyebrow">Status do agente</span><span class="pill" id="agent-pill">aguardando</span></div>
+      <p class="big mid" id="h-mode-info">Aguardando configuração</p>
+      <p class="kpi-sub" id="agent-foot">Defina o modo na aba Swarm &amp; IA.</p>
+    </article>
+  </section>
+
+  <nav class="tabs" id="tabs" aria-label="Seções do painel">
+    <div class="tabs-in" role="tablist" id="tablist">
+      <i class="tab-pill" id="tab-pill" aria-hidden="true"></i>
+      <button class="tab" role="tab" id="t-swarm" aria-controls="p-swarm" aria-selected="true" data-tab="swarm" type="button">🤖 Swarm &amp; IA</button>
+      <button class="tab" role="tab" id="t-custos" aria-controls="p-custos" aria-selected="false" tabindex="-1" data-tab="custos" type="button">💰 Custos LLM</button>
+      <button class="tab" role="tab" id="t-coex" aria-controls="p-coex" aria-selected="false" tabindex="-1" data-tab="coex" type="button">🔀 WhatsApp CoEx</button>
+      <button class="tab" role="tab" id="t-voice" aria-controls="p-voice" aria-selected="false" tabindex="-1" data-tab="voice" type="button">🎙️ Voice AI</button>
+      <button class="tab" role="tab" id="t-canais" aria-controls="p-canais" aria-selected="false" tabindex="-1" data-tab="canais" type="button">📱 Canais Sociais</button>
+      <button class="tab" role="tab" id="t-pix" aria-controls="p-pix" aria-selected="false" tabindex="-1" data-tab="pix" type="button">📦 Produtos &amp; Pix</button>
+      <button class="tab" role="tab" id="t-contratos" aria-controls="p-contratos" aria-selected="false" tabindex="-1" data-tab="contratos" type="button">📄 Contratos</button>
+      <button class="tab" role="tab" id="t-sim" aria-controls="p-sim" aria-selected="false" tabindex="-1" data-tab="sim" type="button">🎯 Simulador IA</button>
+      <button class="tab" role="tab" id="t-agencia" aria-controls="p-agencia" aria-selected="false" tabindex="-1" data-tab="agencia" type="button">🏢 Agência</button>
+    </div>
+  </nav>
+
+  <!-- ABA 1 · SWARM & IA -->
+  <section class="panel" role="tabpanel" id="p-swarm" aria-labelledby="t-swarm">
+    <div class="panel-h"><div><h2>Swarm de IA e playbook</h2><p>Defina como o agente vende: nicho, tom, limites de preço e o cérebro que responde seus clientes.</p></div></div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-h"><h3>Playbook de vendas</h3><p>O agente negocia dentro destes limites e nunca passa deles.</p></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="sw-nicho">Nicho</label><input id="sw-nicho" name="sw-nicho" type="text" autocomplete="off" placeholder="Ex.: moda feminina em linho"></div>
+          <div class="field wide"><label for="sw-tom">Tom de voz</label><input id="sw-tom" name="sw-tom" type="text" autocomplete="off" list="tons" placeholder="Ex.: consultivo e caloroso"><datalist id="tons"><option value="Consultivo e caloroso"><option value="Direto e objetivo"><option value="Descontraído"><option value="Premium e sofisticado"></datalist></div>
+          <div class="field"><label for="sw-cap">Desconto máximo (%)</label><input id="sw-cap" name="sw-cap" type="number" inputmode="decimal" min="0" max="100" step="1" placeholder="10"></div>
+          <div class="field"><label for="sw-floor">Preço mínimo (R$)</label><input id="sw-floor" name="sw-floor" type="number" inputmode="decimal" min="0" step="0.01" placeholder="120,00"></div>
+          <div class="field"><label for="sw-ceiling">Preço máximo (R$)</label><input id="sw-ceiling" name="sw-ceiling" type="number" inputmode="decimal" min="0" step="0.01" placeholder="650,00"></div>
+          <div class="field wide"><label for="sw-upsell">Oferta de upsell</label><input id="sw-upsell" name="sw-upsell" type="text" autocomplete="off" placeholder="Ex.: kit com cinto de couro por +R$ 49"></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-h"><h3>Cérebro do agente</h3><p>Escolha o provedor de LLM e informe a credencial. A chave não é exibida depois de salva.</p></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="sw-provider">Provedor de LLM</label>
+            <select id="sw-provider" name="sw-provider">
+              <option value="workers-ai">Workers AI</option>
+              <option value="deepseek-chat">DeepSeek Chat V3</option>
+              <option value="deepseek-reasoner">DeepSeek Reasoner R1</option>
+              <option value="openai-gpt-4o-mini">OpenAI GPT-4o-mini</option>
+              <option value="anthropic-claude-3">Anthropic Claude 3</option>
+            </select></div>
+          <div class="field wide"><label for="sw-llm-key">Chave de API</label><input class="mono-in" id="sw-llm-key" name="sw-llm-key" type="password" autocomplete="off" placeholder="sk-••••••••••••••••"></div>
+          <div class="field wide"><label for="sw-llm-endpoint">Endpoint (opcional)</label><input class="mono-in" id="sw-llm-endpoint" name="sw-llm-endpoint" type="url" autocomplete="off" placeholder="https://api.seuprovedor.com/v1"></div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" type="button" onclick="saveSwarm()">Salvar Configurações de IA</button>
+          <button class="btn danger" id="kill-btn" type="button" onclick="toggleKill()"><span>Pausa de Emergência</span></button>
+        </div>
+        <div class="notice" id="e4" role="status" aria-live="polite"></div>
+      </article>
+
+      <article class="card">
+        <div class="card-h"><h3>Respostas automáticas</h3><p>O texto que o agente envia quando reconhece cada intenção do cliente.</p></div>
+        <div class="stack">
+          <div class="field"><label for="reply-buy">Quer comprar</label><textarea id="reply-buy" name="reply-buy" placeholder="Perfeito! Segue o Pix para finalizar agora."></textarea></div>
+          <div class="field"><label for="reply-objection">Objeção</label><textarea id="reply-objection" name="reply-objection" placeholder="Entendo. Posso ver uma condição melhor para você."></textarea></div>
+          <div class="field"><label for="reply-mild_interest">Interesse leve</label><textarea id="reply-mild_interest" name="reply-mild_interest" placeholder="Que bom que gostou! Quer ver outras opções parecidas?"></textarea></div>
+          <div class="field"><label for="reply-info_question">Dúvida de informação</label><textarea id="reply-info_question" name="reply-info_question" placeholder="Claro! Já te explico tamanho, prazo e entrega."></textarea></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveReplies()">Salvar respostas</button></div>
+      </article>
+
+      <article class="card">
+        <div class="card-h"><h3>Modo Hunter</h3><p>Controla o quanto o agente toma a iniciativa de abordar leads e puxar a conversa para o fechamento.</p></div>
+        <div class="field"><label for="h-mode">Modo</label>
+          <select id="h-mode" name="h-mode">
+            <option value="passive">Passivo · só responde</option>
+            <option value="balanced">Equilibrado · responde e retoma</option>
+            <option value="aggressive">Agressivo · aborda e fecha</option>
+          </select></div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveHunterModeUI()">Salvar modo</button></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ABA 2 · CUSTOS -->
+  <section class="panel" role="tabpanel" id="p-custos" aria-labelledby="t-custos" hidden>
+    <div class="panel-h"><div><h2>Custos e uso de LLM</h2><p>Quanto cada provedor e cada agente consumiu. Alertas aparecem quando a quota ou o custo saem do normal.</p></div>
+      <button class="btn" type="button" onclick="loadUsageMetrics()">Atualizar Métricas</button></div>
+    <div class="cols">
+      <div class="tile"><span class="eyebrow">Hoje</span><span class="big" data-mirror="um-cost-today">US$ 0,00</span><div class="tile-row"><span class="sub">tokens</span><span class="mono-v" data-mirror="um-tokens-today">0</span></div></div>
+      <div class="tile"><span class="eyebrow">Semana</span><span class="big" id="um-cost-week">US$ 0,00</span><div class="tile-row"><span class="sub">tokens</span><span class="mono-v" id="um-tokens-week">0</span></div></div>
+      <div class="tile"><span class="eyebrow">Mês</span><span class="big" id="um-cost-month">US$ 0,00</span><div class="tile-row"><span class="sub">tokens</span><span class="mono-v" id="um-tokens-month">0</span></div></div>
+    </div>
+    <div class="grid">
+      <article class="card"><div class="card-h"><h3>Por provedor</h3><p>Custo de hoje por provedor de LLM.</p></div><div id="um-by-provider"><p class="empty">Sem dados ainda. Clique em Atualizar Métricas.</p></div></article>
+      <article class="card"><div class="card-h"><h3>Execuções por agente</h3><p>Quantas vezes cada agente rodou hoje.</p></div><div id="um-agents"><p class="empty">Sem dados ainda.</p></div></article>
+      <article class="card"><div class="card-h"><h3>Alertas</h3><p>Quota acima de 80% ou custo mais de 15% acima da média.</p></div><div id="um-alerts"><p class="empty">Nenhum alerta.</p></div></article>
+      <article class="card"><div class="card-h"><h3>Chamadas de voz</h3><p>Resumo do dia no Voice AI.</p></div><div id="voice-metrics"><p class="empty">Sem chamadas hoje.</p></div></article>
+    </div>
+  </section>
+
+  <!-- ABA 3 · COEX -->
+  <section class="panel" role="tabpanel" id="p-coex" aria-labelledby="t-coex" hidden>
+    <div class="panel-h"><div><h2>WhatsApp CoEx</h2><p>O bot atende e o seu time assume quando precisar. Nenhum cliente fica sem resposta.</p></div></div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-h"><h3>Regras de coexistência</h3><p>Palavras-chave decidem quem responde a cada conversa.</p></div>
+        <div class="stack">
+          <label class="switch" for="coex-enabled"><input type="checkbox" id="coex-enabled" name="coex-enabled"><span class="track"></span><span>Ativar Coexistência</span></label>
+          <div class="field"><label for="coex-human-kw">Palavras que chamam um humano</label><input id="coex-human-kw" name="coex-human-kw" type="text" autocomplete="off" placeholder="atendente, humano, falar com alguém"><span class="hint">Separe por vírgula.</span></div>
+          <div class="field"><label for="coex-bot-kw">Palavras que devolvem ao bot</label><input id="coex-bot-kw" name="coex-bot-kw" type="text" autocomplete="off" placeholder="voltar, bot, pode continuar"></div>
+          <div class="field"><label for="coex-ttl">Devolver ao bot após (minutos)</label><input id="coex-ttl" name="coex-ttl" type="number" inputmode="numeric" min="1" step="1" placeholder="30"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveCoex()">Salvar coexistência</button><span class="pill" id="coex-status">desativada</span></div>
+      </article>
+      <div class="stack">
+        <article class="card"><div class="card-h"><h3>Métricas</h3><p>Como o bot e o time dividem o atendimento.</p></div><div id="coex-metrics"><p class="empty">Sem dados ainda.</p></div></article>
+        <article class="card"><div class="card-h"><h3>Conversas ativas</h3><p>Quem está respondendo agora.</p></div><div id="coex-active"><p class="empty">Nenhuma conversa ativa.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABA 4 · VOICE -->
+  <section class="panel" role="tabpanel" id="p-voice" aria-labelledby="t-voice" hidden>
+    <div class="panel-h"><div><h2>Voice AI</h2><p>Ligações de venda e cobrança por voz. Conecte um provedor e dispare uma chamada de teste.</p></div></div>
+    <div class="grid">
+      <article class="card">
+        <div class="chan-head"><h3>Vapi</h3><span class="pill off" id="st-vapi">não configurado</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="v-vapi-key">Chave de API</label><input class="mono-in" id="v-vapi-key" name="v-vapi-key" type="password" autocomplete="off" placeholder="vapi_••••••••••••"></div>
+          <div class="field wide"><label for="v-vapi-assistant">ID do assistente</label><input class="mono-in" id="v-vapi-assistant" name="v-vapi-assistant" type="text" autocomplete="off" placeholder="asst_..."></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveVoiceConfig('vapi')">Salvar Vapi</button></div>
+      </article>
+      <article class="card">
+        <div class="chan-head"><h3>Bland</h3><span class="pill off" id="st-bland">não configurado</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="v-bland-key">Chave de API</label><input class="mono-in" id="v-bland-key" name="v-bland-key" type="password" autocomplete="off" placeholder="sk_••••••••••••"></div>
+          <div class="field wide"><label for="v-bland-path">Pathway (fluxo)</label><input class="mono-in" id="v-bland-path" name="v-bland-path" type="text" autocomplete="off" placeholder="pathway_id"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveVoiceConfig('bland')">Salvar Bland</button></div>
+      </article>
+      <article class="card span-all">
+        <div class="card-h"><h3>Ligação de teste</h3><p>Dispara uma chamada real para o número informado. Use o seu próprio número.</p></div>
+        <div class="form-grid">
+          <div class="field"><label for="v-phone">Telefone com DDI e DDD</label><input class="mono-in" id="v-phone" name="v-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="+55 11 91234-5678"></div>
+          <div class="field"><label for="v-lang">Idioma da chamada</label><select id="v-lang" name="v-lang"><option value="pt-BR">Português (Brasil)</option><option value="en-US">English (US)</option><option value="es-ES">Español</option></select></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="initiateVoiceCall()">Ligar agora</button></div>
+        <div class="notice" id="voice-call-result" role="status" aria-live="polite"></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ABA 5 · CANAIS -->
+  <section class="panel" role="tabpanel" id="p-canais" aria-labelledby="t-canais" hidden>
+    <div class="panel-h"><div><h2>Canais sociais</h2><p>Conecte onde seus clientes já estão. O agente responde em todos com o mesmo playbook.</p></div></div>
+    <div class="grid">
+      <article class="card">
+        <div class="chan-head"><h3>Instagram</h3><span class="pill off" id="ch-instagram-status">desconectado</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="ch-instagram-account">Conta</label><input id="ch-instagram-account" name="ch-instagram-account" type="text" autocomplete="off" placeholder="@sualoja"></div>
+          <div class="field wide"><label for="ch-instagram-token">Token de acesso</label><input class="mono-in" id="ch-instagram-token" name="ch-instagram-token" type="password" autocomplete="off" placeholder="IGQ••••••••••"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveChannelUI('instagram')">Conectar Instagram</button></div>
+      </article>
+      <article class="card">
+        <div class="chan-head"><h3>YouTube</h3><span class="pill off" id="ch-youtube-status">desconectado</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="ch-youtube-account">ID do canal</label><input class="mono-in" id="ch-youtube-account" name="ch-youtube-account" type="text" autocomplete="off" placeholder="UC..."></div>
+          <div class="field wide"><label for="ch-youtube-token">Chave de API</label><input class="mono-in" id="ch-youtube-token" name="ch-youtube-token" type="password" autocomplete="off" placeholder="AIza••••••••••"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveChannelUI('youtube')">Conectar YouTube</button></div>
+      </article>
+      <article class="card">
+        <div class="chan-head"><h3>TikTok</h3><span class="pill off" id="ch-tiktok-status">desconectado</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="ch-tiktok-account">Conta</label><input id="ch-tiktok-account" name="ch-tiktok-account" type="text" autocomplete="off" placeholder="@sualoja"></div>
+          <div class="field wide"><label for="ch-tiktok-token">Token de acesso</label><input class="mono-in" id="ch-tiktok-token" name="ch-tiktok-token" type="password" autocomplete="off" placeholder="act.••••••••••"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveChannelUI('tiktok')">Conectar TikTok</button></div>
+      </article>
+      <article class="card">
+        <div class="chan-head"><h3>Telegram</h3><span class="pill off" id="ch-telegram-status">desconectado</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="ch-telegram-account">Usuário do bot</label><input id="ch-telegram-account" name="ch-telegram-account" type="text" autocomplete="off" placeholder="@sualoja_bot"></div>
+          <div class="field wide"><label for="ch-telegram-token">Token do bot</label><input class="mono-in" id="ch-telegram-token" name="ch-telegram-token" type="password" autocomplete="off" placeholder="123456:ABC••••••••"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveChannelUI('telegram')">Conectar Telegram</button></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ABA 6 · PRODUTOS & PIX -->
+  <section class="panel" role="tabpanel" id="p-pix" aria-labelledby="t-pix" hidden>
+    <div class="panel-h"><div><h2>Produtos e Pix</h2><p>A chave que recebe o dinheiro e o catálogo que o agente vende dentro da conversa.</p></div></div>
+    <div class="grid">
+      <article class="card">
+        <div class="chan-head"><h3>Recebimento Pix</h3><span class="pill off" id="pix-status">sem chave</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="pix-key">Chave Pix</label><input class="mono-in" id="pix-key" name="pix-key" type="text" autocomplete="off" placeholder="CNPJ, email, telefone ou chave aleatória"></div>
+          <div class="field wide"><label for="pix-name">Nome do recebedor</label><input id="pix-name" name="pix-name" type="text" autocomplete="off" placeholder="Como aparece no banco do cliente"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="savePixUI()">Salvar chave Pix</button></div>
+      </article>
+      <article class="card">
+        <div class="card-h"><h3>Adicionar produto</h3><p>O preço vai em centavos, para evitar erro de arredondamento.</p></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="prod-name">Nome do produto</label><input id="prod-name" name="prod-name" type="text" autocomplete="off" placeholder="Ex.: Vestido de linho"></div>
+          <div class="field"><label for="prod-cents">Preço (centavos)</label><input class="mono-in" id="prod-cents" name="prod-cents" type="number" inputmode="numeric" min="1" step="1" placeholder="28900"></div>
+          <div class="field"><label for="prod-deliver">Entrega</label><input id="prod-deliver" name="prod-deliver" type="text" autocomplete="off" placeholder="Link, texto ou 'envio físico'"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="addProdUI()">Adicionar produto</button></div>
+      </article>
+      <article class="card span-all">
+        <div class="card-h"><h3>Catálogo</h3><p>Produtos que o agente pode oferecer e cobrar.</p></div>
+        <ul class="rows" id="prods-list"><li><span class="empty">Nenhum produto cadastrado.</span></li></ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ABA 7 · CONTRATOS -->
+  <section class="panel" role="tabpanel" id="p-contratos" aria-labelledby="t-contratos" hidden>
+    <div class="panel-h"><div><h2>Contratos</h2><p>Venda de maior valor fecha com assinatura. A Clicksign cuida da validade jurídica.</p></div></div>
+    <div class="grid">
+      <article class="card">
+        <div class="chan-head"><h3>Clicksign</h3><span class="pill off" id="cs-status">desconectado</span></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="cs-key">Token de acesso</label><input class="mono-in" id="cs-key" name="cs-key" type="password" autocomplete="off" placeholder="cs_••••••••••••"></div>
+          <div class="field wide"><label for="cs-template">ID do template</label><input class="mono-in" id="cs-template" name="cs-template" type="text" autocomplete="off" placeholder="template_id"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveClicksignUI()">Salvar Clicksign</button></div>
+      </article>
+      <article class="card">
+        <div class="card-h"><h3>Como o contrato sai</h3></div>
+        <ol class="step-list">
+          <li><span><b>O cliente confirma a compra</b> na conversa e o agente preenche o template com os dados dele.</span></li>
+          <li><span><b>O link de assinatura</b> chega no mesmo chat, sem trocar de canal.</span></li>
+          <li><span><b>Depois de assinado</b>, o agente envia o Pix e libera a entrega.</span></li>
+        </ol>
+      </article>
+    </div>
+  </section>
+
+  <!-- ABA 8 · SIMULADOR -->
+  <section class="panel" role="tabpanel" id="p-sim" aria-labelledby="t-sim" hidden>
+    <div class="panel-h"><div><h2>Simulador Hunter IA</h2><p>Cole uma mensagem de cliente e veja como o agente classifica a intenção e o que responderia.</p></div></div>
+    <div class="grid">
+      <article class="card">
+        <div class="field"><label for="sim-text">Mensagem do cliente</label><textarea id="sim-text" name="sim-text" style="min-height:160px" placeholder="Ex.: Oi! Vi o vestido de linho no Instagram, ainda tem no M? Consigo pagar no Pix hoje?"></textarea></div>
+        <div class="actions"><button class="btn primary" type="button" onclick="simHunterUI()">Simular resposta</button><button class="btn" type="button" onclick="fillExample()">Usar exemplo</button></div>
+      </article>
+      <article class="card">
+        <div class="card-h"><h3>Resultado</h3></div>
+        <div class="result" id="sim-res"><p class="empty">O resultado aparece aqui depois da simulação.</p></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ABA 9 · AGÊNCIA -->
+  <section class="panel" role="tabpanel" id="p-agencia" aria-labelledby="t-agencia" hidden>
+    <div class="panel-h"><div><h2>Agência</h2><p>Gerencie várias lojas de clientes no mesmo painel, cada uma com seu agente e seu Pix.</p></div></div>
+    <article class="card stack" id="agency-card">
+      <div class="cols" id="ag-stats"><p class="empty">Sem dados de agência ainda.</p></div>
+      <div>
+        <div class="card-h"><h3>Clientes</h3></div>
+        <ul class="rows" id="ag-clients-list"><li><span class="empty">Nenhum cliente cadastrado.</span></li></ul>
+      </div>
+      <div>
+        <div class="card-h"><h3>Novo cliente</h3><p>O cliente recebe um convite por email para acessar o painel dele.</p></div>
+        <div class="form-grid">
+          <div class="field"><label for="ag-new-dom">Domínio</label><input class="mono-in" id="ag-new-dom" name="ag-new-dom" type="text" autocomplete="off" placeholder="lojadocliente.com.br"></div>
+          <div class="field"><label for="ag-new-brand">Nome da marca</label><input id="ag-new-brand" name="ag-new-brand" type="text" autocomplete="off" placeholder="Loja do Cliente"></div>
+          <div class="field"><label for="ag-new-email">Email do cliente</label><input id="ag-new-email" name="ag-new-email" type="email" autocomplete="off" placeholder="cliente@email.com"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="addAgencyClientUI()">Adicionar cliente</button></div>
+      </div>
+    </article>
+  </section>
+
+  <p class="foot">ChatPay · painel administrativo</p>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var LIVE = !!window.CHATPAY_LIVE;
+  var brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+  var usd = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'USD' });
+  var nf = new Intl.NumberFormat('pt-BR');
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var setText = function (id, t) { var el = document.getElementById(id); if (el) el.textContent = t; };
+  var val = function (id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  var def = function (name, fn) { if (typeof window[name] !== 'function') window[name] = fn; };
+
+  /* ---------- Toast ---------- */
+  var toastT;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg + (LIVE ? '' : ' (demo)');
+    t.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { t.classList.remove('show'); }, 2600);
+  }
+  function notice(id, msg, kind) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'notice' + (kind ? ' ' + kind : '');
+    el.textContent = msg;
+  }
+  function pill(id, text, kind) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'pill' + (kind ? ' ' + kind : '');
+    el.textContent = text;
+  }
+
+  /* ---------- Tema ---------- */
+  function applyTheme(t) {
+    if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+    $('#theme').setAttribute('aria-checked', String(t === 'light'));
+    setTimeout(function () { renderAllSparks(); }, 0);
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('cp-theme'); } catch (e) {}
+  applyTheme(saved === 'light' ? 'light' : 'dark');
+  def('toggleTheme', function () {
+    var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem('cp-theme', next); } catch (e) {}
+  });
+
+  /* ---------- Abas ---------- */
+  var tabs = $$('.tab'), tabsBox = $('#tabs'), pillEl = $('#tab-pill');
+  function movePill() {
+    var a = $('.tab[aria-selected="true"]');
+    if (!a) return;
+    pillEl.style.width = a.offsetWidth + 'px';
+    pillEl.style.transform = 'translateX(' + a.offsetLeft + 'px)';
+  }
+  function edgeMask() {
+    var noScroll = tabsBox.scrollWidth <= tabsBox.clientWidth + 2;
+    tabsBox.classList.toggle('no-scroll', noScroll);
+    tabsBox.classList.toggle('at-end', tabsBox.scrollLeft + tabsBox.clientWidth >= tabsBox.scrollWidth - 4);
+  }
+  function setTab(name, focus) {
+    tabs.forEach(function (t) {
+      var on = t.dataset.tab === name;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.getAttribute('aria-controls'));
+      if (p) p.hidden = !on;
+      if (on && focus) t.focus();
+    });
+    movePill();
+    var a = $('.tab[aria-selected="true"]');
+    var target = a.offsetLeft - (tabsBox.clientWidth - a.offsetWidth) / 2;
+    tabsBox.scrollTo({ left: Math.max(0, target), behavior: reduce ? 'auto' : 'smooth' });
+    try { localStorage.setItem('cp-tab', name); } catch (e) {}
+  }
+  $('#tablist').addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b) setTab(b.dataset.tab);
+  });
+  $('#tablist').addEventListener('keydown', function (e) {
+    var i = tabs.indexOf(document.activeElement);
+    if (i < 0) return;
+    var n = null;
+    if (e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+    else if (e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') n = 0;
+    else if (e.key === 'End') n = tabs.length - 1;
+    if (n === null) return;
+    e.preventDefault();
+    setTab(tabs[n].dataset.tab, true);
+  });
+  tabsBox.addEventListener('scroll', edgeMask, { passive: true });
+  addEventListener('resize', function () { movePill(); edgeMask(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { movePill(); edgeMask(); });
+  pillEl.style.transition = 'none';
+  var firstTab = 'swarm';
+  try { var st = localStorage.getItem('cp-tab'); if (st && $('.tab[data-tab="' + st + '"]')) firstTab = st; } catch (e) {}
+  setTab(firstTab);
+  requestAnimationFrame(function () { requestAnimationFrame(function () { pillEl.style.transition = ''; edgeMask(); }); });
+
+  /* ---------- Brilho nos cards e botões magnéticos ---------- */
+  if (fine && !reduce) {
+    document.addEventListener('pointermove', function (e) {
+      var c = e.target.closest && e.target.closest('.card');
+      if (c) {
+        var r = c.getBoundingClientRect();
+        c.style.setProperty('--px', (e.clientX - r.left) + 'px');
+        c.style.setProperty('--py', (e.clientY - r.top) + 'px');
+      }
+      var b = e.target.closest && e.target.closest('.btn');
+      if (b) {
+        var br = b.getBoundingClientRect();
+        b.style.setProperty('--mx', ((e.clientX - (br.left + br.width / 2)) * .16).toFixed(1) + 'px');
+        b.style.setProperty('--my', ((e.clientY - (br.top + br.height / 2)) * .26).toFixed(1) + 'px');
+      }
+    });
+    document.addEventListener('pointerout', function (e) {
+      var b = e.target.closest && e.target.closest('.btn');
+      if (b && !b.contains(e.relatedTarget)) { b.style.setProperty('--mx', '0px'); b.style.setProperty('--my', '0px'); }
+    });
+  }
+
+  /* ---------- Espelho dos ids de "hoje" na aba de custos ---------- */
+  $$('[data-mirror]').forEach(function (m) {
+    var src = document.getElementById(m.dataset.mirror);
+    if (!src) return;
+    var sync = function () { m.textContent = src.textContent; };
+    sync();
+    new MutationObserver(sync).observe(src, { childList: true, characterData: true, subtree: true });
+  });
+
+  /* ---------- Sparklines (série única, 14 dias) ---------- */
+  var dates = [];
+  for (var i = 13; i >= 0; i--) { var d = new Date(); d.setDate(d.getDate() - i); dates.push(d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })); }
+  var SERIES = {
+    rev: { vals: [2100, 2650, 2400, 3100, 2900, 3600, 3350, 4100, 3800, 4650, 4300, 5200, 4900, 5750], fmt: function (v) { return brl.format(v); }, name: 'Receita' },
+    leads: { vals: [38, 45, 41, 52, 49, 61, 58, 66, 63, 74, 70, 82, 79, 91], fmt: function (v) { return nf.format(v) + ' leads'; }, name: 'Leads' },
+    cost: { vals: [2.1, 2.4, 2.2, 2.9, 2.7, 3.1, 2.8, 3.3, 3.0, 3.6, 3.2, 3.9, 3.5, 3.42], fmt: function (v) { return usd.format(v); }, name: 'Custo LLM' }
+  };
+  function renderSpark(el) {
+    var key = el.dataset.spark, s = SERIES[key];
+    if (!s) return;
+    var w = Math.max(120, el.clientWidth), h = 64, pl = 2, pr = 8, pt = 8, pb = 6;
+    var min = Math.min.apply(null, s.vals), max = Math.max.apply(null, s.vals), rg = (max - min) || 1;
+    var lo = min - rg * .18, hi = max + rg * .12;
+    var X = function (i) { return pl + (w - pl - pr) * i / (s.vals.length - 1); };
+    var Y = function (v) { return pt + (h - pt - pb) * (1 - (v - lo) / (hi - lo)); };
+    var pts = s.vals.map(function (v, i) { return X(i).toFixed(1) + ',' + Y(v).toFixed(1); });
+    var line = 'M' + pts.join(' L');
+    var area = line + ' L' + X(s.vals.length - 1).toFixed(1) + ',' + h + ' L' + X(0).toFixed(1) + ',' + h + ' Z';
+    var grid = [.25, .55, .85].map(function (f) { var y = (pt + (h - pt - pb) * f).toFixed(1); return '<line x1="0" x2="' + w + '" y1="' + y + '" y2="' + y + '" stroke="var(--grid)" stroke-width="1"/>'; }).join('');
+    var ex = X(s.vals.length - 1), ey = Y(s.vals[s.vals.length - 1]);
+    el.innerHTML =
+      '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(s.name) + ' nos últimos 14 dias, de ' + esc(s.fmt(s.vals[0])) + ' a ' + esc(s.fmt(s.vals[s.vals.length - 1])) + '">' +
+      '<defs><linearGradient id="g-' + key + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ok-fill);stop-opacity:.28"/><stop offset="1" style="stop-color:var(--ok-fill);stop-opacity:0"/></linearGradient></defs>' +
+      grid + '<path d="' + area + '" fill="url(#g-' + key + ')"/>' +
+      '<path d="' + line + '" fill="none" stroke="var(--ok-fill)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '<circle class="hov" r="4" fill="var(--ok-fill)" stroke="var(--surface)" stroke-width="2" style="opacity:0"/>' +
+      '<circle class="end" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="4" fill="var(--ok-fill)" stroke="var(--surface)" stroke-width="2"/>' +
+      '<rect x="0" y="-10" width="' + w + '" height="' + (h + 10) + '" fill="transparent" class="hit"/></svg>' +
+      '<span class="spark-tip"></span>';
+    var svg = $('svg', el), hit = $('.hit', el), hov = $('.hov', el), tip = $('.spark-tip', el), end = $('.end', el);
+    function move(e) {
+      var r = svg.getBoundingClientRect();
+      var f = (e.clientX - r.left) / r.width * w;
+      var i = Math.round((f - pl) / (w - pl - pr) * (s.vals.length - 1));
+      i = Math.max(0, Math.min(s.vals.length - 1, i));
+      var x = X(i), y = Y(s.vals[i]);
+      hov.setAttribute('cx', x.toFixed(1)); hov.setAttribute('cy', y.toFixed(1)); hov.style.opacity = 1;
+      end.style.opacity = i === s.vals.length - 1 ? 1 : .35;
+      tip.textContent = dates[i] + ' · ' + s.fmt(s.vals[i]);
+      tip.style.left = Math.max(60, Math.min(w - 60, x)) + 'px';
+      tip.style.top = (y - 2) + 'px';
+      tip.style.opacity = 1;
+    }
+    function leave() { hov.style.opacity = 0; tip.style.opacity = 0; end.style.opacity = 1; }
+    hit.addEventListener('pointermove', move);
+    hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', leave);
+  }
+  var sparkEls = $$('[data-spark]');
+  function renderAllSparks() { sparkEls.forEach(renderSpark); }
+  var lastW = 0;
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(function () { var w = sparkEls[0] ? sparkEls[0].clientWidth : 0; if (w !== lastW) { lastW = w; renderAllSparks(); } }).observe(document.body);
+  }
+  renderAllSparks();
+
+  /* ---------- Renderizadores de demonstração ---------- */
+  function renderProviders(list) {
+    var max = Math.max.apply(null, list.map(function (p) { return p.cost; }));
+    $('#um-by-provider').innerHTML = list.map(function (p) {
+      return '<div class="bar"><span class="name">' + esc(p.n) + '</span><span class="val">' + usd.format(p.cost) + ' · ' + nf.format(p.tokens) + ' tok</span><div class="rail"><div class="fill" style="--w:' + (p.cost / max * 100).toFixed(1) + '%"></div></div></div>';
+    }).join('');
+  }
+  function renderAgents(list) {
+    var max = Math.max.apply(null, list.map(function (a) { return a.runs; }));
+    $('#um-agents').innerHTML = list.map(function (a) {
+      return '<div class="bar"><span class="name">' + esc(a.n) + '</span><span class="val">' + nf.format(a.runs) + '</span><div class="rail"><div class="fill" style="--w:' + (a.runs / max * 100).toFixed(1) + '%"></div></div></div>';
+    }).join('');
+  }
+  function renderAlerts(list) {
+    $('#um-alerts').innerHTML = list.length ? list.map(function (a) { return '<div class="alert ' + a.k + '"><b>' + (a.k === 'warn' ? '!' : '✓') + '</b><span>' + esc(a.t) + '</span></div>'; }).join('') : '<div class="alert ok"><b>✓</b><span>Tudo dentro do normal.</span></div>';
+  }
+  function renderVoice(v) {
+    $('#voice-metrics').innerHTML = '<div class="cols"><div class="tile"><span class="eyebrow">Chamadas</span><span class="big">' + nf.format(v.calls) + '</span></div><div class="tile"><span class="eyebrow">Duração média</span><span class="big">' + esc(v.avg) + '</span></div><div class="tile"><span class="eyebrow">Atendidas</span><span class="big">' + v.rate + '%</span></div></div>';
+  }
+  function renderCoex() {
+    $('#coex-metrics').innerHTML = '<div class="cols"><div class="tile"><span class="eyebrow">Assumidas por humano</span><span class="big">14</span></div><div class="tile"><span class="eyebrow">Devolvidas ao bot</span><span class="big">11</span></div><div class="tile"><span class="eyebrow">Tempo médio humano</span><span class="big">6 min</span></div></div>';
+    var rows = [['+55 11 9****-4821', 'Humano', '12 min restantes'], ['+55 21 9****-0377', 'Bot', 'em atendimento'], ['+55 41 9****-1190', 'Humano', '4 min restantes']];
+    $('#coex-active').innerHTML = '<ul class="rows">' + rows.map(function (r) { return '<li><div><div class="name mono">' + r[0] + '</div><div class="sub">' + r[2] + '</div></div><span class="pill ' + (r[1] === 'Bot' ? 'ok' : 'warn') + '">' + r[1] + '</span></li>'; }).join('') + '</ul>';
+  }
+  function renderProds(items) {
+    $('#prods-list').innerHTML = items.length ? items.map(function (p) {
+      return '<li><div><div class="name">' + esc(p.name) + '</div><div class="sub">Entrega: ' + esc(p.deliver || 'não informada') + '</div></div><span class="val">' + brl.format(p.cents / 100) + '</span></li>';
+    }).join('') : '<li><span class="empty">Nenhum produto cadastrado.</span></li>';
+  }
+  function renderAgency(clients) {
+    $('#ag-stats').innerHTML = '<div class="tile"><span class="eyebrow">Clientes ativos</span><span class="big">' + clients.length + '</span></div><div class="tile"><span class="eyebrow">Receita sob gestão</span><span class="big">' + brl.format(clients.reduce(function (a, c) { return a + c.rev; }, 0)) + '</span></div><div class="tile"><span class="eyebrow">Leads no mês</span><span class="big">' + nf.format(clients.reduce(function (a, c) { return a + c.leads; }, 0)) + '</span></div>';
+    $('#ag-clients-list').innerHTML = clients.length ? clients.map(function (c) {
+      return '<li><div><div class="name">' + esc(c.brand) + '</div><div class="sub mono">' + esc(c.dom) + '</div></div><span class="pill ' + (c.ok ? 'ok' : 'warn') + '">' + (c.ok ? 'ativo' : 'convite enviado') + '</span></li>';
+    }).join('') : '<li><span class="empty">Nenhum cliente cadastrado.</span></li>';
+  }
+
+  /* ---------- Dados de exemplo ---------- */
+  var prods = [
+    { name: 'Vestido de Linho Sol', cents: 28900, deliver: 'envio físico' },
+    { name: 'Kit 3 Camisetas Básicas', cents: 15990, deliver: 'envio físico' },
+    { name: 'Consultoria de Estilo (1h)', cents: 12000, deliver: 'link da reunião' }
+  ];
+  var clients = [
+    { brand: 'Ateliê Sol', dom: 'atelie-sol.com.br', rev: 48920, leads: 1284, ok: true },
+    { brand: 'Casa Norte Café', dom: 'casanorte.com.br', rev: 31480, leads: 902, ok: true },
+    { brand: 'Studio Pilates Lume', dom: 'lumepilates.com', rev: 22150, leads: 517, ok: true },
+    { brand: 'Barba & Tinta', dom: 'barbaetinta.com.br', rev: 0, leads: 0, ok: false }
+  ];
+  var usage = { today: { tok: 412806, cost: 3.42 }, week: { tok: 2318450, cost: 21.87 }, month: { tok: 9640120, cost: 94.3 } };
+  var MODE = { passive: 'Hunter · Passivo', balanced: 'Hunter · Equilibrado', aggressive: 'Hunter · Agressivo' };
+  var MODE_FOOT = { passive: 'Só responde quando o cliente chama.', balanced: 'Responde e retoma conversas paradas.', aggressive: 'Aborda leads e conduz até o Pix.' };
+
+  function paintUsage() {
+    setText('um-cost-today', usd.format(usage.today.cost));
+    setText('um-tokens-today', nf.format(usage.today.tok));
+    setText('um-cost-week', usd.format(usage.week.cost));
+    setText('um-tokens-week', nf.format(usage.week.tok));
+    setText('um-cost-month', usd.format(usage.month.cost));
+    setText('um-tokens-month', nf.format(usage.month.tok));
+  }
+  function paintMode(mode) {
+    setText('h-mode-info', MODE[mode] || MODE.balanced);
+    setText('agent-foot', MODE_FOOT[mode] || '');
+    pill('agent-pill', 'online', 'ok');
+  }
+  function seed() {
+    setText('dash-brand', 'Ateliê Sol');
+    setText('dash-domain', 'atelie-sol.com.br');
+    setText('token-display', 'cp_live_9f3a…e7c1');
+    setText('metric-rev', brl.format(48920));
+    setText('rev-delta', '+12,4%');
+    setText('metric-leads', nf.format(1284));
+    setText('leads-delta', '+8,1%');
+    pill('cost-pill', 'dentro da meta', 'ok');
+    paintUsage();
+    paintMode('balanced');
+    var set = function (id, v) { var el = document.getElementById(id); if (el) el.value = v; };
+    set('sw-nicho', 'Moda feminina em linho'); set('sw-tom', 'Consultivo e caloroso');
+    set('sw-cap', '10'); set('sw-floor', '120'); set('sw-ceiling', '650');
+    set('sw-upsell', 'Kit com cinto de couro por +R$ 49'); set('sw-provider', 'deepseek-chat');
+    set('reply-buy', 'Perfeito! Vou gerar o Pix agora. Assim que o pagamento cair, já separo seu pedido.');
+    set('reply-objection', 'Entendo. Consigo uma condição melhor se você fechar hoje. Posso te mostrar?');
+    set('reply-mild_interest', 'Que bom que gostou! Quer ver outras peças que combinam com essa?');
+    set('reply-info_question', 'Claro! Me conta o tamanho que você usa e o CEP, que já calculo prazo e frete.');
+    set('h-mode', 'balanced');
+    document.getElementById('coex-enabled').checked = true;
+    set('coex-human-kw', 'atendente, humano, falar com alguém'); set('coex-bot-kw', 'voltar, bot, pode continuar'); set('coex-ttl', '30');
+    pill('coex-status', 'ativa', 'ok');
+    set('pix-key', 'pix@atelie-sol.com.br'); set('pix-name', 'ATELIE SOL LTDA'); pill('pix-status', 'chave ativa', 'ok');
+    renderProviders([{ n: 'DeepSeek Chat V3', cost: 1.84, tokens: 221400 }, { n: 'Workers AI', cost: .92, tokens: 118900 }, { n: 'OpenAI GPT-4o-mini', cost: .66, tokens: 72506 }]);
+    renderAgents([{ n: 'Hunter · prospecção', runs: 1204 }, { n: 'Closer · fechamento', runs: 873 }, { n: 'Cobrança Pix', runs: 611 }, { n: 'Pós-venda', runs: 302 }]);
+    renderAlerts([{ k: 'warn', t: 'Quota do Workers AI em 82% do limite diário.' }, { k: 'warn', t: 'Custo de hoje está 17% acima da média da semana.' }]);
+    renderVoice({ calls: 38, avg: '2:41', rate: 61 });
+    renderCoex(); renderProds(prods); renderAgency(clients);
+  }
+  if (LIVE) $('#demo-pill').hidden = true; else seed();
+
+  /* ---------- Funções dos onclick (versões de demonstração) ---------- */
+  var killed = false;
+  def('saveSwarm', function () {
+    var cap = parseFloat(val('sw-cap')), fl = parseFloat(val('sw-floor')), ce = parseFloat(val('sw-ceiling'));
+    if (!val('sw-nicho')) { notice('e4', 'Informe o nicho da loja para o agente saber o que vender.', 'err'); $('#sw-nicho').focus(); return; }
+    if (!isNaN(cap) && (cap < 0 || cap > 100)) { notice('e4', 'O desconto máximo precisa estar entre 0 e 100%.', 'err'); $('#sw-cap').focus(); return; }
+    if (!isNaN(fl) && !isNaN(ce) && fl > ce) { notice('e4', 'O preço mínimo não pode ser maior que o preço máximo.', 'err'); $('#sw-floor').focus(); return; }
+    notice('e4', 'Configurações de IA salvas.', 'okk');
+    toast('Configurações de IA salvas');
+  });
+  def('toggleKill', function () {
+    killed = !killed;
+    var b = $('#kill-btn span');
+    b.textContent = killed ? 'Retomar agente' : 'Pausa de Emergência';
+    if (killed) {
+      notice('e4', 'Pausa de emergência ativa. O agente não responde ninguém até você retomar.', 'warn');
+      setText('h-mode-info', 'Agente pausado'); setText('agent-foot', 'Nenhuma mensagem está sendo respondida.'); pill('agent-pill', 'pausado', 'bad');
+    } else {
+      notice('e4', 'Agente retomado.', 'okk');
+      paintMode(val('h-mode') || 'balanced');
+    }
+  });
+  def('saveReplies', function () {
+    var ids = ['reply-buy', 'reply-objection', 'reply-mild_interest', 'reply-info_question'];
+    for (var i = 0; i < ids.length; i++) if (!val(ids[i])) { toast('Preencha todas as respostas'); $('#' + ids[i]).focus(); return; }
+    toast('Respostas salvas');
+  });
+  def('saveHunterModeUI', function () { var m = val('h-mode'); if (!killed) paintMode(m); toast('Modo Hunter atualizado'); });
+  def('loadUsageMetrics', function () {
+    var j = function (n) { return n * (.97 + Math.random() * .08); };
+    usage.today.tok = Math.round(j(usage.today.tok)); usage.today.cost = +j(usage.today.cost).toFixed(2);
+    paintUsage();
+    toast('Métricas atualizadas');
+  });
+  def('saveCoex', function () {
+    if (document.getElementById('coex-enabled').checked && !val('coex-human-kw')) { toast('Informe ao menos uma palavra para chamar um humano'); $('#coex-human-kw').focus(); return; }
+    var ttl = parseInt(val('coex-ttl'), 10);
+    if (!ttl || ttl < 1) { toast('Informe os minutos até devolver ao bot'); $('#coex-ttl').focus(); return; }
+    if (document.getElementById('coex-enabled').checked) pill('coex-status', 'ativa', 'ok'); else pill('coex-status', 'desativada', '');
+    toast('Coexistência salva');
+  });
+  def('saveVoiceConfig', function (p) {
+    var key = val('v-' + p + '-key'), other = val(p === 'vapi' ? 'v-vapi-assistant' : 'v-bland-path');
+    if (!key && !other) { toast('Informe a chave e o ' + (p === 'vapi' ? 'ID do assistente' : 'pathway')); return; }
+    pill('st-' + p, 'conectado', 'ok');
+    toast((p === 'vapi' ? 'Vapi' : 'Bland') + ' salvo');
+  });
+  def('initiateVoiceCall', function () {
+    var digits = val('v-phone').replace(/\D/g, '');
+    if (digits.length < 12) { notice('voice-call-result', 'Digite o telefone com DDI e DDD. Exemplo: +55 11 91234-5678.', 'err'); $('#v-phone').focus(); return; }
+    notice('voice-call-result', 'Chamada de teste enviada em ' + val('v-lang') + '. O telefone deve tocar em instantes.', 'okk');
+  });
+  def('saveChannelUI', function (c) {
+    if (!val('ch-' + c + '-account') || !val('ch-' + c + '-token')) { toast('Preencha a conta e o token'); return; }
+    pill('ch-' + c + '-status', 'conectado', 'ok');
+    toast('Canal conectado');
+  });
+  def('savePixUI', function () {
+    if (!val('pix-key')) { toast('Informe a chave Pix'); $('#pix-key').focus(); return; }
+    pill('pix-status', 'chave ativa', 'ok'); toast('Chave Pix salva');
+  });
+  def('addProdUI', function () {
+    var cents = parseInt(val('prod-cents'), 10);
+    if (!val('prod-name')) { toast('Dê um nome ao produto'); $('#prod-name').focus(); return; }
+    if (!cents || cents < 1) { toast('Informe o preço em centavos. Ex.: 28900 para R$ 289,00'); $('#prod-cents').focus(); return; }
+    prods.push({ name: val('prod-name'), cents: cents, deliver: val('prod-deliver') });
+    renderProds(prods);
+    ['prod-name', 'prod-cents', 'prod-deliver'].forEach(function (id) { document.getElementById(id).value = ''; });
+    toast('Produto adicionado');
+  });
+  def('saveClicksignUI', function () {
+    if (!val('cs-key') || !val('cs-template')) { toast('Informe o token e o ID do template'); return; }
+    pill('cs-status', 'conectado', 'ok'); toast('Clicksign salvo');
+  });
+  var EXAMPLE = 'Oi! Vi o vestido de linho no Instagram, ainda tem no M? Consigo pagar no Pix hoje?';
+  def('fillExample', function () { document.getElementById('sim-text').value = EXAMPLE; document.getElementById('sim-text').focus(); });
+  var INTENTS = {
+    buy: { label: 'Quer comprar', re: /(quero|vou levar|fechar|fechado|pix|comprar|manda o (link|pix)|como pago|pagar)/gi, act: 'Gerar cobrança Pix e enviar na conversa' },
+    objection: { label: 'Objeção', re: /(caro|desconto|mais barato|vou pensar|n[ãa]o sei|concorrente|depois|sem condi)/gi, act: function () { var c = val('sw-cap'); return 'Negociar com desconto de até ' + (c || '0') + '%'; } },
+    info_question: { label: 'Dúvida de informação', re: /(tamanho|prazo|entrega|frete|tem (no|na|em)|cor|material|quanto|estoque|medida)/gi, act: 'Responder e puxar para o fechamento' },
+    mild_interest: { label: 'Interesse leve', re: /(legal|gostei|interessante|bonito|lindo|curti|talvez)/gi, act: 'Mostrar opções parecidas e retomar depois' }
+  };
+  def('simHunterUI', function () {
+    var t = val('sim-text'), out = document.getElementById('sim-res');
+    if (!t) { out.innerHTML = '<div class="notice err">Cole ou escreva a mensagem do cliente.</div>'; document.getElementById('sim-text').focus(); return; }
+    var best = null, bestN = 0;
+    Object.keys(INTENTS).forEach(function (k) { var m = t.match(INTENTS[k].re); var n = m ? m.length : 0; if (n > bestN) { best = k; bestN = n; } });
+    if (!best) { best = 'info_question'; }
+    var it = INTENTS[best], conf = Math.min(97, 58 + bestN * 14);
+    var act = typeof it.act === 'function' ? it.act() : it.act;
+    var reply = val('reply-' + best) || '(sem resposta automática configurada para esta intenção)';
+    out.innerHTML = '<div class="sim-intent"><div><span class="eyebrow">Intenção detectada</span><p class="big">' + esc(it.label) + '</p></div><span class="pill ok">' + conf + '% de confiança</span></div>' +
+      '<div class="bubble">' + esc(reply) + '</div>' +
+      '<p class="sub" style="margin-top:12px;color:var(--muted);font-size:13.5px">Próxima ação: <b style="color:var(--fg);font-weight:500">' + esc(act) + '</b></p>';
+  });
+  def('addAgencyClientUI', function () {
+    var dom = val('ag-new-dom'), brand = val('ag-new-brand'), em = val('ag-new-email');
+    if (!dom || !brand) { toast('Informe o domínio e o nome da marca'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { toast('Confira o email do cliente'); $('#ag-new-email').focus(); return; }
+    clients.push({ brand: brand, dom: dom, rev: 0, leads: 0, ok: false });
+    renderAgency(clients);
+    ['ag-new-dom', 'ag-new-brand', 'ag-new-email'].forEach(function (id) { document.getElementById(id).value = ''; });
+    toast('Convite enviado para ' + em);
+  });
+})();
+</script>
+</body>
+</html>

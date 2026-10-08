@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Pelo que entendi, sua prioridade agora é {mirror}. Para te ajudar a avançar nesse objetivo, organizei este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que a segurança no retorno dessa decisão é um ponto fundamental para você. O que exatamente traria a clareza necessária para avançarmos?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como a resolução definitiva desse desafio impactaria os seus resultados nos próximos meses?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja como empresas com desafios similares aos seus alcançaram resultados mensuráveis: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de avaliarmos o investimento, veja o valor do tempo e dos recursos que você economizará: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual tem um custo diário invisível. Se estiver pronto para mudar esse quadro, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial simples para validar a solução? O acesso está aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua experiência é protegida por nossa garantia, movendo o risco para o nosso lado. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para agregar valor imediato à sua análise, liberei este material estratégico para você: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como prezamos pela qualidade da implementação, as vagas para este ciclo de ativação são limitadas: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui trabalhamos com foco em simplicidade e resultados reais. Veja como funcionamos por dentro: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é baseada em resultados verificáveis no mercado. Confira nossas credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Tudo está pronto para sua ativação. Ao concluir agora, você garante sua vaga no próximo ciclo e acelera seus resultados: {link}"}
+]

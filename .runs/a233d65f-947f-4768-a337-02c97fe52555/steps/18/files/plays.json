@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que seu foco principal é {mirror}. Para que possamos avançar exatamente nessa direção, preparei este material: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se o esforço de implementação compensa o resultado agora. O que traria mais segurança para você?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria na sua operação se conseguíssemos resolver esse gargalo nas próximas semanas?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Resultados concretos são a melhor evidência. Veja como empresas com desafios similares ao seu chegaram lá: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, veja o quanto de tempo e recursos sua equipe recupera com essa solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o processo atual tem um custo silencioso que aumenta a cada dia. Se estiver pronto para mudar, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar pelo módulo que traz retorno mais rápido? Se sim, este é o link de acesso: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"A garantia protegida permite que você valide a solução na prática antes de um compromisso final. Confira os termos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar no diagnóstico inicial, liberei este guia prático sem custo: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Para manter a qualidade do suporte na implementação, limitamos o número de novos projetos mensais. Verifique a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros no crescimento do seu negócio, buscamos a implementação mais eficiente possível. Veja a proposta: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é baseada em padrões validados pelo mercado e auditorias de segurança. Veja os detalhes: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Tudo pronto para iniciarmos. Para garantir sua vaga no cronograma de implementação deste mês, finalize com segurança aqui: {link}"}
+]

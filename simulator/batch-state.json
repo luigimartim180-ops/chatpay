@@ -1,0 +1,1946 @@
+{
+  "seed": 20260910,
+  "personas_completed": 20,
+  "turns_by_persona": {
+    "ana-curiosa": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "Que bom que gostou! Clique no link para iniciar seu ChatPay Trial de 30 dias por R$97: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.276238379,
+          "prompt_tokens": 251,
+          "prompt_time": 0.017249646,
+          "completion_tokens": 209,
+          "completion_time": 0.225180147,
+          "total_tokens": 460,
+          "total_time": 0.242429793,
+          "completion_tokens_details": {
+            "reasoning_tokens": 155
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "como funciona?",
+        "reply": "O ChatPay oferece um teste de 30 dias por R$ 97, podendo pagar via Pix ou cartão em até 12x, com garantia de 7 dias e atendimento humano. O link oficial para pagamento é https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.236653583,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012348986,
+          "completion_tokens": 175,
+          "completion_time": 0.182598313,
+          "total_tokens": 427,
+          "total_time": 0.194947299,
+          "completion_tokens_details": {
+            "reasoning_tokens": 100
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "quanto custa?",
+        "reply": "ChatPay Trial 30 dias custa R$ 97,00, pagamento via Pix ou cartão em até 12x. Para adquirir, acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial e, se precisar de ajuda, fale com a equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.227207007,
+          "prompt_tokens": 252,
+          "prompt_time": 0.03635452,
+          "completion_tokens": 241,
+          "completion_time": 0.338421492,
+          "total_tokens": 493,
+          "total_time": 0.374776012,
+          "completion_tokens_details": {
+            "reasoning_tokens": 169
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem suporte?",
+        "reply": "Sim, o suporte humano está disponível 24h. Para solicitar atendimento, acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.271425851,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012576175,
+          "completion_tokens": 186,
+          "completion_time": 0.207712596,
+          "total_tokens": 438,
+          "total_time": 0.220288771,
+          "completion_tokens_details": {
+            "reasoning_tokens": 138
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero comprar agora",
+        "reply": "Claro, segue o link oficial para comprar o ChatPay Trial 30 dias por R$ 97,00: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, estou à disposição.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.209525961,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014261794,
+          "completion_tokens": 412,
+          "completion_time": 0.53848775,
+          "total_tokens": 664,
+          "total_time": 0.552749544,
+          "completion_tokens_details": {
+            "reasoning_tokens": 349
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "bruno-direto": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "Claro! O ChatPay Trial de 30 dias custa R$97,00. Faça a assinatura aqui: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.190296686,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012170606,
+          "completion_tokens": 145,
+          "completion_time": 0.165014385,
+          "total_tokens": 396,
+          "total_time": 0.177184991,
+          "completion_tokens_details": {
+            "reasoning_tokens": 93
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "como funciona?",
+        "reply": "O ChatPay funciona como uma assinatura de 30 dias por R$ 97, podendo pagar via Pix ou cartão em até 12 vezes. Tem garantia de 7 dias e atendimento humano disponível.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.217949884,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014583889,
+          "completion_tokens": 191,
+          "completion_time": 0.205187245,
+          "total_tokens": 443,
+          "total_time": 0.219771134,
+          "completion_tokens_details": {
+            "reasoning_tokens": 138
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "achei caro",
+        "reply": "Entendo seu ponto, o plano tem 30 dias de uso e suporte humano completo. Posso encaminhá-lo para nossa equipe para discutir alternativas?",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.194947926,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012334716,
+          "completion_tokens": 157,
+          "completion_time": 0.162988219,
+          "total_tokens": 408,
+          "total_time": 0.175322935,
+          "completion_tokens_details": {
+            "reasoning_tokens": 118
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem garantia?",
+        "reply": "Sim, oferecemos garantia de 7 dias. Se precisar, nosso atendimento humano está à disposição para ajudar.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.238407418,
+          "prompt_tokens": 252,
+          "prompt_time": 0.077250665,
+          "completion_tokens": 118,
+          "completion_time": 0.139930991,
+          "total_tokens": 370,
+          "total_time": 0.217181656,
+          "completion_tokens_details": {
+            "reasoning_tokens": 87
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "me manda o link para pagar",
+        "reply": "Segue o link oficial: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, me avise!",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.216389979,
+          "prompt_tokens": 255,
+          "prompt_time": 0.012432499,
+          "completion_tokens": 176,
+          "completion_time": 0.181031953,
+          "total_tokens": 431,
+          "total_time": 0.193464452,
+          "completion_tokens_details": {
+            "reasoning_tokens": 131
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "carla-preco": [
+      {
+        "turn": 1,
+        "prompt": "vou pensar",
+        "reply": "Claro! Se precisar, é só falar com a equipe e eu te ajudo a garantir seu ChatPay Trial 30d de R$ 97,00 via https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148173571,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012167977,
+          "completion_tokens": 611,
+          "completion_time": 0.721427246,
+          "total_tokens": 862,
+          "total_time": 0.733595223,
+          "completion_tokens_details": {
+            "reasoning_tokens": 547
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "o que está incluído?",
+        "reply": "Inclui 30 dias de uso do ChatPay, garantia de 7 dias e atendimento humano. O pagamento pode ser feito por Pix ou cartão em até 12 parcelas.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.229548348,
+          "prompt_tokens": 255,
+          "prompt_time": 0.014399413,
+          "completion_tokens": 197,
+          "completion_time": 0.216441997,
+          "total_tokens": 452,
+          "total_time": 0.23084141,
+          "completion_tokens_details": {
+            "reasoning_tokens": 151
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "quanto custa?",
+        "reply": "O ChatPay Trial de 30 dias custa R$ 97,00, com pagamento via Pix ou cartão em até 12 parcelas. Para comprar, acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.218158791,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014439809,
+          "completion_tokens": 338,
+          "completion_time": 0.353030402,
+          "total_tokens": 590,
+          "total_time": 0.367470211,
+          "completion_tokens_details": {
+            "reasoning_tokens": 275
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "serve para iniciantes?",
+        "reply": "Sim, o ChatPay foi desenvolvido pensando em quem está começando, com interface intuitiva e suporte humano 24h. Se quiser aproveitar o trial de 30 dias por R$97, acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.272644816,
+          "prompt_tokens": 254,
+          "prompt_time": 0.012415206,
+          "completion_tokens": 321,
+          "completion_time": 0.351126404,
+          "total_tokens": 575,
+          "total_time": 0.36354161,
+          "completion_tokens_details": {
+            "reasoning_tokens": 249
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero comprar",
+        "reply": "Para adquirir o ChatPay Trial 30d por R$97,00, basta clicar no link: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, fale com a equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.201942544,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012320617,
+          "completion_tokens": 284,
+          "completion_time": 0.294615401,
+          "total_tokens": 535,
+          "total_time": 0.306936018,
+          "completion_tokens_details": {
+            "reasoning_tokens": 222
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "diego-iniciante": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.17710397,
+          "prompt_tokens": 251,
+          "prompt_time": 0.021436343,
+          "completion_tokens": 800,
+          "completion_time": 0.931329321,
+          "total_tokens": 1051,
+          "total_time": 0.952765664,
+          "completion_tokens_details": {
+            "reasoning_tokens": 798
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "serve para quem começa do zero?",
+        "reply": "Sim, o ChatPay é ideal para quem está começando do zero, permitindo criar uma loja virtual em poucos minutos. Basta acessar o link de pagamento oficial e começar com o trial de 30 dias por R$97.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148547393,
+          "prompt_tokens": 256,
+          "prompt_time": 0.012809003,
+          "completion_tokens": 405,
+          "completion_time": 0.454120094,
+          "total_tokens": 661,
+          "total_time": 0.466929097,
+          "completion_tokens_details": {
+            "reasoning_tokens": 351
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "não tenho dinheiro agora",
+        "reply": "Sem problema! Você pode pagar a qualquer momento via Pix ou cartão em até 12x, e o trial de 30 dias começa assim que o pagamento for processado; se precisar de ajuda, fale com a equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.274559263,
+          "prompt_tokens": 253,
+          "prompt_time": 0.038891524,
+          "completion_tokens": 488,
+          "completion_time": 0.540941114,
+          "total_tokens": 741,
+          "total_time": 0.579832638,
+          "completion_tokens_details": {
+            "reasoning_tokens": 434
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem suporte?",
+        "reply": "Sim, temos suporte humano disponível 24/7. Você pode entrar em contato conosco pelo link de pagamento ou falar com a equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.149850298,
+          "prompt_tokens": 252,
+          "prompt_time": 0.016892899,
+          "completion_tokens": 280,
+          "completion_time": 0.316507812,
+          "total_tokens": 532,
+          "total_time": 0.333400711,
+          "completion_tokens_details": {
+            "reasoning_tokens": 244
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "vou pagar agora",
+        "reply": "Segue o link oficial para pagamento: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, estamos à disposição.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.193467314,
+          "prompt_tokens": 252,
+          "prompt_time": 0.015273274,
+          "completion_tokens": 155,
+          "completion_time": 0.173663093,
+          "total_tokens": 407,
+          "total_time": 0.188936367,
+          "completion_tokens_details": {
+            "reasoning_tokens": 108
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "elisa-cetica": [
+      {
+        "turn": 1,
+        "prompt": "vou avaliar",
+        "reply": "Claro, se precisar de mais detalhes, estou aqui para ajudar. Pode me chamar quando quiser!",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.143300097,
+          "prompt_tokens": 251,
+          "prompt_time": 0.014535932,
+          "completion_tokens": 186,
+          "completion_time": 0.203688445,
+          "total_tokens": 437,
+          "total_time": 0.218224377,
+          "completion_tokens_details": {
+            "reasoning_tokens": 158
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "isso funciona mesmo?",
+        "reply": "Sim, o ChatPay funciona com pagamento de R$97,00 em até 12x ou Pix, garantindo 30 dias de teste. Atendimento humano está disponível para qualquer dúvida.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148800849,
+          "prompt_tokens": 253,
+          "prompt_time": 0.014206998,
+          "completion_tokens": 232,
+          "completion_time": 0.251972064,
+          "total_tokens": 485,
+          "total_time": 0.266179062,
+          "completion_tokens_details": {
+            "reasoning_tokens": 186
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "parece caro",
+        "reply": "Entendemos que o valor pode parecer alto, mas o ChatPay oferece 30 dias de uso completo com suporte humano, garantia de 7 dias e pagamento facilitado via Pix ou cartão em até 12x. Caso queira discutir mais detalhes, podemos encaminhar sua dúvida à nossa equipe especializada.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.238162495,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012198525,
+          "completion_tokens": 295,
+          "completion_time": 0.330201842,
+          "total_tokens": 546,
+          "total_time": 0.342400367,
+          "completion_tokens_details": {
+            "reasoning_tokens": 226
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem garantia?",
+        "reply": "Sim, a ChatPay oferece garantia de 7 dias contra falhas. Se precisar de mais detalhes, fale com nossa equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.236369131,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012380349,
+          "completion_tokens": 142,
+          "completion_time": 0.150853543,
+          "total_tokens": 394,
+          "total_time": 0.163233892,
+          "completion_tokens_details": {
+            "reasoning_tokens": 107
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero comprar agora",
+        "reply": "Segue o link para efetuar a compra do ChatPay Trial 30d por R$ 97,00: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Caso precise de ajuda, fale conosco.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.342908846,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014211383,
+          "completion_tokens": 230,
+          "completion_time": 0.233523724,
+          "total_tokens": 482,
+          "total_time": 0.247735107,
+          "completion_tokens_details": {
+            "reasoning_tokens": 168
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "fabio-ocupado": [
+      {
+        "turn": 1,
+        "prompt": "me explica depois",
+        "reply": "Claro, quando quiser pode me chamar que explico. Se precisar de ajuda, estou à disposição.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.147637371,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012472356,
+          "completion_tokens": 119,
+          "completion_time": 0.140023433,
+          "total_tokens": 371,
+          "total_time": 0.152495789,
+          "completion_tokens_details": {
+            "reasoning_tokens": 90
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "responde rápido: como funciona?",
+        "reply": "Com o ChatPay, você obtém 30 dias de uso completo por R$97,00, podendo pagar via Pix ou cartão em até 12x. Seu acesso começa imediatamente, com suporte humano e garantia de 7 dias caso não esteja satisfeito.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.273660095,
+          "prompt_tokens": 255,
+          "prompt_time": 0.018612782,
+          "completion_tokens": 268,
+          "completion_time": 0.314869518,
+          "total_tokens": 523,
+          "total_time": 0.3334823,
+          "completion_tokens_details": {
+            "reasoning_tokens": 206
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "qual o preço?",
+        "reply": "O ChatPay Trial 30 dias custa R$97,00, pagamento via Pix ou cartão em até 12x. Clique no link oficial para pagar: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.218130212,
+          "prompt_tokens": 253,
+          "prompt_time": 0.015047608,
+          "completion_tokens": 224,
+          "completion_time": 0.243550298,
+          "total_tokens": 477,
+          "total_time": 0.258597906,
+          "completion_tokens_details": {
+            "reasoning_tokens": 162
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem suporte?",
+        "reply": "Sim, oferecemos atendimento humano disponível. Se precisar de ajuda, basta responder aqui e nossa equipe entrará em contato.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.19129001,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012552879,
+          "completion_tokens": 132,
+          "completion_time": 0.141488421,
+          "total_tokens": 384,
+          "total_time": 0.1540413,
+          "completion_tokens_details": {
+            "reasoning_tokens": 99
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "pode me mandar o link de pagamento",
+        "reply": "Claro, segue o link oficial: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Qualquer dúvida, estou à disposição.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.237276961,
+          "prompt_tokens": 256,
+          "prompt_time": 0.018605557,
+          "completion_tokens": 126,
+          "completion_time": 0.139078831,
+          "total_tokens": 382,
+          "total_time": 0.157684388,
+          "completion_tokens_details": {
+            "reasoning_tokens": 80
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "gabi-objection": [
+      {
+        "turn": 1,
+        "prompt": "talvez depois",
+        "reply": "Claro! Se quiser garantir o ChatPay Trial 30d por R$ 97, acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de mais informações, fale com a equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.387286663,
+          "prompt_tokens": 251,
+          "prompt_time": 0.034447443,
+          "completion_tokens": 409,
+          "completion_time": 0.44466777,
+          "total_tokens": 660,
+          "total_time": 0.479115213,
+          "completion_tokens_details": {
+            "reasoning_tokens": 347
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "como funciona?",
+        "reply": "O ChatPay oferece uma solução de pagamento por QR, link ou integração API, com um período de teste de 30 dias por R$ 97, podendo ser pago via Pix ou cartão em até 12x. Você tem garantia de 7 dias e atendimento humano disponível, caso precise de ajuda.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.239785604,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014393705,
+          "completion_tokens": 379,
+          "completion_time": 0.426645452,
+          "total_tokens": 631,
+          "total_time": 0.441039157,
+          "completion_tokens_details": {
+            "reasoning_tokens": 309
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "achei caro",
+        "reply": "O plano ChatPay Trial 30 dias custa R$97,00. Se precisar de mais informações, fale com a nossa equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.27219422,
+          "prompt_tokens": 251,
+          "prompt_time": 0.028066884,
+          "completion_tokens": 162,
+          "completion_time": 0.18217331,
+          "total_tokens": 413,
+          "total_time": 0.210240194,
+          "completion_tokens_details": {
+            "reasoning_tokens": 125
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem garantia?",
+        "reply": "Sim, oferecemos garantia de 7 dias.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.193553857,
+          "prompt_tokens": 252,
+          "prompt_time": 0.015432431,
+          "completion_tokens": 225,
+          "completion_time": 0.296841162,
+          "total_tokens": 477,
+          "total_time": 0.312273593,
+          "completion_tokens_details": {
+            "reasoning_tokens": 206
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero comprar",
+        "reply": "Para adquirir o ChatPay Trial de 30 dias por R$ 97,00 (Pix ou cartão em até 12x), acesse: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, fale com nossa equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.261575803,
+          "prompt_tokens": 251,
+          "prompt_time": 0.014369562,
+          "completion_tokens": 313,
+          "completion_time": 0.353136831,
+          "total_tokens": 564,
+          "total_time": 0.367506393,
+          "completion_tokens_details": {
+            "reasoning_tokens": 242
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "hugo-comparador": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "O ChatPay Trial custa R$97,00 e você tem 30 dias de acesso, pagamento via Pix ou cartão em até 12x. Clique no link para pagar: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.149085446,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012240683,
+          "completion_tokens": 288,
+          "completion_time": 0.326677852,
+          "total_tokens": 539,
+          "total_time": 0.338918535,
+          "completion_tokens_details": {
+            "reasoning_tokens": 222
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "qual a diferença?",
+        "reply": "O ChatPay Trial oferece 30 dias de uso completo do serviço por R$ 97,00, com pagamento via Pix ou cartão em até 12 parcelas e garantia de 7 dias. Se precisar de mais detalhes, posso encaminhá-lo para nossa equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.217031325,
+          "prompt_tokens": 253,
+          "prompt_time": 0.014385566,
+          "completion_tokens": 372,
+          "completion_time": 0.54292846,
+          "total_tokens": 625,
+          "total_time": 0.557314026,
+          "completion_tokens_details": {
+            "reasoning_tokens": 310
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "quanto custa?",
+        "reply": "O ChatPay Trial de 30 dias custa R$ 97,00 e você pode pagar via Pix ou cartão em até 12x. Clique aqui para fazer seu pagamento: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.193724507,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012262011,
+          "completion_tokens": 115,
+          "completion_time": 0.118141146,
+          "total_tokens": 367,
+          "total_time": 0.130403157,
+          "completion_tokens_details": {
+            "reasoning_tokens": 49
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "serve para minha equipe?",
+        "reply": "Sim, o ChatPay funciona para equipes, você pode adquirir a Trial de 30 dias por R$ 97,00 com Pix ou cartão em até 12x. Para comprar, acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.219180507,
+          "prompt_tokens": 254,
+          "prompt_time": 0.012582596,
+          "completion_tokens": 343,
+          "completion_time": 0.40292234,
+          "total_tokens": 597,
+          "total_time": 0.415504936,
+          "completion_tokens_details": {
+            "reasoning_tokens": 273
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "vamos fechar",
+        "reply": "Claro, segue o link oficial para concluir: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Em caso de dúvida, fale com a equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148700182,
+          "prompt_tokens": 251,
+          "prompt_time": 0.014253935,
+          "completion_tokens": 136,
+          "completion_time": 0.154759444,
+          "total_tokens": 387,
+          "total_time": 0.169013379,
+          "completion_tokens_details": {
+            "reasoning_tokens": 86
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "ines-social": [
+      {
+        "turn": 1,
+        "prompt": "vou pensar",
+        "reply": "Tudo bem, se precisar de mais detalhes sobre o trial de 30 dias por R$97 ou quiser esclarecer algo, é só falar. Posso ajudá-lo com alguma dúvida antes de decidir?",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.238638436,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012492722,
+          "completion_tokens": 141,
+          "completion_time": 0.159041843,
+          "total_tokens": 392,
+          "total_time": 0.171534565,
+          "completion_tokens_details": {
+            "reasoning_tokens": 93
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "quem já usa?",
+        "reply": "Alguns usuários são pequenos negócios, freelancers e empresas que já aproveitaram o período de teste para validar o ChatPay. Se quiser mais detalhes, posso direcionar você à equipe de suporte.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.339155685,
+          "prompt_tokens": 253,
+          "prompt_time": 0.018082673,
+          "completion_tokens": 156,
+          "completion_time": 0.204289163,
+          "total_tokens": 409,
+          "total_time": 0.222371836,
+          "completion_tokens_details": {
+            "reasoning_tokens": 109
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "achei caro",
+        "reply": "Entendo sua preocupação, mas o valor inclui recursos completos e garantia. Posso encaminhar sua dúvida para nossa equipe de atendimento.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.201843358,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012139548,
+          "completion_tokens": 145,
+          "completion_time": 0.149569192,
+          "total_tokens": 396,
+          "total_time": 0.16170874,
+          "completion_tokens_details": {
+            "reasoning_tokens": 110
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem depoimentos?",
+        "reply": "Sim, temos depoimentos de clientes satisfeitos disponíveis no nosso site oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.14798065,
+          "prompt_tokens": 253,
+          "prompt_time": 0.019764288,
+          "completion_tokens": 190,
+          "completion_time": 0.234987429,
+          "total_tokens": 443,
+          "total_time": 0.254751717,
+          "completion_tokens_details": {
+            "reasoning_tokens": 166
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "me manda o link para comprar",
+        "reply": "Claro! Clique no link para adquirir o ChatPay Trial 30 dias: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, é só chamar.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.223015962,
+          "prompt_tokens": 255,
+          "prompt_time": 0.048275584,
+          "completion_tokens": 114,
+          "completion_time": 0.12809813,
+          "total_tokens": 369,
+          "total_time": 0.176373714,
+          "completion_tokens_details": {
+            "reasoning_tokens": 59
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "joao-tecnico": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "Ótimo! Podemos iniciar a assinatura de 30 dias por R$ 97, basta clicar no link: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.216383086,
+          "prompt_tokens": 251,
+          "prompt_time": 0.014278192,
+          "completion_tokens": 154,
+          "completion_time": 0.182928834,
+          "total_tokens": 405,
+          "total_time": 0.197207026,
+          "completion_tokens_details": {
+            "reasoning_tokens": 100
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "como é a ativação?",
+        "reply": "Para ativar, basta efetuar o pagamento pelo link oficial e, após a confirmação, enviaremos o código de ativação por mensagem. Se precisar de ajuda, posso encaminhar ao nosso atendimento humano.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.271834406,
+          "prompt_tokens": 255,
+          "prompt_time": 0.01638115,
+          "completion_tokens": 86,
+          "completion_time": 0.096048331,
+          "total_tokens": 341,
+          "total_time": 0.112429481,
+          "completion_tokens_details": {
+            "reasoning_tokens": 36
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "qual o preço?",
+        "reply": "O ChatPay Trial 30 dias custa R$ 97,00. Você pode pagar via Pix ou cartão em até 12 x e tem 7 dias de garantia; acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.271180329,
+          "prompt_tokens": 253,
+          "prompt_time": 0.014733519,
+          "completion_tokens": 269,
+          "completion_time": 0.30524277,
+          "total_tokens": 522,
+          "total_time": 0.319976289,
+          "completion_tokens_details": {
+            "reasoning_tokens": 199
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "integra com meu canal?",
+        "reply": "Sim, o ChatPay integra perfeitamente com o seu canal. Clique aqui para adquirir o Trial 30 dias: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.237988709,
+          "prompt_tokens": 254,
+          "prompt_time": 0.013186821,
+          "completion_tokens": 252,
+          "completion_time": 0.313158934,
+          "total_tokens": 506,
+          "total_time": 0.326345755,
+          "completion_tokens_details": {
+            "reasoning_tokens": 199
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero pagar",
+        "reply": "Claro! O ChatPay Trial de 30 dias custa R$97,00 e pode ser pago via Pix ou cartão em até 12x. Clique aqui: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148917505,
+          "prompt_tokens": 251,
+          "prompt_time": 0.014523522,
+          "completion_tokens": 359,
+          "completion_time": 0.420745084,
+          "total_tokens": 610,
+          "total_time": 0.435268606,
+          "completion_tokens_details": {
+            "reasoning_tokens": 296
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "lara-urgente": [
+      {
+        "turn": 1,
+        "prompt": "ainda estou avaliando",
+        "reply": "Entendo que você está avaliando; se precisar de mais informações, basta usar o link oficial para iniciar seu trial de 30 dias por R$ 97. O pagamento pode ser feito via Pix ou cartão em até 12x, com garantia de 7 dias e atendimento humano disponível.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.237970805,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012574664,
+          "completion_tokens": 191,
+          "completion_time": 0.207385458,
+          "total_tokens": 444,
+          "total_time": 0.219960122,
+          "completion_tokens_details": {
+            "reasoning_tokens": 123
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "como funciona?",
+        "reply": "O ChatPay oferece um período de teste de 30 dias por R$ 97,00, que pode ser pago via Pix ou cartão em até 12x. Você tem acesso a todas as funcionalidades enquanto o teste estiver ativo, com garantia de 7 dias e atendimento humano.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.205671269,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014206399,
+          "completion_tokens": 356,
+          "completion_time": 0.394268372,
+          "total_tokens": 608,
+          "total_time": 0.408474771,
+          "completion_tokens_details": {
+            "reasoning_tokens": 288
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "está caro para mim",
+        "reply": "Entendo seu ponto. Posso encaminhar sua mensagem para a equipe avaliar opções de pagamento ou parcelamento.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.202658041,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012607196,
+          "completion_tokens": 184,
+          "completion_time": 0.192732752,
+          "total_tokens": 437,
+          "total_time": 0.205339948,
+          "completion_tokens_details": {
+            "reasoning_tokens": 153
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem suporte?",
+        "reply": "Sim, temos atendimento humano disponível. Você pode entrar em contato conosco a qualquer momento para obter ajuda.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.201991362,
+          "prompt_tokens": 252,
+          "prompt_time": 0.015263486,
+          "completion_tokens": 118,
+          "completion_time": 0.130226077,
+          "total_tokens": 370,
+          "total_time": 0.145489563,
+          "completion_tokens_details": {
+            "reasoning_tokens": 89
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "preciso pagar agora",
+        "reply": "Você pode pagar agora via Pix ou cartão em até 12x clicando no link: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se tiver dúvidas, fale com nossa equipe de atendimento humano.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.202340923,
+          "prompt_tokens": 252,
+          "prompt_time": 0.020718912,
+          "completion_tokens": 252,
+          "completion_time": 0.272504015,
+          "total_tokens": 504,
+          "total_time": 0.293222927,
+          "completion_tokens_details": {
+            "reasoning_tokens": 191
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "marcos-morno": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "Claro! O ChatPay Trial 30 dias custa R$97,00 e pode ser pago via Pix ou cartão em até 12x. Acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial para garantir sua assinatura e aproveite 7 dias de garantia com atendimento humano.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.193934117,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012318352,
+          "completion_tokens": 251,
+          "completion_time": 0.259610109,
+          "total_tokens": 502,
+          "total_time": 0.271928461,
+          "completion_tokens_details": {
+            "reasoning_tokens": 174
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "me explica melhor",
+        "reply": "O ChatPay oferece um teste grátis de 30 dias por apenas R$ 97,00, com pagamento via Pix ou cartão em até 12x. Clique no link oficial para efetuar a compra: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.202061809,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012547828,
+          "completion_tokens": 157,
+          "completion_time": 0.184494751,
+          "total_tokens": 409,
+          "total_time": 0.197042579,
+          "completion_tokens_details": {
+            "reasoning_tokens": 84
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "quanto custa?",
+        "reply": "ChatPay Trial 30 dias custa R$97,00 e pode ser pago por Pix ou cartão em até 12x.  \nAcesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial para concluir a compra.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.464534943,
+          "prompt_tokens": 252,
+          "prompt_time": 0.125658578,
+          "completion_tokens": 267,
+          "completion_time": 0.300161318,
+          "total_tokens": 519,
+          "total_time": 0.425819896,
+          "completion_tokens_details": {
+            "reasoning_tokens": 203
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem garantia?",
+        "reply": "Sim, a ChatPay vem com garantia de 7 dias. Se precisar de ajuda, nossa equipe humana está disponível.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.14373968,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014588818,
+          "completion_tokens": 112,
+          "completion_time": 0.13157572,
+          "total_tokens": 364,
+          "total_time": 0.146164538,
+          "completion_tokens_details": {
+            "reasoning_tokens": 79
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero comprar agora",
+        "reply": "Claro! Você pode adquirir o ChatPay Trial de 30 dias por R$97,00, pagando via Pix ou cartão em até 12x: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Garantia de 7 dias e atendimento humano estão disponíveis.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.192786061,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012377581,
+          "completion_tokens": 457,
+          "completion_time": 0.534091815,
+          "total_tokens": 709,
+          "total_time": 0.546469396,
+          "completion_tokens_details": {
+            "reasoning_tokens": 383
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "nina-desconfiada": [
+      {
+        "turn": 1,
+        "prompt": "vou pensar",
+        "reply": "Entendo, se quiser começar o trial de 30 dias por R$ 97,00, basta usar nosso link oficial: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de mais informações, pode falar com a equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.300461706,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012609231,
+          "completion_tokens": 361,
+          "completion_time": 0.449751351,
+          "total_tokens": 612,
+          "total_time": 0.462360582,
+          "completion_tokens_details": {
+            "reasoning_tokens": 292
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "e se eu não gostar?",
+        "reply": "Você tem 7 dias para testar o serviço, e se não ficar satisfeito pode solicitar o reembolso entrando em contato com a nossa equipe. Estaremos prontos para ajudar e garantir seu direito ao reembolso.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.236750947,
+          "prompt_tokens": 255,
+          "prompt_time": 0.014649011,
+          "completion_tokens": 241,
+          "completion_time": 0.322880987,
+          "total_tokens": 496,
+          "total_time": 0.337529998,
+          "completion_tokens_details": {
+            "reasoning_tokens": 189
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "achei caro",
+        "reply": "Entendemos seu ponto; o ChatPay oferece 30 dias de acesso completo com atendimento humano e garantia de 7 dias. Se quiser experimentar, pode iniciar a versão trial ou falar com nossa equipe para mais detalhes.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.339113061,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012216609,
+          "completion_tokens": 180,
+          "completion_time": 0.186562208,
+          "total_tokens": 431,
+          "total_time": 0.198778817,
+          "completion_tokens_details": {
+            "reasoning_tokens": 127
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem garantia?",
+        "reply": "Sim, há garantia de 7 dias. Para mais detalhes, fale com nossa equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.19419461,
+          "prompt_tokens": 252,
+          "prompt_time": 0.013111599,
+          "completion_tokens": 131,
+          "completion_time": 0.232243393,
+          "total_tokens": 383,
+          "total_time": 0.245354992,
+          "completion_tokens_details": {
+            "reasoning_tokens": 104
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "me passa o pagamento",
+        "reply": "Segue o link para efetuar o pagamento do ChatPay Trial: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, me avise.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.202618722,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012633846,
+          "completion_tokens": 208,
+          "completion_time": 0.236359359,
+          "total_tokens": 461,
+          "total_time": 0.248993205,
+          "completion_tokens_details": {
+            "reasoning_tokens": 155
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "otavio-indeciso": [
+      {
+        "turn": 1,
+        "prompt": "não sei se é para mim",
+        "reply": "O ChatPay oferece 30 dias de teste por R$ 97,00 com pagamento via Pix ou cartão em até 12x e garantia de 7 dias. Se quiser conversar com nossa equipe para entender melhor, me avise!",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.208653522,
+          "prompt_tokens": 255,
+          "prompt_time": 0.046942936,
+          "completion_tokens": 202,
+          "completion_time": 0.225980135,
+          "total_tokens": 457,
+          "total_time": 0.272923071,
+          "completion_tokens_details": {
+            "reasoning_tokens": 145
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "quais são os benefícios?",
+        "reply": "Com o ChatPay Trial você tem 30 dias de acesso completo ao nosso sistema de pagamentos, podendo pagar via Pix ou cartão em até 12 vezes. Além disso, oferecemos garantia de 7 dias, atendimento humano dedicado e suporte para garantir sua satisfação.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.144110413,
+          "prompt_tokens": 254,
+          "prompt_time": 0.020869255,
+          "completion_tokens": 251,
+          "completion_time": 0.317669363,
+          "total_tokens": 505,
+          "total_time": 0.338538618,
+          "completion_tokens_details": {
+            "reasoning_tokens": 190
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "quanto custa?",
+        "reply": "O ChatPay Trial 30 dias custa R$ 97,00, pagamento via Pix ou cartão em até 12x. Clique aqui para pagar: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.711255623,
+          "prompt_tokens": 252,
+          "prompt_time": 0.017528565,
+          "completion_tokens": 202,
+          "completion_time": 0.222479896,
+          "total_tokens": 454,
+          "total_time": 0.240008461,
+          "completion_tokens_details": {
+            "reasoning_tokens": 141
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "serve para iniciantes?",
+        "reply": "Sim, o ChatPay é ideal para iniciantes. O plano trial de 30 dias custa R$97, com pagamento por Pix ou cartão.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.340133914,
+          "prompt_tokens": 254,
+          "prompt_time": 0.014432155,
+          "completion_tokens": 145,
+          "completion_time": 0.164186357,
+          "total_tokens": 399,
+          "total_time": 0.178618512,
+          "completion_tokens_details": {
+            "reasoning_tokens": 106
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "vou comprar",
+        "reply": "Para comprar, acesse o link oficial: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. O valor é R$97,00 e você pode pagar via Pix ou cartão em até 12x.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.217031647,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012205813,
+          "completion_tokens": 229,
+          "completion_time": 0.363737004,
+          "total_tokens": 480,
+          "total_time": 0.375942817,
+          "completion_tokens_details": {
+            "reasoning_tokens": 167
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "paula-repetida": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "Que bom que gostou! O ChatPay Trial de 30 dias custa apenas R$ 97,00, pagamento via Pix ou cartão em até 12x, com garantia de 7 dias e atendimento humano. Para garantir a sua vaga, acesse: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148325271,
+          "prompt_tokens": 251,
+          "prompt_time": 0.017528065,
+          "completion_tokens": 125,
+          "completion_time": 0.13901065,
+          "total_tokens": 376,
+          "total_time": 0.156538715,
+          "completion_tokens_details": {
+            "reasoning_tokens": 41
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "como funciona?",
+        "reply": "O ChatPay funciona como um chatbot que integra pagamentos via Pix ou cartão, com teste gratuito de 30 dias por R$97, podendo parcelar em até 12 vezes. Oferecemos garantia de 7 dias e atendimento humano para qualquer dúvida.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.340287305,
+          "prompt_tokens": 252,
+          "prompt_time": 0.018662874,
+          "completion_tokens": 215,
+          "completion_time": 0.288596753,
+          "total_tokens": 467,
+          "total_time": 0.307259627,
+          "completion_tokens_details": {
+            "reasoning_tokens": 155
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "quanto custa mesmo?",
+        "reply": "O plano custa R$ 97,00 por 30 dias. Você pode pagar via Pix ou cartão até 12x pelo link https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.207982638,
+          "prompt_tokens": 253,
+          "prompt_time": 0.020731956,
+          "completion_tokens": 266,
+          "completion_time": 0.368016325,
+          "total_tokens": 519,
+          "total_time": 0.388748281,
+          "completion_tokens_details": {
+            "reasoning_tokens": 209
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem suporte?",
+        "reply": "Sim, oferecemos suporte humano 24h. Para mais detalhes acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.348877944,
+          "prompt_tokens": 252,
+          "prompt_time": 0.052063585,
+          "completion_tokens": 150,
+          "completion_time": 0.168278825,
+          "total_tokens": 402,
+          "total_time": 0.22034241,
+          "completion_tokens_details": {
+            "reasoning_tokens": 104
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero comprar",
+        "reply": "Claro! O ChatPay Trial 30 dias custa R$97,00 e pode ser pago por Pix ou cartão em até 12x. Acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial para concluir a compra e garantir sua assinatura com 7 dias de garantia.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.201650525,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012391103,
+          "completion_tokens": 331,
+          "completion_time": 0.343242382,
+          "total_tokens": 582,
+          "total_time": 0.355633485,
+          "completion_tokens_details": {
+            "reasoning_tokens": 255
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "rafael-suporte": [
+      {
+        "turn": 1,
+        "prompt": "vou avaliar",
+        "reply": "Claro, fico à disposição para tirar dúvidas ou agendar demonstração.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.920983069,
+          "prompt_tokens": 251,
+          "prompt_time": 0.013208614,
+          "completion_tokens": 117,
+          "completion_time": 0.131958361,
+          "total_tokens": 368,
+          "total_time": 0.145166975,
+          "completion_tokens_details": {
+            "reasoning_tokens": 94
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "preciso de ajuda, como funciona?",
+        "reply": "ChatPay funciona permitindo que você crie chats pagos no seu Telegram e receba o valor automaticamente. Faça o pagamento de R$97,00 pelo link oficial e você terá 30 dias de teste com garantia de 7 dias e atendimento humano.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.193242256,
+          "prompt_tokens": 256,
+          "prompt_time": 0.012501873,
+          "completion_tokens": 153,
+          "completion_time": 0.169118532,
+          "total_tokens": 409,
+          "total_time": 0.181620405,
+          "completion_tokens_details": {
+            "reasoning_tokens": 94
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "não tenho dinheiro agora",
+        "reply": "Entendo, podemos falar com a equipe de atendimento humano para encontrar uma solução. Enquanto isso, segue o link oficial: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.237915105,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012364855,
+          "completion_tokens": 378,
+          "completion_time": 0.411405351,
+          "total_tokens": 631,
+          "total_time": 0.423770206,
+          "completion_tokens_details": {
+            "reasoning_tokens": 324
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem suporte?",
+        "reply": "Sim, suporte humano está disponível durante a avaliação de 30 dias. Para falar com a equipe, acesse https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.217856797,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014859861,
+          "completion_tokens": 241,
+          "completion_time": 0.261869215,
+          "total_tokens": 493,
+          "total_time": 0.276729076,
+          "completion_tokens_details": {
+            "reasoning_tokens": 188
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "me envia o link para pagar",
+        "reply": "Segue o link oficial para pagamento do ChatPay Trial 30d por R$ 97,00: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.270512337,
+          "prompt_tokens": 255,
+          "prompt_time": 0.018304378,
+          "completion_tokens": 86,
+          "completion_time": 0.09532791,
+          "total_tokens": 341,
+          "total_time": 0.113632288,
+          "completion_tokens_details": {
+            "reasoning_tokens": 35
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "sara-curta": [
+      {
+        "turn": 1,
+        "prompt": "sim, parece interessante",
+        "reply": "Ótimo! Você pode começar o trial de 30 dias pagando R$ 97,00 via Pix ou cartão (até 12x) pelo link https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, nosso atendimento humano está pronto para ajudar.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.202192395,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012468553,
+          "completion_tokens": 237,
+          "completion_time": 0.245268393,
+          "total_tokens": 490,
+          "total_time": 0.257736946,
+          "completion_tokens_details": {
+            "reasoning_tokens": 161
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "como funciona?",
+        "reply": "O ChatPay funciona como assinatura mensal de 30 dias pelo valor de R$97, que pode ser pago via Pix ou cartão em até 12 parcelas. Você tem 7 dias de garantia e atendimento humano disponível.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.216809404,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014612664,
+          "completion_tokens": 275,
+          "completion_time": 0.303965216,
+          "total_tokens": 527,
+          "total_time": 0.31857788,
+          "completion_tokens_details": {
+            "reasoning_tokens": 222
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "é caro?",
+        "reply": "O plano custa R$97,00 por 30 dias, com pagamento em Pix ou cartão em até 12 vezes. Se quiser mais detalhes, posso encaminhar você ao nosso suporte.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.15154584,
+          "prompt_tokens": 252,
+          "prompt_time": 0.044801078,
+          "completion_tokens": 208,
+          "completion_time": 0.272851645,
+          "total_tokens": 460,
+          "total_time": 0.317652723,
+          "completion_tokens_details": {
+            "reasoning_tokens": 161
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem suporte?",
+        "reply": "Sim! O ChatPay tem atendimento humano disponível 24/7. Precisa de ajuda com algo?",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.34270692,
+          "prompt_tokens": 252,
+          "prompt_time": 0.01214569,
+          "completion_tokens": 236,
+          "completion_time": 0.274643896,
+          "total_tokens": 488,
+          "total_time": 0.286789586,
+          "completion_tokens_details": {
+            "reasoning_tokens": 206
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "ok, manda o link",
+        "reply": "Segue o link para pagamento: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.438129674,
+          "prompt_tokens": 254,
+          "prompt_time": 0.015343702,
+          "completion_tokens": 253,
+          "completion_time": 0.310300448,
+          "total_tokens": 507,
+          "total_time": 0.32564415,
+          "completion_tokens_details": {
+            "reasoning_tokens": 217
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "tiago-corporativo": [
+      {
+        "turn": 1,
+        "prompt": "podemos conversar depois",
+        "reply": "Claro, podemos conversar em outro momento. Quando seria conveniente para você?",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.217144861,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012392262,
+          "completion_tokens": 263,
+          "completion_time": 0.307320106,
+          "total_tokens": 515,
+          "total_time": 0.319712368,
+          "completion_tokens_details": {
+            "reasoning_tokens": 240
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "tem plano para equipe?",
+        "reply": "Desculpe, mas o plano atual é apenas para uso individual. Posso encaminhá‑lo(a) para nossa equipe para verificar opções de licenças corporativas.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.144266015,
+          "prompt_tokens": 254,
+          "prompt_time": 0.015235423,
+          "completion_tokens": 120,
+          "completion_time": 0.130880774,
+          "total_tokens": 374,
+          "total_time": 0.146116197,
+          "completion_tokens_details": {
+            "reasoning_tokens": 76
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "qual o preço?",
+        "reply": "O plano Trial de 30 dias custa R$ 97,00, pagamento via Pix ou cartão até 12 parcelas.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.23805454,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012389069,
+          "completion_tokens": 219,
+          "completion_time": 0.240318145,
+          "total_tokens": 472,
+          "total_time": 0.252707214,
+          "completion_tokens_details": {
+            "reasoning_tokens": 185
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "emite nota fiscal?",
+        "reply": "Sim, emitimos nota fiscal eletrônica. Você receberá o arquivo via e‑mail assim que o pagamento for concluído.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.307805992,
+          "prompt_tokens": 254,
+          "prompt_time": 0.014624611,
+          "completion_tokens": 143,
+          "completion_time": 0.190295895,
+          "total_tokens": 397,
+          "total_time": 0.204920506,
+          "completion_tokens_details": {
+            "reasoning_tokens": 108
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "vamos fechar",
+        "reply": "Certo! Clique aqui para pagar e garantir seu trial de 30 dias por R$ 97,00: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148748736,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012280913,
+          "completion_tokens": 217,
+          "completion_time": 0.240214805,
+          "total_tokens": 468,
+          "total_time": 0.252495718,
+          "completion_tokens_details": {
+            "reasoning_tokens": 164
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "ursula-mobile": [
+      {
+        "turn": 1,
+        "prompt": "parece interessante",
+        "reply": "O ChatPay Trial de 30 dias custa R$ 97,00, pagamento por Pix ou cartão em até 12x. Clique aqui para pagar: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.148647608,
+          "prompt_tokens": 251,
+          "prompt_time": 0.012458199,
+          "completion_tokens": 361,
+          "completion_time": 0.407239347,
+          "total_tokens": 612,
+          "total_time": 0.419697546,
+          "completion_tokens_details": {
+            "reasoning_tokens": 299
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "funciona no celular?",
+        "reply": "Sim, o ChatPay funciona no celular. Clique no link oficial e pague R$97 para começar seu trial de 30 dias.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.216674275,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012562725,
+          "completion_tokens": 212,
+          "completion_time": 0.224349614,
+          "total_tokens": 465,
+          "total_time": 0.236912339,
+          "completion_tokens_details": {
+            "reasoning_tokens": 175
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "quanto custa?",
+        "reply": "O ChatPay Trial de 30 dias custa R$ 97,00. Você pode pagar via Pix ou cartão em até 12 vezes.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.207823428,
+          "prompt_tokens": 252,
+          "prompt_time": 0.012305753,
+          "completion_tokens": 141,
+          "completion_time": 0.193377112,
+          "total_tokens": 393,
+          "total_time": 0.205682865,
+          "completion_tokens_details": {
+            "reasoning_tokens": 103
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "tem garantia?",
+        "reply": "Sim, oferecemos garantia de 7 dias. Se precisar de mais informações, é só falar!",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.273284163,
+          "prompt_tokens": 252,
+          "prompt_time": 0.029789041,
+          "completion_tokens": 111,
+          "completion_time": 0.121600502,
+          "total_tokens": 363,
+          "total_time": 0.151389543,
+          "completion_tokens_details": {
+            "reasoning_tokens": 82
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "quero testar e pagar",
+        "reply": "Claro! Você pode testar o ChatPay Trial 30 dias por R$ 97,00. Clique no link abaixo para pagar via Pix ou cartão em até 12x: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.201910091,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012482196,
+          "completion_tokens": 225,
+          "completion_time": 0.234572795,
+          "total_tokens": 478,
+          "total_time": 0.247054991,
+          "completion_tokens_details": {
+            "reasoning_tokens": 159
+          }
+        },
+        "cache_hit": false
+      }
+    ],
+    "vitor-followup": [
+      {
+        "turn": 1,
+        "prompt": "voltei, vou pensar",
+        "reply": "Claro, se precisar de mais alguma informação ou quiser garantir sua vaga na trial, me avise. Estamos aqui para ajudar!",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.217061034,
+          "prompt_tokens": 254,
+          "prompt_time": 0.01239555,
+          "completion_tokens": 161,
+          "completion_time": 0.167527145,
+          "total_tokens": 415,
+          "total_time": 0.179922695,
+          "completion_tokens_details": {
+            "reasoning_tokens": 127
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 2,
+        "prompt": "ainda está disponível?",
+        "reply": "Sim, a oferta de 30 dias por R$ 97,00 está disponível. Para adquirir, basta acessar o link oficial: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.23777612,
+          "prompt_tokens": 253,
+          "prompt_time": 0.012418539,
+          "completion_tokens": 332,
+          "completion_time": 0.367115633,
+          "total_tokens": 585,
+          "total_time": 0.379534172,
+          "completion_tokens_details": {
+            "reasoning_tokens": 275
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 3,
+        "prompt": "achei caro",
+        "reply": "Entendo sua preocupação. Nosso plano oferece 30 dias de acesso completo por R$ 97,00, com suporte humano e garantia de 7 dias; se quiser discutir opções, posso encaminhá-lo(a) à equipe.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.238227086,
+          "prompt_tokens": 251,
+          "prompt_time": 0.166164961,
+          "completion_tokens": 367,
+          "completion_time": 0.408108112,
+          "total_tokens": 618,
+          "total_time": 0.574273073,
+          "completion_tokens_details": {
+            "reasoning_tokens": 312
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 4,
+        "prompt": "como funciona?",
+        "reply": "O ChatPay oferece 30 dias de teste por R$ 97,00, pagável por Pix ou cartão em até 12 parcelas. Garantia de 7 dias e atendimento humano estão disponíveis para seu suporte.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.143672311,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014424797,
+          "completion_tokens": 186,
+          "completion_time": 0.199316191,
+          "total_tokens": 438,
+          "total_time": 0.213740988,
+          "completion_tokens_details": {
+            "reasoning_tokens": 133
+          }
+        },
+        "cache_hit": false
+      },
+      {
+        "turn": 5,
+        "prompt": "vamos fechar agora",
+        "reply": "Ótimo, clique no link para concluir: https://midas-core.novoronaldo-m.workers.dev/pay?d=chatpay.oficial. Se precisar de ajuda, basta me avisar.",
+        "provider": "groq",
+        "usage": {
+          "queue_time": 0.471665929,
+          "prompt_tokens": 252,
+          "prompt_time": 0.014227476,
+          "completion_tokens": 192,
+          "completion_time": 0.210183496,
+          "total_tokens": 444,
+          "total_time": 0.224410972,
+          "completion_tokens_details": {
+            "reasoning_tokens": 141
+          }
+        },
+        "cache_hit": false
+      }
+    ]
+  }
+}

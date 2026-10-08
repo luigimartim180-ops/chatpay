@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo seu ponto perfeitamente. Para facilitar sua análise, preparei este próximo passo: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está priorizando segurança e clareza antes de decidir. O que é indispensável para você avançar com confiança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que esta solução fizesse total sentido para você hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Clientes com desafios idênticos aos seus alcançaram estes resultados verificáveis: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de considerar o investimento, veja o impacto direto no tempo que você recuperará: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o processo atual tem um custo invisível de tempo e energia. Se preferir resolver isso agora, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar de forma simples para validar os resultados? Se sim, este é o ponto de partida: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua tranquilidade é garantida por nossa política de proteção ao teste. Confira os detalhes aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a ter clareza sobre o problema, preparei este guia prático gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"As vagas para suporte individualizado dependem da agenda atual. Verifique a disponibilidade em tempo real: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui trabalhamos como parceiros para simplificar sua jornada. Veja como pensamos a solução: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é baseada em dados e resultados auditados no mercado. Veja as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já revisou os pontos principais. Se a proposta atende suas necessidades, conclua sua adesão com segurança aqui: {link}"}
+]

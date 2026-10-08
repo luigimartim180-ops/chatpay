@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Perfeito, você mencionou '{mirror}'. Entendo a importância disso para o seu contexto. Veja como podemos avançar: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está sentindo que o investimento ou o tempo de retorno são pontos críticos agora. É uma preocupação legítima. O que traria a segurança que você busca?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Como essa solução impactaria seu principal desafio de negócio se começássemos a implementar hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja aqui resultados reais e verificáveis de empresas que tinham desafios idênticos aos seus: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de falarmos de preço, veja o valor total das horas que sua equipe deixará de desperdiçar: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o processo atual custa caro todos os dias. Se fizer sentido estancar essa perda hoje, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos pela solução do seu problema mais urgente? Se sim, aqui está o checkout: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para sua total tranquilidade, nossa garantia protege seu teste inicial. Confira os termos aqui: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar no diagnóstico inicial do seu problema, preparei este guia gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como prezamos pela qualidade da implementação, limitamos os novos acessos por semana. Verifique a disponibilidade atual: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui no nosso time, focamos em resultados simples e seguros. Vamos resolver isso juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por especialistas e auditorias externas. Veja os certificados: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com todos os pontos alinhados, este é o link seguro para garantir sua vaga e iniciarmos o setup: {link}"}
+]

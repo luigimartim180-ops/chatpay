@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que seu foco é {mirror}. Faz sentido darmos o próximo passo para transformar esse objetivo em realidade? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando se o retorno compensa o investimento agora. É uma análise correta. O que falta para você decidir com segurança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que impediria você de alcançar suas metas se esse desafio não fosse resolvido hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Entendo sua busca por segurança. Veja como casos similares ao seu foram resolvidos com sucesso: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de focarmos no preço, veja o valor de economizar tempo e recursos com esta solução: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia sem uma solução é um dia de progresso estagnado. Se estiver pronto para mudar, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos de forma simples para você validar os resultados? O link de acesso é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para sua tranquilidade, nossa garantia assegura que você possa testar a solução com total proteção: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para ajudar na sua decisão, preparei este material com orientações práticas para o seu caso: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Como prezamos pela qualidade do suporte individual, as vagas de implementação são limitadas. Confira disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos no mesmo barco para otimizar seus resultados. Veja como nossa parceria funcionará na prática: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa eficácia é comprovada por resultados reais e anos de experiência no setor. Veja as evidências: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Com todas as dúvidas sanadas, este é o acesso para iniciarmos sua transformação sem perder o ritmo: {link}"}
+]

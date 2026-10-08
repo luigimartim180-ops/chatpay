@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. É um ponto que merece atenção para garantir o melhor resultado. Posso te mostrar como avançamos a partir daí? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando o risco vs. o benefício imediato. Faz todo sentido ser criterioso. O que precisaria ficar mais claro para você decidir hoje?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria na sua operação se conseguíssemos eliminar essa barreira ainda esta semana?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Clientes que tinham exatamente essa mesma dúvida validaram o processo e hoje operam com mais folga. Veja os detalhes: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o custo, considere o valor do tempo que você vai recuperar. Veja este comparativo prático: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia que passa sem essa automação é um custo extra na sua operação. Se estiver pronto para estancar essa perda, avance aqui: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um primeiro passo simples para você validar a eficiência na prática? O link é este: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Para sua total tranquilidade, o Trial é protegido pela garantia de 7 dias. Você testa sem riscos. Veja os termos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a decidir com base em dados reais, aqui está um diagnóstico técnico gratuito: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Só libero novos acessos quando nossa equipe de suporte está com folga para atender bem. Se for seu momento, o link é: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Estamos juntos no objetivo de escalar seu negócio com eficiência. Veja como essa parceria funciona na prática: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa plataforma é construída sobre pilares de segurança e performance validados. Confira as credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já revisou os pontos essenciais. Se o timing do seu negócio pede essa evolução agora, o link seguro para concluir é: {link}"}
+]

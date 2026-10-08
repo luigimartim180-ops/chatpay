@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"{mirror}? Entendo perfeitamente. Se o seu objetivo é esse, aqui está o próximo passo ideal para você: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está avaliando cuidadosamente o custo-benefício agora. Além do investimento, o que mais pesa para você tomar essa decisão com segurança?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que precisaria ser verdade para que o ChatPay se tornasse a escolha óbvia para sua operação hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja os resultados reais e verificáveis que clientes em situações similares à sua alcançaram: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de pensar no preço, veja quanto tempo e produtividade sua equipe recupera ao automatizar esse processo: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Cada dia no processo manual é um custo de oportunidade para seu negócio. Se quiser estancar essa perda hoje, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começarmos com um passo simples e seguro para você validar o resultado na prática? Se sim, este é o link: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua segurança é prioridade. O trial de 30 dias inclui 7 dias de garantia total para você testar sem riscos: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para te ajudar a começar com o pé direito, preparei este guia com orientações práticas para seu desafio: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Limitamos os novos acessos semanais para garantir que nosso suporte consiga acompanhar cada implementação. Confira a disponibilidade: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Nós aqui também focamos em escala com simplicidade. Vamos construir esse próximo nível juntos? {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Nossa metodologia é validada por anos de experiência no mercado de pagamentos. Confira nossas credenciais: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Você já tem todos os detalhes. Se quiser garantir que sua conta seja ativada e priorizada na fila técnica de hoje, finalize aqui: {link}"}
+]

@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Notei que você busca evoluir em {mirror}. Faz sentido ver como esse próximo passo acelera seu resultado? {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Parece que você está sendo criterioso na sua análise, o que é fundamental. Qual detalhe ainda gera incerteza na sua decisão?"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"O que mudaria na sua operação se o desafio de {mirror} fosse resolvido ainda este mês?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Para dar segurança à sua escolha, veja os resultados reais de quem já aplicou isso: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Antes de olhar o investimento, veja o quanto de tempo e recurso é desperdiçado no modelo atual: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Manter o cenário atual tem um custo invisível diário. Se estiver pronto para estancar essa perda, o caminho é este: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido darmos um passo inicial mais simples para você validar os benefícios? Confira por aqui: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"Sua transição é protegida pela garantia informada nos termos. Veja como funciona a nossa política de satisfação: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Para retribuir seu contato, liberei este material prático para você aplicar no seu fluxo de {mirror}: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Trabalhamos com um cronograma de ativação limitada para manter a qualidade. Veja a disponibilidade atual: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Como parceiros, nosso objetivo é simplificar sua jornada em {mirror}. Veja como faremos isso juntos: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira os reconhecimentos e as certificações que validam nossa metodologia em {mirror}: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Se os pontos conversados fazem sentido, podemos iniciar a implementação agora para você colher os frutos o quanto antes: {link}"}
+]

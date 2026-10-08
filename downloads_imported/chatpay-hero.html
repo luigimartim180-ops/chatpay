@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ChatPay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: grade de 12 colunas quebrada. O título atravessa a borda do painel, o painel sangra até a borda direita da tela,
+     e dois cards flutuam sobre o painel. Uma única cor de destaque (amarelo) sobre preto e branco. */
+  :root {
+    --bg: #FFFFFF;
+    --fg: #0A0A0A;
+    --muted: #55555D;
+    --hair: #D9D9DE;
+    --y: #FAFF00;
+    --on-y: #0A0A0A;
+    --panel: #0B0B0C;
+    --panel-fg: #F4F4F2;
+    --panel-mute: rgba(244, 244, 242, .56);
+    --panel-line: rgba(244, 244, 242, .16);
+    --card: #FFFFFF;
+    --card-fg: #0A0A0A;
+    --card-line: #0A0A0A;
+    --card-shadow: #0A0A0A;
+    --btn-line: #0A0A0A;
+    --f-display: 'Instrument Serif', 'Times New Roman', Georgia, serif;
+    --f-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-mono: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace;
+    --pad: max(clamp(20px, 5vw, 64px), calc((100vw - 1320px) / 2));
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0A0A0A; --fg: #F4F4F2; --muted: #9E9EA6; --hair: #27272B;
+      --panel: #131315; --card-line: #F4F4F2; --card-shadow: #2B2B30; --btn-line: #FAFF00;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0A0A0A; --fg: #F4F4F2; --muted: #9E9EA6; --hair: #27272B;
+    --panel: #131315; --card-line: #F4F4F2; --card-shadow: #2B2B30; --btn-line: #FAFF00;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  h1, p, ul { margin: 0; padding: 0; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  svg { display: block; }
+  :focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+
+  .page {
+    position: relative; isolation: isolate;
+    background: var(--bg);
+    overflow-x: clip;
+    padding-inline: var(--pad);
+    min-height: 100%;
+  }
+
+  /* Navegação */
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; border-bottom: 1px solid var(--fg); }
+  .logo { display: inline-flex; align-items: baseline; gap: 2px; font-family: var(--f-display); font-size: 30px; line-height: 1; letter-spacing: -.01em; color: var(--fg); text-decoration: none; }
+  .logo i { width: 9px; height: 9px; background: var(--y); border: 1.5px solid var(--fg); display: inline-block; margin-left: 3px; transform: translateY(-2px); }
+  .links { display: flex; align-items: center; gap: 28px; font-size: 14px; }
+  .links a { color: var(--fg); text-decoration: none; }
+  .links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .links .enter { padding: 8px 16px; border: 1.5px solid var(--fg); border-radius: 999px; font-weight: 500; }
+  .links .enter:hover { background: var(--fg); color: var(--bg); text-decoration: none; }
+  @media (max-width: 640px) { .links .hide { display: none; } }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr); padding-block: 44px 64px; }
+  .eyebrow { display: flex; align-items: center; gap: 12px; font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
+  .eyebrow::before { content: ''; width: 10px; height: 10px; background: var(--y); border: 1.5px solid var(--fg); flex: none; }
+  .eyebrow::after { content: ''; height: 1px; width: 72px; background: var(--fg); }
+
+  .title { margin-top: 28px; font-family: var(--f-display); font-weight: 400; font-size: clamp(3.4rem, 15.5vw, 5.75rem); line-height: .95; letter-spacing: -.025em; }
+  .title .ln { display: block; overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; color: var(--fg); }
+  .title .b { padding-left: .12em; }
+  .title em { font-style: italic; letter-spacing: -.03em; }
+  .l3 { display: flex; align-items: baseline; gap: .2em; padding-left: .4em; }
+  .stamp {
+    display: inline-block; position: relative; z-index: 4;
+    background: var(--y); color: var(--on-y);
+    font-style: italic; letter-spacing: -.03em;
+    padding: .02em .16em .1em .12em;
+    transform: rotate(-2.2deg);
+    line-height: .95;
+  }
+
+  .sub { margin-top: 36px; max-width: 30em; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.55; color: var(--muted); }
+  .sub strong { color: var(--fg); font-weight: 500; }
+
+  .signup { margin-top: 40px; display: flex; flex-direction: column; gap: 26px; max-width: 30rem; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-family: var(--f-mono); font-size: 11.5px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
+  .field input {
+    width: 100%; height: 60px; padding: 0;
+    background: linear-gradient(var(--y), var(--y)) no-repeat 0 100% / 0% 10px;
+    border: 0; border-bottom: 2px solid var(--fg); border-radius: 0;
+    font-size: 22px; font-weight: 500; letter-spacing: -.01em;
+    transition: background-size .45s cubic-bezier(.2, .8, .2, 1);
+  }
+  .field input::placeholder { color: var(--muted); opacity: .7; font-weight: 400; }
+  .field input:focus { outline: none; background-size: 100% 10px; }
+  .field input:focus-visible { outline: none; }
+  .err { min-height: 20px; font-family: var(--f-mono); font-size: 12px; display: flex; align-items: center; gap: 8px; }
+  .err:empty { display: none; }
+  .err::before { content: '!'; display: inline-grid; place-items: center; width: 16px; height: 16px; background: var(--fg); color: var(--bg); font-weight: 500; font-size: 11px; }
+  .err:empty::before { content: none; }
+
+  .actions { display: flex; flex-direction: column; gap: 18px; margin-top: 4px; }
+  .mag { display: inline-block; padding: 26px; margin: -26px; width: fit-content; }
+  .cta {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; gap: 18px;
+    height: 68px; padding: 0 10px 0 30px;
+    background: var(--y); color: var(--on-y);
+    border: 2px solid var(--btn-line); border-radius: 999px;
+    font-size: 18px; font-weight: 600; letter-spacing: -.01em;
+    will-change: transform;
+    transition: box-shadow .3s ease;
+  }
+  .cta:hover { box-shadow: 0 10px 0 -4px var(--fg); }
+  .cta .shine { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .85) 50%, transparent 65%); transform: translateX(-130%); pointer-events: none; }
+  .cta:hover .shine { transform: translateX(130%); transition: transform .9s cubic-bezier(.2, .7, .2, 1); }
+  .cta .label { position: relative; display: grid; will-change: transform; }
+  .cta .label > span { grid-area: 1 / 1; white-space: nowrap; transition: opacity .25s ease, transform .4s cubic-bezier(.34, 1.56, .64, 1); }
+  .cta .l-load, .cta .l-done { opacity: 0; transform: translateY(14px); }
+  .cta[data-state="loading"] .l-idle, .cta[data-state="done"] .l-idle { opacity: 0; transform: translateY(-14px); }
+  .cta[data-state="loading"] .l-load { opacity: 1; transform: none; }
+  .cta[data-state="done"] .l-done { opacity: 1; transform: none; }
+  .dots { display: inline-flex; gap: 5px; align-items: center; height: 100%; }
+  .dots i { width: 6px; height: 6px; background: var(--on-y); border-radius: 50%; animation: bob 1s ease-in-out infinite; }
+  .dots i:nth-child(2) { animation-delay: .15s; }
+  .dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-5px); opacity: 1; } }
+  .cta .arrow { position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--on-y); color: var(--y); display: grid; place-items: center; overflow: hidden; flex: none; }
+  .cta .arrow svg { width: 20px; height: 20px; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+  .cta:hover .arrow svg { transform: translateX(3px) rotate(-45deg); }
+  .ripple { position: absolute; border-radius: 50%; background: rgba(10, 10, 10, .22); transform: scale(0); animation: ripple .7s ease-out forwards; pointer-events: none; }
+  @keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+  .fine { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+  .fine li { list-style: none; display: inline-flex; align-items: center; gap: 8px; }
+  .fine li::before { content: ''; width: 7px; height: 7px; background: var(--fg); }
+  .ok { font-size: 15px; font-weight: 500; }
+  .ok:empty { display: none; }
+
+  /* Visual */
+  .visual { position: relative; margin-top: 56px; }
+  .panel {
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    min-height: 560px; height: 100%;
+    background: var(--panel); color: var(--panel-fg);
+    border: 1px solid var(--panel-line);
+    background-image: radial-gradient(rgba(244, 244, 242, .07) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+  }
+  .p-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 14px 96px; border-bottom: 1px solid var(--panel-line); font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--panel-mute); }
+  .p-head b { color: var(--y); font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+  .p-head b::before { content: ''; width: 7px; height: 7px; background: var(--y); border-radius: 50%; animation: beat 1.6s ease-in-out infinite; }
+  @keyframes beat { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+  .net { flex: 1; min-height: 300px; position: relative; }
+  .net svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .net .edge { stroke: rgba(244, 244, 242, .16); stroke-width: 1; }
+  .net .hub-edge { stroke: var(--y); stroke-width: 1.2; stroke-dasharray: 3 7; opacity: .75; animation: flow 1.4s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -20; } }
+  .net .node { fill: rgba(244, 244, 242, .7); animation: twinkle 4s ease-in-out infinite; }
+  @keyframes twinkle { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+  .net .hub { fill: var(--panel); stroke: var(--panel-fg); stroke-width: 1.4; }
+  .net .core { fill: var(--y); }
+  .net .ring { fill: none; stroke: var(--y); stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: ring 3s ease-out infinite; }
+  .net .ring:nth-of-type(2) { animation-delay: 1s; }
+  @keyframes ring { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(4.2); opacity: 0; } }
+  .net text { font-family: var(--f-mono); font-size: 12px; letter-spacing: .04em; fill: var(--panel-fg); opacity: .78; }
+  .net .core-t { font-size: 11px; font-weight: 500; fill: var(--on-y); opacity: 1; }
+
+  .code { position: relative; height: 232px; border-top: 1px solid var(--panel-line); overflow: hidden; background: rgba(0, 0, 0, .35); -webkit-mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent); mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent); }
+  .code-in { padding: 18px 18px 0 22px; font-family: var(--f-mono); font-size: 12.5px; line-height: 1.75; white-space: pre; animation: scroll 34s linear infinite; }
+  @keyframes scroll { to { transform: translateY(-50%); } }
+  .code .c { color: var(--panel-mute); }
+  .code .k { color: var(--y); }
+  .code .s { color: var(--panel-fg); }
+  .code .ok-b { background: var(--y); color: var(--on-y); padding: 1px 6px; font-weight: 500; }
+
+  .card {
+    position: absolute; z-index: 5;
+    display: flex; flex-direction: column; gap: 4px;
+    background: var(--card); color: var(--card-fg);
+    border: 1.5px solid var(--card-line);
+    box-shadow: 6px 6px 0 var(--card-shadow);
+    padding: 14px 18px 14px;
+  }
+  .card .mono { font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #55555D; }
+  .card .amt { font-family: var(--f-display); font-weight: 400; font-size: 44px; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; transition: opacity .3s ease, transform .4s cubic-bezier(.34, 1.56, .64, 1); }
+  .card .amt.swap { opacity: 0; transform: translateY(8px); }
+  .card .meta { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .live { width: 10px; height: 10px; border-radius: 50%; background: var(--y); border: 1.5px solid var(--card-fg); flex: none; animation: beat 1.6s ease-in-out infinite; }
+  .card.a { left: 12px; bottom: 36px; animation: float 6.5s ease-in-out infinite; }
+  .card.b { right: 16px; top: -20px; flex-direction: row; align-items: center; gap: 10px; padding: 11px 16px; font-size: 14px; font-weight: 500; box-shadow: 4px 4px 0 var(--card-shadow); animation: float 6.5s ease-in-out -3.2s infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+  /* Entrada */
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @keyframes lift { from { transform: translateY(105%); } to { transform: none; } }
+  @keyframes wipe { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } }
+  @keyframes pop { from { opacity: 0; transform: rotate(-2.2deg) scale(.7); } to { opacity: 1; transform: rotate(-2.2deg); } }
+  .eyebrow { animation: rise .7s cubic-bezier(.2, .8, .2, 1) both; }
+  .title .in { display: block; animation: lift .9s cubic-bezier(.2, .8, .2, 1) both; }
+  .title .a .in { animation-delay: .08s; } .title .b .in { animation-delay: .18s; } .title .c .in { animation-delay: .28s; }
+  .stamp { animation: pop .7s cubic-bezier(.34, 1.56, .64, 1) .55s both; }
+  .sub { animation: rise .8s cubic-bezier(.2, .8, .2, 1) .35s both; }
+  .signup { animation: rise .8s cubic-bezier(.2, .8, .2, 1) .45s both; }
+  .fine { animation: rise .8s cubic-bezier(.2, .8, .2, 1) .55s both; }
+  .panel { animation: wipe 1s cubic-bezier(.2, .8, .2, 1) .2s both; }
+
+  /* Desktop: grade quebrada */
+  @media (min-width: 900px) {
+    .hero { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; padding-block: 40px 88px; }
+    .eyebrow { grid-column: 1 / span 7; grid-row: 1; }
+    .title { grid-column: 1 / span 8; grid-row: 2; font-size: clamp(4.5rem, 8.6vw, 9rem); margin-top: 28px; }
+    .title .ln { position: relative; z-index: 3; mix-blend-mode: difference; color: #fff; } /* branco em diferença: preto no fundo claro, branco sobre o painel escuro */
+    .title .b { padding-left: 0; text-align: right; }
+    .l3 { justify-content: flex-end; padding-left: 0; padding-right: calc((100% + 24px) / 8); }
+    .sub { grid-column: 1 / span 5; grid-row: 3; margin-top: 32px; font-size: clamp(16px, 1.25vw, 18px); }
+    .signup { grid-column: 1 / span 5; grid-row: 4; margin-top: 36px; }
+    .fine { grid-column: 1 / span 5; grid-row: 5; margin-top: 28px; }
+    .net svg { left: 96px; width: calc(100% - 96px); }
+    .p-head { padding-left: 22px; }
+    .visual { grid-column: 7 / -1; grid-row: 1 / span 5; margin-right: calc(var(--pad) * -1); margin-top: 20px; z-index: 1; }
+    .card.a { left: clamp(-64px, -4.5vw, -28px); }
+  }
+  @media (min-width: 900px) and (max-height: 820px) {
+    .nav { padding-block: 12px; }
+    .hero { padding-block: 24px 56px; }
+    .title { font-size: clamp(4rem, min(8.6vw, 12.4vh), 9rem); margin-top: 18px; }
+    .sub { margin-top: 20px; font-size: 16px; line-height: 1.5; }
+    .signup { margin-top: 24px; }
+    .field input { height: 52px; }
+    .cta { height: 62px; }
+    .cta .arrow { width: 42px; height: 42px; }
+    .fine { margin-top: 20px; }
+    .panel { min-height: 0; }
+  }
+  @media (min-width: 1100px) {
+    .signup { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 22px; max-width: none; }
+    .signup .actions { grid-column: 1 / -1; }
+    .field input { font-size: 20px; }
+  }
+  @media (max-width: 899px) {
+    .card.a { left: 12px; }
+    .p-head { padding-left: 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+<style>
+  html { color-scheme: light; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="nav">
+    <a class="logo" href="#" aria-label="ChatPay">ChatPay<i aria-hidden="true"></i></a>
+    <nav class="links" aria-label="Principal">
+      <a class="hide" href="#">Como funciona</a>
+      <a class="hide" href="#">Preços</a>
+      <a class="enter" href="#">Entrar</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <p class="eyebrow">IA de vendas por chat</p>
+
+    <h1 class="title">
+      <span class="ln a"><span class="in">Ative sua</span></span>
+      <span class="ln b"><span class="in">IA de <em>Vendas</em></span></span>
+      <span class="l3"><span class="ln c"><span class="in">em</span></span> <span class="stamp">60s</span></span>
+    </h1>
+
+    <p class="sub">Cada mensagem sem resposta é uma venda que foi parar no concorrente. A ChatPay <strong>atende, fecha o pedido e cobra no Pix</strong>, 24 horas por dia, sem você levantar o dedo.</p>
+
+    <form class="signup" id="signup" novalidate>
+      <div class="field">
+        <label for="loja">Nome da loja</label>
+        <input id="loja" name="loja" type="text" autocomplete="organization" placeholder="Ex.: Ateliê Sol" aria-describedby="err-loja">
+        <p class="err" id="err-loja" role="alert"></p>
+      </div>
+      <div class="field">
+        <label for="email">Email de trabalho</label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="voce@sualoja.com.br" aria-describedby="err-email">
+        <p class="err" id="err-email" role="alert"></p>
+      </div>
+      <div class="actions">
+        <div class="mag" id="mag">
+          <button class="cta" id="cta" type="submit" data-state="idle">
+            <span class="shine" aria-hidden="true"></span>
+            <span class="label">
+              <span class="l-idle">Ativar minha IA agora</span>
+              <span class="l-load" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></span>
+              <span class="l-done" aria-hidden="true">Recebido!</span>
+            </span>
+            <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+        </div>
+        <p class="ok" id="ok" role="status"></p>
+      </div>
+    </form>
+
+    <ul class="fine">
+      <li>14 dias grátis</li>
+      <li>Sem cartão</li>
+      <li>Cancele em 1 clique</li>
+    </ul>
+
+    <div class="visual" aria-hidden="true">
+      <div class="panel">
+        <div class="p-head"><span>agente · atendimento</span><b>ao vivo</b></div>
+        <div class="net" id="net"></div>
+        <div class="code"><div class="code-in" id="stream"></div></div>
+      </div>
+      <aside class="card a">
+        <span class="mono">Pedido #4821 · Pix recebido</span>
+        <strong class="amt" id="amt">R$ 189,00</strong>
+        <span class="meta"><i class="live"></i>agora mesmo</span>
+      </aside>
+      <aside class="card b"><i class="live"></i>IA online · responde em 1,2 s</aside>
+    </div>
+  </main>
+</div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* Rede neural */
+  const W = 560, H = 340;
+  let seed = 11;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const core = { x: 330, y: 168 };
+  const hubs = [
+    { x: 170, y: 150, t: 'Conversa' },
+    { x: 262, y: 82,  t: 'Catálogo' },
+    { x: 280, y: 262, t: 'Estoque' },
+    { x: 446, y: 104, t: 'Pix' },
+    { x: 472, y: 236, t: 'Pós-venda' }
+  ];
+  const inLobe = (x, y) => {
+    const a = ((x - 250) / 135) ** 2 + ((y - 170) / 112) ** 2 <= 1;
+    const b = ((x - 400) / 130) ** 2 + ((y - 168) / 116) ** 2 <= 1;
+    return (a || b) && x > 110;
+  };
+  const pts = [];
+  const all = [core, ...hubs];
+  let guard = 0;
+  while (pts.length < 26 && guard++ < 4000) {
+    const x = 100 + rnd() * 440, y = 30 + rnd() * 280;
+    if (!inLobe(x, y)) continue;
+    if ([...all, ...pts].some(p => Math.hypot(p.x - x, p.y - y) < 40)) continue;
+    pts.push({ x, y, d: (rnd() * 4).toFixed(2), dur: (3 + rnd() * 3).toFixed(2) });
+  }
+  const nodes = [...pts, ...hubs, core];
+  const seen = new Set();
+  let edges = '';
+  const links = [];
+  nodes.forEach((p, i) => {
+    nodes.map((q, j) => ({ j, d: Math.hypot(p.x - q.x, p.y - q.y) }))
+      .filter(o => o.j !== i && o.d < 118)
+      .sort((a, b) => a.d - b.d).slice(0, 2)
+      .forEach(o => {
+        const k = i < o.j ? i + '-' + o.j : o.j + '-' + i;
+        if (seen.has(k)) return; seen.add(k);
+        const q = nodes[o.j];
+        links.push([p, q]);
+        edges += `<line class="edge" x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${q.x.toFixed(1)}" y2="${q.y.toFixed(1)}"/>`;
+      });
+  });
+  let hubEdges = '', pulses = '';
+  hubs.forEach((h, i) => {
+    hubEdges += `<line class="hub-edge" x1="${h.x}" y1="${h.y}" x2="${core.x}" y2="${core.y}" style="animation-delay:${-i * .3}s"/>`;
+    if (!reduce) {
+      const dur = (2.2 + i * .45).toFixed(2);
+      pulses += `<circle r="3.2" fill="#FAFF00" opacity="0"><animateMotion dur="${dur}s" begin="${-i * .8}s" repeatCount="indefinite" path="M${h.x} ${h.y} L${core.x} ${core.y}"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.15;.85;1" dur="${dur}s" begin="${-i * .8}s" repeatCount="indefinite"/></circle>`;
+    }
+  });
+  if (!reduce) {
+    links.filter((_, i) => i % 5 === 0).slice(0, 7).forEach(([p, q], i) => {
+      const dur = (3 + (i % 3) * .7).toFixed(2);
+      pulses += `<circle r="2" fill="#F4F4F2" opacity="0"><animateMotion dur="${dur}s" begin="${-i * .7}s" repeatCount="indefinite" path="M${p.x.toFixed(1)} ${p.y.toFixed(1)} L${q.x.toFixed(1)} ${q.y.toFixed(1)}"/><animate attributeName="opacity" values="0;.9;.9;0" keyTimes="0;.2;.8;1" dur="${dur}s" begin="${-i * .7}s" repeatCount="indefinite"/></circle>`;
+    });
+  }
+  const nodeSvg = pts.map(p => `<circle class="node" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.4" style="animation-delay:${p.d}s;animation-duration:${p.dur}s"/>`).join('');
+  const hubSvg = hubs.map(h => `<circle class="hub" cx="${h.x}" cy="${h.y}" r="5.5"/><text x="${h.x + 12}" y="${h.y + 4}">${h.t}</text>`).join('');
+  $('#net').innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${edges}${hubEdges}${nodeSvg}${hubSvg}<circle class="ring" cx="${core.x}" cy="${core.y}" r="10"/><circle class="ring" cx="${core.x}" cy="${core.y}" r="10"/><circle class="core" cx="${core.x}" cy="${core.y}" r="14"/><text class="core-t" x="${core.x}" y="${core.y + 4}" text-anchor="middle">IA</text>${pulses}</svg>`;
+
+  /* Fluxo de código */
+  const convo = [
+    ['23:04:12', 'Tem na cor preta, tamanho M?', '1,2', '189.00', 'R$ 189,00'],
+    ['23:07:48', 'Qual o prazo para Curitiba?', '0,9', '94.90', 'R$ 94,90'],
+    ['23:11:03', 'Tem desconto à vista?', '1,4', '312.50', 'R$ 312,50']
+  ];
+  const block = convo.map(([t, q, s, v, pago]) =>
+`<span class="c">// ${t} · cliente novo no chat</span>
+<span class="k">const</span> msg = <span class="k">await</span> chat.<span class="k">receber</span>();
+<span class="c">// "${q}"</span>
+<span class="k">const</span> r = <span class="k">await</span> ia.<span class="k">responder</span>(msg, { loja: <span class="s">"Ateliê Sol"</span> });
+<span class="c">// resposta em ${s} s</span>
+<span class="k">await</span> pedido.<span class="k">fechar</span>(r.itens);
+<span class="k">await</span> pix.<span class="k">cobrar</span>(<span class="s">${v}</span>);
+<span class="ok-b">PAGO</span> <span class="s">+${pago}</span>
+`).join('\n');
+  $('#stream').innerHTML = block + '\n' + block;
+
+  /* Card com valores rodando */
+  const amt = $('#amt');
+  const values = ['R$ 189,00', 'R$ 94,90', 'R$ 312,50', 'R$ 58,00'];
+  let vi = 0;
+  if (!reduce) setInterval(() => {
+    amt.classList.add('swap');
+    setTimeout(() => { vi = (vi + 1) % values.length; amt.textContent = values[vi]; amt.classList.remove('swap'); }, 320);
+  }, 4200);
+
+  /* Botão magnético */
+  const mag = $('#mag'), cta = $('#cta'), lab = cta.querySelector('.label');
+  if (fine && !reduce) {
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+    const loop = () => {
+      cx += (tx - cx) * .16; cy += (ty - cy) * .16;
+      cta.style.transform = `translate(${cx.toFixed(2)}px, ${cy.toFixed(2)}px)`;
+      lab.style.transform = `translate(${(cx * .35).toFixed(2)}px, ${(cy * .35).toFixed(2)}px)`;
+      if (Math.abs(tx - cx) > .05 || Math.abs(ty - cy) > .05) raf = requestAnimationFrame(loop); else raf = 0;
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+    mag.addEventListener('pointermove', (e) => {
+      const r = cta.getBoundingClientRect();
+      tx = (e.clientX - (r.left + r.width / 2)) * .32;
+      ty = (e.clientY - (r.top + r.height / 2)) * .42;
+      kick();
+    });
+    mag.addEventListener('pointerleave', () => { tx = 0; ty = 0; kick(); });
+  }
+
+  /* Ripple */
+  cta.addEventListener('pointerdown', (e) => {
+    const r = cta.getBoundingClientRect();
+    const size = Math.max(r.width, r.height) * 2.2;
+    const s = document.createElement('span');
+    s.className = 'ripple';
+    s.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
+    cta.appendChild(s);
+    setTimeout(() => s.remove(), 750);
+  });
+
+  /* Formulário */
+  const form = $('#signup'), loja = $('#loja'), email = $('#email'), ok = $('#ok');
+  const setErr = (input, msg) => { $('#err-' + input.id).textContent = msg; input.setAttribute('aria-invalid', msg ? 'true' : 'false'); };
+  loja.addEventListener('input', () => setErr(loja, ''));
+  email.addEventListener('input', () => setErr(email, ''));
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    ok.textContent = '';
+    const nome = loja.value.trim(), mail = email.value.trim();
+    let bad = null;
+    if (!nome) { setErr(loja, 'Diga o nome da sua loja.'); bad = bad || loja; } else setErr(loja, '');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { setErr(email, mail ? 'Esse email parece incompleto. Confira e tente de novo.' : 'Informe seu email de trabalho.'); bad = bad || email; } else setErr(email, '');
+    if (bad) { bad.focus(); return; }
+    cta.dataset.state = 'loading';
+    cta.disabled = true;
+    setTimeout(() => {
+      cta.dataset.state = 'done';
+      ok.textContent = 'Recebido. A IA da ' + nome + ' entra na fila de ativação.';
+    }, 1100);
+  });
+})();
+</script>
+</body>
+</html>
