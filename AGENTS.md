@@ -8,7 +8,7 @@
 >
 > Este arquivo existe porque o projeto tem muitas frentes e qualquer modelo (opencode, Cursor, etc.) precisa retomar do ponto certo sem repetir trabalho.
 
-**Ãšltima atualizaÃ§Ã£o**: 2026-10-05 (por Antigravity â€” **DASHBOARD PADRONIZADO & DEPLOYED**: `chatpay-dash.html` integrado em `/dash`, compatibilidade total com testes legados (v22, v22.1, v22.2 etc.) restaurada via marcadores ocultos; predeploy PASS; deploy `30854ff7-5d12-48e6-b9d4-d6b7fc5301cb` em produÃ§Ã£o).
+**Ãšltima atualizaÃ§Ã£o**: 2026-10-09 (por Kilo â€” **Dashboard cards + APIs completos**: 8 cards na aba Swarm & IA (Agent Graph, Memory Layer, Scout, Modos Operantis, Aprendizado por Segmento, Dogfooding, Minhas Vendas, Webhooks), 2 APIs (/api/sales CSV, /api/webhooks CRUD+test HMAC); predeploy 601/601 PASS).
 
 ---
 
@@ -26,6 +26,9 @@
 | RegressÃ£o | phase1 **33/33**, phase2 **22/22**, phase3-kb **20/20**, phase4-mafel **14/14**, coex **41/41**, **v24-ux 4/4**, **v24-ux-edge 7/7**, predeploy **PASS** **(601 testes: +4 UX-FAST +7 UX-FAST-edge)** |
 | Smoke ao vivo | **10/10 ALL PASS** (fase 3) + **12 personas 17/17 ALL PASS** (2026-09-24, deploy 6f296d08) |
 | FASE M real | **20 personas / 100 chamadas reais (Groq)**, gate `--require-real` PASS, 1 reply vazia â€” ver Â§1.9 |
+| **Timeout fix** | **Groq chamadas â‰¤30s** (era 52 min travado) â€” `fetchWithTimeout(30s)` em todos providers |
+| **plays.json** | **Consumido** via `getV23Plays()` no worker.js (substituiu `V23_PLAYS` hardcoded) |
+| **Personas** | **20 Ã— 3 objeÃ§Ãµes** (era 1) â€” alinhado com currÃ­culo nÃ­vel 10 |
 | Secrets wrangler | 6 presentes Â· zero chaves proibidas no repo |
 | Canais Sociais | Instagram/YouTube/TikTok operacionais (webhooks + `/api/hunter-lead`); `docs/GUIA-YOUTUBE-SETUP.md` e `docs/GUIA-CLIENTE-SETUP-COMPLETO.md` criados 2026-09-25 |
 | Arq. canais | 100% API/Backend (Tampermonkey/userscript **removido** do repo â€” `glob` confirma zero arquivos `userscript*`) |
@@ -217,7 +220,62 @@
 - [x] **`predeploy-check.ps1`** atualizado: `test-v24-ux.js` e `test-v24-ux-edge.js` adicionados Ã  lista de regressÃ£o automÃ¡tica.
 - [x] **Arquitetura de validaÃ§Ã£o documentada**: e-mail Ã© gate front-end (HTML5 `type=email required`); servidor salva `buyer_email` literalmente â€” separaÃ§Ã£o clara de responsabilidades.
 
----
+### 1.18 Mistral Provider Integration (2026-10-08)
+- [x] **`mistral` provider adicionado** a `scripts/llm-providers.js`: endpoint `https://api.mistral.ai/v1/chat/completions`, model `env.MISTRAL_MODEL || 'mistral-small-latest'`, max_tokens 800, headers `{ Authorization: Bearer ${mistralKey} }`, telemetry `mistral`. IncluÃ­do em `PROVIDER_ORDER` e `REAL_PROVIDERS` (posiÃ§Ã£o **depois de groq, antes de deepseek/openrouter** â€” cadeia de backup para Groq).
+- [x] **Probe endpoint**: `mistral: ['https://api.mistral.ai/v1/chat/completions', env.MISTRAL_API_KEY, { model: env.MISTRAL_MODEL || 'mistral-small-latest', max_tokens: 1 }]`.
+- [x] **`MISTRAL_API_KEY` + `MISTRAL_MODEL` adicionados a `SECRET_NAMES`** em `scripts/secret-loader.js` (linhas 5-6) â€” root cause do `mistral=ausente` corrigida: `loadLabSecrets()` agora lÃª a key do shell env (45 chars `mstrl_...`).
+- [x] **ValidaÃ§Ã£o**: `node --check scripts/secret-loader.js` PASS; `loadLabSecrets()` retorna `MISTRAL_API_KEY loaded: true len: 45`; probe real confirma `mistral=429` (rate limit, key vÃ¡lida e endpoint acessÃ­vel) â€” antes `ausente`; `node --check scripts/llm-providers.js` PASS.
+- [x] Graciosamente degraded sem chave (`skipped: 'MISTRAL_API_KEY ausente ou execuÃ§Ã£o nÃ£o-local'`).
+
+### 1.19 LLM Provider Timeout Fix + plays.json Integration + Personas Update (2026-10-09)
+- [x] **Timeout fix crÃ­tico** (`scripts/llm-providers.js`): adicionado `fetchWithTimeout(30000)` wrapper aplicado a **todas** chamadas de provider (Groq, OpenRouter, Mistral, Gemini, Cerebras, DeepSeek, Pollinations, `requestOpenAICompatible`, `deepseekRequest`). Antes Groq travava 52 min sem timeout; agora falha em â‰¤30s e cai para prÃ³ximo provider.
+- [x] **`plays.json` consumido pelo worker** (`worker.js:2595-2601` â†’ `getV23Plays()`): carregamento dinÃ¢mico com fallback sÃ­ncrono; substituiu array hardcoded `V23_PLAYS`. 4 templates otimizados: `MirrorOpener`, `LabelEmpathy`, `CalibratedQuestion`, `LastMileClose`.
+- [x] **Personas atualizadas** (`simulator/personas.json`): 20 personas agora com **3 objeÃ§Ãµes cada** (antes 1) â€” alinhado com currÃ­culo nÃ­vel 10 que exige 3 objeÃ§Ãµes para chegar em `pago`.
+- [x] **Rodada 20-personas completa** (seed 20260910, `--require-real --personas-subset 20 --max-turns 5 --no-cache`): **100/100 chamadas reais Groq** concluÃ­das em segundos (timeout fix funcionando); 1 reply vazia (diego-iniciante turno 1, reasoning 798/800 tokens); 99/100 replies Ãºteis; `cache_hit: false` em todas (sem cache stale).
+- [x] **Heatmap**: mÃºltiplas personas alcanÃ§am `quase_pago` com `paid: true` (ex: bruno-direto, carla-preco, diego-iniciante, elisa-cetica, fabio-ocupado, gabi-objection, hugo-comparador, ines-social, joao-tecnico, lara-urgente, marcos-morno, nina-desconfiada, otavio-indeciso, paula-repetida, rafael-suporte, sara-curta, tiago-corporativo, ursula-mobile, vitor-followup) â€” progresso vs baseline onde todos ficavam em `quase`.
+- [x] **Curriculum bands**: N1-N3 (easy) win_rate 0.95-1.0 mas gate anti-cooperaÃ§Ã£o falha (win_rate=1 detectado como suspeito); N4-N10 (medium/difficult/adversarial) win_rate=0 â€” requer iteraÃ§Ã£o Weco com instruÃ§Ã£o focada em personas mÃ©dias/difÃ­ceis (N4-N8) para â‰¥15% melhoria em 2+ bandas antes de deploy.
+- [x] **Predeploy 100% PASS** (601 testes) apÃ³s todas as mudanÃ§as â€” syntax check, phase1-4, v22-v24, wa-coex, secrets, padrÃµes proibidos.
+
+### 1.20 Fix N3 â€” PreÃ§o 100x Errado (2026-10-09)
+- [x] **Bug**: resposta de objeÃ§Ã£o e outras exibia "R$ 9700.00" em vez de "R$ 97,00" â€” template `{preco}` inseria cents crus com ".00" anexado.
+- [x] **Helper Ãºnico criado**: `fmtBRL = (cents) => 'R$ ' + (Number(cents)/100).toFixed(2).replace('.', ',')` em `worker.js:59`.
+- [x] **Locais corrigidos** (todos usam `fmtBRL` agora):
+  - `installmentOffer` (linha 1895) â€” parcelamento
+  - `processPriceWatches` (linha 2863) â€” notificaÃ§Ãµes de queda de preÃ§o
+  - `runAnalystDaily` (linha 3143) â€” digest de receita por email
+  - `payPage` JS (linhas 4433, 4450) â€” cards de produto e status "Escaneie e pague"
+  - `/api/wa-send-button` (linha 4602) â€” botÃ£o WhatsApp
+  - `replyChannel` WhatsApp (linha 2899) â€” `pb.floor` passado via `fmtBRL`
+- [x] **ValidaÃ§Ã£o**: `node --check worker.js` PASS; predeploy **601/601 PASS**; demo mostra "Posso liberar por R$ 97,00?" corretamente.
+
+### 1.21 Dashboard Cards Completion — 8 cards + 2 APIs (2026-10-09)
+- [x] **6 cards na aba Swarm & IA** (total 8 cards na aba):
+  - Agent Graph V22 — pipeline 5 estágios + rotas por evento, contagens por agente, última execução
+  - Memory Layer — RAG objections + reply_winner + segment_patterns, busca por query/tipo, persistência dual Redis+Vectorize
+  - Scout — taxa unknown, amostras hoje, top unknown, botão "Digestar" ? `/api/scout`
+  - Modos Operantis — AUTO/LIVE_SELLING/DM/GROUP/COMMENT/QA, confiança persistida, salvar ? `/api/op-mode`
+  - Aprendizado por Segmento — taxonomia segment/intent/variation CRUD ? `/api/taxonomy`
+  - Dogfooding Real-Time — requests/leads hoje, uptime, feed recente ? `/api/dogfooding`
+- [x] **2 cards enterprise críticos na aba Swarm & IA**:
+  - **Minhas Vendas** — tabela completa (txid, valor, status, rail, lead_id, created_at, buyer_email, play_id), filtros status/data, **Exportar CSV** ? `GET /api/sales?format=csv`
+  - **Webhooks** — CRUD completo (criar/listar/deletar), campos url/eventos/secret/ativo, botão **"Testar webhook"** dispara payload assinado HMAC-SHA256 ? `POST /api/webhooks/test`
+- [x] **APIs adicionadas** (worker.js ~linhas 6415-6470):
+  - `GET /api/sales?format=json|csv&limit=200` — lista vendas do domínio, exportação CSV com headers
+  - `GET/POST/DELETE /api/webhooks` — CRUD webhooks persistidos em `swarm:webhooks:{dom}`
+  - `POST /api/webhooks/test` — envia payload teste `payment_confirmed` com assinatura HMAC-SHA256 no header `X-ChatPay-Signature`
+- [x] **Validação**: `node --check worker.js` PASS; `scripts/predeploy-check.ps1` **601/601 PASS**; Dashboard carrega modo Simple/Advanced toggle (`.adv-card` visível por padrão, oculto em `body.mode-simple`), localStorage `chatpay_dash_mode` persistido
+
+### 1.22 Dashboard Cards 2ª Onda — 6 cards analytics + advanced (2026-10-09)
+- [x] **6 cards adicionados na aba Swarm & IA** (total 14 cards na aba):
+  - **Tool Calling** — Lista de tools do playbook V23 + formulário adicionar tool (nome, descrição, JSON Schema) ? `/api/v23/playbook`
+  - **Hunter Analytics** — Leads por plataforma + receita atribuída + conversão estimada + gráfico temporal (Chart.js) ? `/api/hunter-analytics`
+  - **ROI do Swarm V23** — Receita total vs custo LLM + ROI % + breakdown por provider ? `/api/v23/roi`
+  - **ROI por Play V23** — Tabela + gráfico de barras com receita atribuída por play + conversões ? `/api/v23/roi`
+  - **Simulador Adversarial** — Heatmap win rate por persona + resultados detalhados + botão executar simulação (seed, personas, turns, batch) ? `/api/v23/simulator-report`
+  - **Relatório de Decisão V23** — Gate status das 10 bandas curriculares + lições aprendidas + export JSON ? `/api/v23/decision-report`
+- [x] **Chart.js 4.4.2** adicionado via CDN no dashboard HTML
+- [x] **Auto-load** das 6 novas funções no dashboard live
+- [x] **Validação**: `node --check worker.js` PASS; `scripts/predeploy-check.ps1` **601/601 PASS** (todas as suítes intactas, incluindo V22 dashboard markers)
 
 ## 2. PENDENTE â¬œ (o que falta fazer / checar)
 
@@ -281,3 +339,8 @@ PowerShell 5.1: **sem `&&`** (usar `cmd1; if ($?) { cmd2 }`), sucesso via `$LAST
 - Honesty: sem dado real = sem exibir nÃºmero; "paguei" nunca confirma sem prova no Redis.
 - Todo deploy passa por `predeploy-check.ps1` PASS antes de `wrangler deploy`.
 - **Ao terminar qualquer seÃ§Ã£o: atualizar `AGENTS.md` (este arquivo).**
+
+
+
+
+

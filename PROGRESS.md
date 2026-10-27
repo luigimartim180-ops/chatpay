@@ -848,3 +848,95 @@ nenhum item P0/P1
 - Após carregar `CEREBRAS_API_KEY` do escopo User, o probe `/v1/models` retornou 200 e listou `gpt-oss-120b`, `gemma-4-31b`, `qwen-3.8-27b`; o default foi corrigido para `gpt-oss-120b`.
 - A inferência Cerebras falhou então com **HTTP 402** (quota/crédito de inferência), sem gravar cache ou progresso de batch. `batch-state.json` continua em zero.
 - `test-v23-simulator.js` e `test-v23-k.js`: PASS após o ajuste do modelo.
+---
+
+## DEPLOY 2026-10-09 — Timeout fix + plays.json + fmtBRL + smoke validation (fc10aa96)
+
+**Deploy**: c10aa96-3e8b-41e5-aaec-334ad6044523 → https://midas-core.novoronaldo-m.workers.dev  
+**Rollback**: 30854ff7-5d12-48e6-b9d4-d6b7fc5301cb (2026-10-05)
+
+### Mudanças
+- **Timeout fix crítico** (scripts/llm-providers.js): etchWithTimeout(30000) wrapper em TODAS as chamadas de provider (Groq, OpenRouter, Mistral, Gemini, Cerebras, DeepSeek, Pollinations, equestOpenAICompatible, deepseekRequest). Antes Groq travava 52 min; agora falha ≤30s com fallback.
+- **plays.json integrado** (worker.js): getV23Plays() carrega dinamicamente com fallback síncrono; substituiu array hardcoded V23_PLAYS. 4 templates: MirrorOpener, LabelEmpathy, CalibratedQuestion, LastMileClose.
+- **Personas 3 objeções** (simulator/personas.json): 20 personas × 3 objeções (era 1) — alinhado com currículo nível 10.
+- **Fix N3 preço 100x** (worker.js:59): helper único mtBRL = (cents) => 'R$ ' + (Number(cents)/100).toFixed(2).replace('.', ',') aplicado em 6 locais (installmentOffer, processPriceWatches, runAnalystDaily, payPage JS, /api/wa-send-button, replyChannel WhatsApp).
+- **Predeploy**: 601/601 PASS (phase1 33, phase2 22, phase3-kb 20, phase4-mafel 14, coex 41, v23 47, v22.4 56, v22.1.2 35, v22.1.1 50, v22.1 54, v22 56, v22.2 33, v22.2-channels 32, v24-ux 4, v24-ux-edge 7, demo, simulador, secrets, padrões proibidos).
+
+### Smoke ao vivo (2026-10-09)
+- **smoke-live.js**: **10/10 ALL PASS** — /retomar, STT honesto, paguei honesto, garantia sem link, comprar com &p=, KB RAG, preço com valor, produto sem link.
+- **smoke-12-personas.js**: **17/17 ALL PASS** — 12 personas × intents (compra, preço, garantia, fallback, irritado 1x/2x, handoff, pagamento honesto, retomar, /menu, /preco, injeção, callbacks).
+
+### Fluxo crítico de venda validado
+1. /pay?d=chatpay.oficial → carrega produto R$ 97,00
+2. Email → QR code gerado via /chatpay/charge (demo=1)
+3. /api/tx-status → pending → auto-confirma paid após 15s
+4. Preço exibe corretamente "R$ 97,00" (não "R$ 9700.00")
+
+### Pendentes pós-deploy
+- P1: Validação visual humana no Telegram (bolhas, botões, handoff, dedup)
+- P8: Voice AI produção (requer 4 secrets Vapi/Bland + chamada real)
+- P9: WhatsApp CoEx real (requer Meta Business Manager + PIN)
+
+---
+## DASHBOARD CARDS COMPLETION — 8 novos cards + 2 APIs (2026-10-09)
+
+### Cards implementados na aba **Swarm & IA** (1 → 8 novos cards)
+1. **Agent Graph V22** — pipeline 5 estágios + rotas por evento (lead, whatsapp, paid, abandon, upsell), contagens por agente, última execução
+2. **Memory Layer** — RAG objections + reply_winner + segment_patterns, busca por query + tipo, persistência dual Redis+Vectorize
+3. **Scout** — taxa de unknown, amostras hoje, top unknown, botão "Digestar" → `/api/scout`
+4. **Modos Operantis** — AUTO/LIVE_SELLING/DM_CONVERSATION/GROUP_CHAT/COMMENT_TO_BUY/QA_SESSION, confiança persistida, botão salvar → `/api/op-mode`
+5. **Aprendizado por Segmento** — taxonomia segment/intent/variation CRUD, botão "Adicionar" → `/api/taxonomy`
+6. **Dogfooding Real-Time** — requests/leads hoje, uptime, feed recente 5 itens → `/api/dogfooding`
+7. **Minhas Vendas** — tabela com txid, valor, status, rail, lead_id, created_at, buyer_email, play_id; filtros status/data; botão **Exportar CSV** → `/api/sales?format=csv`
+8. **Webhooks** — CRUD completo (criar, listar, deletar), campos url, eventos, secret (HMAC-SHA256), ativo; botão **"Testar webhook"** dispara payload de teste assinado → `/api/webhooks/test`
+
+### APIs adicionadas
+- `GET /api/sales?format=json|csv&limit=200` — lista vendas do domínio, exportação CSV com headers
+- `GET/POST/DELETE /api/webhooks` — CRUD webhooks persistidos em `swarm:webhooks:{dom}`
+- `POST /api/webhooks/test` — envia payload de teste `payment_confirmed` com assinatura HMAC-SHA256 no header `X-ChatPay-Signature`
+
+### Validação
+- `node --check worker.js`: PASS
+- `scripts/predeploy-check.ps1`: **601/601 PASS** (todas as suítes intactas)
+- Dashboard carrega: modo Simple/Advanced toggle (`.adv-card` visível por padrão, oculto em `body.mode-simple`), localStorage `chatpay_dash_mode` persistido
+
+---
+## DASHBOARD CARDS 2ª ONDA — 6 cards analytics + advanced (2026-10-09)
+
+### Cards adicionados na aba **Swarm & IA** (total 14 cards)
+9. **Tool Calling** — Lista de tools do playbook V23 + formulário adicionar tool (nome, descrição, JSON Schema) → `/api/v23/playbook`
+10. **Hunter Analytics** — Leads por plataforma + receita atribuída + conversão estimada + gráfico temporal (Chart.js) → `/api/hunter-analytics`
+11. **ROI do Swarm V23** — Receita total vs custo LLM + ROI % + breakdown por provider → `/api/v23/roi`
+12. **ROI por Play V23** — Tabela + gráfico de barras com receita atribuída por play + conversões → `/api/v23/roi`
+13. **Simulador Adversarial** — Heatmap win rate por persona + resultados detalhados + botão executar simulação (seed, personas, turns, batch) → `/api/v23/simulator-report`
+14. **Relatório de Decisão V23** — Gate status das 10 bandas curriculares + lições aprendidas + export JSON → `/api/v23/decision-report`
+
+### Validação
+- `node --check worker.js`: PASS
+- `scripts/predeploy-check.ps1`: **601/601 PASS** (todas as suítes intactas, incluindo V22 dashboard markers)
+- Chart.js 4.4.2 carregado via CDN no dashboard
+- Auto-load das 6 novas funções no dashboard live
+
+---
+## DEPLOY 2026-10-10 — Dashboard 21/21 cards completos (35528f4b)
+
+**Deploy**: 35528f4b-2b6d-4c5c-b129-39fa0252b988 → https://midas-core.novoronaldo-m.workers.dev  
+**Rollback**: fc10aa96-3e8b-41e5-aaec-334ad6044523 (2026-10-09)
+
+### Mudanças
+- **Dashboard 14 novos cards** na aba Swarm & IA (total 21 cards): Agent Graph V22, Memory Layer, Scout, Modos Operantis, Aprendizado por Segmento, Dogfooding Real-Time, Minhas Vendas (CSV export), Webhooks (CRUD + HMAC test), Tool Calling, Hunter Analytics (Chart.js), ROI do Swarm V23, ROI por Play V23, Simulador Adversarial, Relatório de Decisão V23
+- **Chart.js 4.4.2** via CDN para gráficos em Hunter Analytics e ROI
+- **APIs**: `/api/sales` (CSV), `/api/webhooks` (CRUD + test HMAC), `/api/scout`, `/api/op-mode`, `/api/taxonomy`, `/api/dogfooding`, `/api/v23/playbook` (tools), `/api/hunter-analytics`, `/api/v23/roi`, `/api/v23/simulator-report`, `/api/v23/decision-report`
+- **Predeploy**: 601/601 PASS (todas as suítes intactas)
+- **Preço R$ 97,00** correto (fmtBRL helper)
+
+### Smoke ao vivo (2026-10-10)
+- `/pay?d=chatpay.oficial` → HTML carrega corretamente
+- `/dash` → 21 cards visíveis (14 novos + 7 existentes)
+- `/api/integrations?token=abc` → 401 token inválido (auth funcionando)
+
+### Pendentes pós-deploy
+- P1: Validação visual humana no Telegram (bolhas, botões, handoff, dedup)
+- P8: Voice AI produção (requer 4 secrets Vapi/Bland + chamada real)
+- P9: WhatsApp CoEx real (requer Meta Business Manager + PIN)
+- **Ground truth**: Teste humano no WhatsApp (grupo teste + QR code + print)

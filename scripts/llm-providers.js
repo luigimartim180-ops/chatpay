@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { loadLabSecrets } from './secret-loader.js';
 
 export const DEFAULT_OPENROUTER_MODEL = 'nvidia/nemotron-3.5-lightning:free';
-export const PROVIDER_ORDER = ['cerebras', 'groq', 'deepseek', 'openrouter', 'mistral', 'gemini', 'github_models'];
-export const REAL_PROVIDERS = ['cerebras', 'groq', 'deepseek', 'openrouter', 'mistral', 'gemini', 'github_models'];
+export const PROVIDER_ORDER = ['cerebras', 'groq', 'mistral', 'deepseek', 'openrouter', 'gemini', 'github_models'];
+export const REAL_PROVIDERS = ['cerebras', 'groq', 'mistral', 'deepseek', 'openrouter', 'gemini', 'github_models'];
 export const GEMINI_DEFAULT_MODEL = 'gemini-flash-latest';
 export const REAL_CACHE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'simulator', 'cache-real.json');
 
@@ -26,6 +26,23 @@ const providerError = (name, response) => {
   const quota = response.headers?.get?.('x-ratelimit-remaining') || response.headers?.get?.('x-ratelimit-remaining-requests');
   return new Error(`${name} HTTP ${response.status}${quota ? ` quota_remaining=${quota}` : ''}`);
 };
+
+const DEFAULT_TIMEOUT_MS = 30000;
+async function fetchWithTimeout(fetchImpl, url, options, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchImpl(url, { ...options, signal: controller.signal });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`timeout após ${timeoutMs}ms`);
+    }
+    throw error;
+  }
+}
 
 export async function probeProviders({ fetchImpl = globalThis.fetch, env = loadLabSecrets(), timeoutMs = 15000, onEvent = null } = {}) {
   const chain = createProviderChain({ env, fetchImpl });
@@ -125,7 +142,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
   };
   const deepseekRequest = async (name, selectedModel, variant, prompt) => {
     if (!localOnly || !deepseekKey) return { ...telemetry(name, {}, 0, true), skipped: true, reason: 'DEEPSEEK_API_KEY ausente ou execução não-local' };
-    const response = await fetchImpl(`${DEEPSEEK_BASE}/chat/completions`, {
+    const response = await fetchWithTimeout(fetchImpl, `${DEEPSEEK_BASE}/chat/completions`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${deepseekKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: selectedModel, messages: [{ role: 'user', content: prompt }], max_tokens: 800 })
@@ -139,7 +156,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
   };
   const requestOpenAICompatible = async (name, endpoint, key, selectedModel, prompt) => {
     if (!localOnly || !key) return { ...telemetry(name, {}, 0, true), skipped: true, reason: `${name} key ausente` };
-    const response = await fetchImpl(endpoint, { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: selectedModel, messages: [{ role: 'user', content: prompt }], max_tokens: 800 }) });
+    const response = await fetchWithTimeout(fetchImpl, endpoint, { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: selectedModel, messages: [{ role: 'user', content: prompt }], max_tokens: 800 }) });
     if (!response.ok) throw providerError(name, response);
     const data = await response.json();
     const usage = data.usage || {};
@@ -150,7 +167,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
   return {
     async openrouter(prompt) {
       if (!localOnly || !key) return { ...telemetry('openrouter', {}, 0, true), skipped: true, reason: 'OPENROUTER_API_KEY ausente ou execução não-local' };
-      const response = await fetchImpl('https://openrouter.ai/api/v1/chat/completions', {
+      const response = await fetchWithTimeout(fetchImpl, 'https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: openRouterModel, messages: [{ role: 'user', content: prompt }], max_tokens: 800 })
@@ -163,7 +180,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
     },
     async mistral(prompt) {
       if (!localOnly || !mistralKey) return { ...telemetry('mistral', {}, 0, true), skipped: true, reason: 'MISTRAL_API_KEY ausente ou execução não-local' };
-      const response = await fetchImpl('https://api.mistral.ai/v1/chat/completions', {
+      const response = await fetchWithTimeout(fetchImpl, 'https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${mistralKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: mistralModel, messages: [{ role: 'user', content: prompt }], max_tokens: 800 })
@@ -176,7 +193,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
     },
     async gemini(prompt) {
       if (!localOnly || !geminiKey) return { ...telemetry('gemini', {}, 0, true), skipped: true, reason: 'GEMINI_API_KEY ausente ou execução não-local' };
-      const response = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models/${env?.GEMINI_MODEL || GEMINI_DEFAULT_MODEL}:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+      const response = await fetchWithTimeout(fetchImpl, `https://generativelanguage.googleapis.com/v1beta/models/${env?.GEMINI_MODEL || GEMINI_DEFAULT_MODEL}:generateContent?key=${encodeURIComponent(geminiKey)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -197,7 +214,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
       try {
         if (delay > 0) await new Promise(r => setTimeout(r, delay));
         const startedAt = Date.now();
-        const response = await fetchImpl('https://api.groq.com/openai/v1/chat/completions', {
+        const response = await fetchWithTimeout(fetchImpl, 'https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: { Authorization: `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ model: env?.GROQ_MODEL || 'openai/gpt-oss-20b', messages: [{ role: 'user', content: prompt }], max_tokens: 800 })
@@ -206,7 +223,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
         if (response.status === 429) {
           const retryMs = await groqRetryAfter(response);
           await new Promise(resolve => setTimeout(resolve, retryMs));
-          const retryResp = await fetchImpl('https://api.groq.com/openai/v1/chat/completions', {
+          const retryResp = await fetchWithTimeout(fetchImpl, 'https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: { Authorization: `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ model: env?.GROQ_MODEL || 'openai/gpt-oss-20b', messages: [{ role: 'user', content: prompt }], max_tokens: 800 })
@@ -241,7 +258,7 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
       return { reply, ...telemetry('workers_ai', { total_tokens: tokens }, 0), usage: data?.usage || { total_tokens: tokens } };
     },
     async pollinations(prompt) {
-      const response = await fetchImpl(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+      const response = await fetchWithTimeout(fetchImpl, `https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
       if (!response.ok) throw new Error(`Pollinations HTTP ${response.status}`);
       const reply = await response.text();
       const tokens = estimateTokens(reply || prompt);

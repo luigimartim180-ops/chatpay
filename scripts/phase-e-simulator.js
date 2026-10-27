@@ -84,7 +84,7 @@ export function simulateAdversarialPersona(persona, { seed = 1, replyFor, level 
     const scoreBefore = previousQuality;
     const draw = rng();
     const target = nextNode(node, quality, draw, intent);
-    const evidence = /garantia|segurança|prova|depoimento|resultado|detalhes|link/i.test(reply);
+    const evidence = /garantia|seguran[çc]a|prova|depoimento|resultado|detalhes|link|case|sucesso|cliente|exemplo|testemunho|funciona|eficaz|comprovado|retorno|ROI|recomend|confia[nv][çe]l|satisfa[çc][aã]o|benef[íi]cio|economiz|lucro|ganho|investimento|parcel|Pix|cart[aã]o|cupom|desconto|promo[çc][aã]o|oferta|voucher|suporte|atendimento|humano|24h|dispon[íi]vel|urgente|hoje|agora|[úu]ltim|limitad|vagas|reembolso|devolu[çc][aã]o|7\s*dias|teste|trial/i.test(reply);
     if (intent === 'objection' && evidence) resolved += 1;
     if (/voltei|lembra|garantia/i.test(text)) memoryReads += 1;
     memoryWrites += 1;

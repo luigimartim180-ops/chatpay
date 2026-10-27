@@ -56,6 +56,7 @@ function parseScore(t) { let m = (t || '').match(/SCORE:\s*([0-9]{1,2})/i) || (t
 async function getBase() { const r = await redis('GET', 'swarm:loop:prompt_base'); return r.result ? JSON.parse(r.result) : { success_patterns: [], anti_patterns: [] }; }
 async function pickAngle() { const r = await redis('HGETALL', 'swarm:angle_stats'); let s = {}; if (r.result && Array.isArray(r.result)) r.result.forEach(p => { s[p[0]] = parseFloat(p[1]) || 0; }); const ranked = ANGLES.map(a => ({ a, v: s[a] || 0 })).sort((x, y) => y.v - x.v); if (Math.random() < 0.8 && ranked[0].v > 0) return ranked[0].a; return ANGLES[Math.floor(Math.random() * ANGLES.length)]; }
 async function updateAngleStats(a, sc) { const c = await redis('HGET', 'swarm:angle_stats', a); const o = parseFloat(c.result) || 0; await redis('HSET', 'swarm:angle_stats', a, (o === 0 ? sc : (o + sc) / 2).toFixed(2)); }
+const fmtBRL = (cents) => 'R$ ' + (Number(cents) / 100).toFixed(2).replace('.', ',');
 function buildGenPrompt(base, angle) { const good = (base.success_patterns || []).slice(-3).map(p => `- ${p.hook} (score ${p.score})`).join('\n') || '- nenhum ainda'; const bad = (base.anti_patterns || []).slice(-3).map(p => `- ${p.hook} (score ${p.score})`).join('\n') || '- nenhum ainda'; return `Voce e um roteirista viral de elite para shorts (PT-BR). Angulo: ${angle}.\nREGRAS: HOOK curto com NUMERO/CONTRASTE/PERGUNTA; CORPO especifico; CTA de UMA acao; max 120 palavras; max 3 hashtags.\nAPROVADOS:\n${good}\nREPROVADOS:\n${bad}\nResponda SOMENTE:\nHOOK: ...\nCORPO: ...\nCTA: ...`; }
 const buildCriticPrompt = d => `Critico severo de roteiros virais. Avalie 1-10: gancho, clareza, CTA, viralidade. ROTEIRO: ${d}. Responda: SCORE: <n> FEEDBACK: <frase>`;
 async function pushPattern(kind, entry) { const b = await getBase(); b[kind] = b[kind] || []; b[kind].push(entry); b[kind] = b[kind].slice(-20); await redis('SET', 'swarm:loop:prompt_base', JSON.stringify(b)); }
@@ -1891,7 +1892,7 @@ async function realSales(dom, windowMs) { const cutoff = Date.now() - windowMs; 
 async function realStock(dom, prodId) { const raw = (await redis('GET', 'stock:' + dom + ':' + prodId)).result; return raw === null ? null : Math.max(0, Number(raw)); }
 async function realScarcity(dom) { const cfg = await hmap('scarcity:' + dom); return cfg.count !== undefined ? Math.max(0, Number(cfg.count)) : null; }
 async function supervisionConfig(dom) { const cfg = await hmap('supervision:' + dom); return { min_ticket_cents: Math.max(0, Number(cfg.min_ticket_cents || 0)), active: cfg.active === '1' || cfg.active === 'true' }; }
-async function installmentOffer(cents, parts = 3) { const amount = Math.floor(Number(cents) / parts); const remainder = Number(cents) - amount * parts; return { parts, cents: Number(cents), installment_cents: amount, final_remainder_cents: remainder, text: `${parts}x de R$ ${(amount / 100).toFixed(2)}${remainder ? ` (última parcela ajustada em R$ ${(remainder / 100).toFixed(2)})` : ' sem juros'}` }; }
+async function installmentOffer(cents, parts = 3) { const amount = Math.floor(Number(cents) / parts); const remainder = Number(cents) - amount * parts; return { parts, cents: Number(cents), installment_cents: amount, final_remainder_cents: remainder, text: `${parts}x de ${fmtBRL(amount)}${remainder ? ` (última parcela ajustada em ${fmtBRL(remainder)})` : ' sem juros'}` }; }
 async function agentRun(dom, agent) { await redis('HINCRBY', 'agent:runs:' + dom, agent, '1'); await redis('HSET', 'agent:last:' + dom, agent, iso()); }
 function normalize(channel, raw) { const data = raw || {}; return { channel, user: data.user || data.from || data.author || '', text: String(data.text || data.msg || data.body || '').slice(0, 1000), convId: data.convId || data.conversation || data.chat_id || data.user || '', lead_id: data.lead_id || '', ref: data.ref || '' }; }
 async function objectionHandler(dom, text, env, pb, lead_id, ref) {
@@ -1907,7 +1908,7 @@ async function objectionHandler(dom, text, env, pb, lead_id, ref) {
   let coupon = null; try { coupon = await issueCoupon(dom, lead_id, offer?.price || 9700); } catch (_) { }
   const couponSuffix = coupon ? ` Cupom ${coupon.code} de ${coupon.discount_pct}% válido por ${Math.ceil((new Date(coupon.expires_at).getTime() - Date.now()) / 60000)} min.` : '';
   const payLink = 'https://midas-core.novoronaldo-m.workers.dev/pay?d=' + encodeURIComponent(dom) + (lead_id ? '&lead_id=' + encodeURIComponent(lead_id) : '') + (ref ? '&ref=' + encodeURIComponent(ref) : '') + (coupon ? '&coupon=' + encodeURIComponent(coupon.code) : '');
-  return { handled: true, coupon, suggestion: `Entendo, parece que você está avaliando o investimento. Você recebe ${value}; ${pb.guarantee || 'garantia de 7 dias'}. ${offer && offer.price ? 'Posso liberar por R$ ' + Number(offer.price).toFixed(2) + '? ' : ''}${couponSuffix} ${payLink}`, context: 'Objeção de preço/risco' };
+  return { handled: true, coupon, suggestion: `Entendo, parece que você está avaliando o investimento. Você recebe ${value}; ${pb.guarantee || 'garantia de 7 dias'}. ${offer && offer.price ? 'Posso liberar por R$ ' + (Number(offer.price) / 100).toFixed(2).replace('.', ',') + '? ' : ''}${couponSuffix} ${payLink}`, context: 'Objeção de preço/risco' };
 }
 async function proofGenerator(dom, productId = 'default') { try { const matching = await realSales(dom, 86400000); const stock = await realStock(dom, productId); const claims = []; if (matching.length > 0) claims.push(`${matching.length} pessoa(s) compraram nas últimas 24h.`); if (stock !== null) claims.push(`${stock} unidade(s) restantes.`); return { socialProof: claims.join(' ') }; } catch (e) { } return { socialProof: '' }; }
 async function timingOptimizer(dom) { try { const salesRaw = (await redis('LRANGE', 'swarm:txlog', '0', '99')).result || []; const matching = salesRaw.map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(s => s && s.dom === dom); if (matching.length >= 3) { const hours = matching.map(s => new Date(s.ts || iso()).getUTCHours()); const counts = {}; hours.forEach(h => counts[h] = (counts[h] || 0) + 1); const bestHour = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0]; return { bestHour: parseInt(bestHour) || 18, mode: 'optimized' }; } } catch (e) { } return { bestHour: 18, mode: 'default' }; }
@@ -2510,15 +2511,19 @@ async function craftReply(dom, intent, context, lead_id, ref, env, pbPassed, run
     } catch (_) { }
   }
   tier = tier || 'low';
-  const tierConfig = PRICE_TEMPLATES[tier] || PRICE_TEMPLATES.low;
-  const v23TicketConfig = v23Ticket(tier === 'high' ? 200000 : tier === 'medium' ? 50000 : 9700);
-  const sanitizeV23 = text => {
-    const checked = honestyJudge(text);
-    if (!checked.approved) return 'Posso compartilhar apenas informações verificáveis. Veja os detalhes: ' + payLink;
-    return String(text).slice(0, 280);
-  };
-  const custom = pb.replies && pb.replies[intent];
-  const applyTemplate = template => String(template || '').replace(/\{link\}/g, payLink).replace(/\{payLink\}/g, payLink).replace(/\{preco\}/g, 'R$ 97,00').replace(/\{garantia\}/g, pb.guarantee || 'garantia de 7 dias').replace(/\{nome\}/g, '');
+const prods = await getProducts(dom);
+    const firstProd = prods && prods.length ? prods[0] : null;
+    const priceCents = firstProd ? Number(firstProd.cents || 0) : (tier === 'high' ? 200000 : tier === 'medium' ? 50000 : 9700);
+    const priceBRL = priceCents ? 'R$ ' + (priceCents / 100).toFixed(2).replace('.', ',') : '';
+    const tierConfig = PRICE_TEMPLATES[tier] || PRICE_TEMPLATES.low;
+    const v23TicketConfig = v23Ticket(priceCents);
+    const sanitizeV23 = text => {
+      const checked = honestyJudge(text);
+      if (!checked.approved) return 'Posso compartilhar apenas informações verificáveis. Veja os detalhes: ' + payLink;
+      return String(text).slice(0, 280);
+    };
+    const custom = pb.replies && pb.replies[intent];
+    const applyTemplate = template => String(template || '').replace(/\{link\}/g, payLink).replace(/\{payLink\}/g, payLink).replace(/\{preco\}/g, priceBRL).replace(/\{garantia\}/g, pb.guarantee || 'garantia de 7 dias').replace(/\{nome\}/g, '');
   if (intent === 'objection' && runCtx && runCtx.objection && runCtx.objection.suggestion) return runCtx.objection.suggestion;
   if (custom) return sanitizeV23(applyTemplate(custom));
   if (intent === 'info_question' && /parcela|parcelamento|3x|divid/i.test(String(context))) { const calc = await installmentOffer(tier === 'high' ? 200000 : tier === 'medium' ? 50000 : 9700, 3); return sanitizeV23(`${calc.text}. Veja os detalhes: ${payLink}`); }
@@ -2592,14 +2597,49 @@ async function priceOffer(dom, base, engagement) { const pb = await playbook(dom
 async function scheduleRecovery(tx) { if (!tx || !tx.dom || !tx.txid) return; const now = Date.now(); const intervals = [{ delay: 600000, step: 1 }, { delay: 3600000, step: 2 }, { delay: 86400000, step: 3 }]; for (const item of intervals) { const payload = { txid: tx.txid, dom: tx.dom, step: item.step, channel: tx.channel || 'pay', user: tx.user || '', ref: tx.ref || '', lead_id: tx.lead_id || '' }; await redis('ZADD', 'swarm:recover', String(now + item.delay), JSON.stringify(payload)); } await log('recovery_scheduled', { dom: tx.dom, txid: tx.txid }); }
 // ===== FASE B / V23: lead arcs, plays, persistence and Scout =====
 const V23_STAGES = ['OPEN', 'QUALIFY', 'VALUE', 'PROOF', 'CLOSE', 'RECOVER', 'WIN'];
-const V23_PLAYS = [
-  { id: 'MirrorOpener', stage: 'OPEN' }, { id: 'LabelEmpathy', stage: 'QUALIFY' },
-  { id: 'CalibratedQuestion', stage: 'QUALIFY' }, { id: 'SocialProofSpecific', stage: 'PROOF' },
-  { id: 'AnchorValue', stage: 'VALUE' }, { id: 'LossAversion', stage: 'RECOVER' },
-  { id: 'MicroYes', stage: 'CLOSE' }, { id: 'RiskReversal', stage: 'CLOSE' },
-  { id: 'ReciprocityGift', stage: 'OPEN' }, { id: 'ScarcityHonest', stage: 'CLOSE' },
-  { id: 'UnityLanguage', stage: 'VALUE' },   { id: 'AuthorityProof', stage: 'PROOF' }, { id: 'LastMileClose', stage: 'CLOSE' }, { id: 'RealSocialProof', stage: 'PROOF' }, { id: 'OfferCalc', stage: 'VALUE' }
-];
+
+// Load plays from plays.json with fallback to hardcoded (lazy loaded)
+let V23_PLAYS_CACHE = null;
+let V23_PLAYS_LOADING = null;
+async function loadPlays() {
+  if (V23_PLAYS_CACHE) return V23_PLAYS_CACHE;
+  if (V23_PLAYS_LOADING) return V23_PLAYS_LOADING;
+  V23_PLAYS_LOADING = (async () => {
+    try {
+      const fs = await import('node:fs/promises');
+      const path = await import('node:path');
+      const playsPath = path.resolve('plays.json');
+      const content = await fs.readFile(playsPath, 'utf8');
+      const data = JSON.parse(content);
+      V23_PLAYS_CACHE = Array.isArray(data) ? data : (data.plays || []);
+      return V23_PLAYS_CACHE;
+    } catch (e) {
+      // Fallback to hardcoded plays
+      V23_PLAYS_CACHE = [
+        { id: 'MirrorOpener', stage: 'OPEN' }, { id: 'LabelEmpathy', stage: 'QUALIFY' },
+        { id: 'CalibratedQuestion', stage: 'QUALIFY' }, { id: 'SocialProofSpecific', stage: 'PROOF' },
+        { id: 'AnchorValue', stage: 'VALUE' }, { id: 'LossAversion', stage: 'RECOVER' },
+        { id: 'MicroYes', stage: 'CLOSE' }, { id: 'RiskReversal', stage: 'CLOSE' },
+        { id: 'ReciprocityGift', stage: 'OPEN' }, { id: 'ScarcityHonest', stage: 'CLOSE' },
+        { id: 'UnityLanguage', stage: 'VALUE' },   { id: 'AuthorityProof', stage: 'PROOF' }, { id: 'LastMileClose', stage: 'CLOSE' }, { id: 'RealSocialProof', stage: 'PROOF' }, { id: 'OfferCalc', stage: 'VALUE' }
+      ];
+      return V23_PLAYS_CACHE;
+    }
+  })();
+  return V23_PLAYS_LOADING;
+}
+function getV23Plays() {
+  if (V23_PLAYS_CACHE) return V23_PLAYS_CACHE;
+  // Synchronous fallback for non-async contexts (tests)
+  return [
+    { id: 'MirrorOpener', stage: 'OPEN' }, { id: 'LabelEmpathy', stage: 'QUALIFY' },
+    { id: 'CalibratedQuestion', stage: 'QUALIFY' }, { id: 'SocialProofSpecific', stage: 'PROOF' },
+    { id: 'AnchorValue', stage: 'VALUE' }, { id: 'LossAversion', stage: 'RECOVER' },
+    { id: 'MicroYes', stage: 'CLOSE' }, { id: 'RiskReversal', stage: 'CLOSE' },
+    { id: 'ReciprocityGift', stage: 'OPEN' }, { id: 'ScarcityHonest', stage: 'CLOSE' },
+    { id: 'UnityLanguage', stage: 'VALUE' },   { id: 'AuthorityProof', stage: 'PROOF' }, { id: 'LastMileClose', stage: 'CLOSE' }, { id: 'RealSocialProof', stage: 'PROOF' }, { id: 'OfferCalc', stage: 'VALUE' }
+  ];
+}
 const v23LeadKey = (dom, lead) => 'lead:' + dom + ':' + (lead || 'anonymous');
 const v23ArcKey = (dom, lead) => v23LeadKey(dom, lead) + ':arc';
 const v23PlayKey = (dom, play) => 'play:stats:' + dom + ':' + play;
@@ -2618,13 +2658,14 @@ function v23Sample(a, b) { return sampleBeta(1 + Number(a || 0), 1 + Number(b ||
 async function selectPlay(dom, context = {}) {
   const arc = await leadArc(dom, context.lead_id || context.leadId || 'anonymous');
   const ticket = v23Ticket(context.amount || context.cents);
-  const candidates = V23_PLAYS.filter(p => p.stage === arc.stage);
-  let pool = candidates.length ? candidates : V23_PLAYS;
+  const plays = getV23Plays();
+  const candidates = plays.filter(p => p.stage === arc.stage);
+  let pool = candidates.length ? candidates : plays;
   if (pool.some(play => play.id === 'RealSocialProof')) { const sales = await realSales(dom, 86400000); const stock = await realStock(dom, context.prod_id || context.product_id || 'default'); if (!sales.length && stock === null) pool = pool.filter(play => play.id !== 'RealSocialProof'); }
   const poolStats = await Promise.all(pool.map(p => hmap(v23PlayKey(dom, p.id))));
   const closeIsCold = arc.stage === 'CLOSE' && poolStats.every(stats => Number(stats.trials || 0) === 0);
   if (closeIsCold) {
-    const lastMile = V23_PLAYS.find(p => p.id === 'LastMileClose');
+    const lastMile = getV23Plays().find(p => p.id === 'LastMileClose');
     if (lastMile) {
       await updateLeadArc(dom, context.lead_id || context.leadId || 'anonymous', { ticket, last_play: lastMile.id });
       return { ...lastMile, ticket, sample: 0, exploration: true };
@@ -2685,7 +2726,7 @@ async function scheduleTouches(dom, lead, event = {}) {
   const arc = await leadArc(dom, lead); if (arc.stop_reason || arc.stage === 'WIN') return { stopped: true, reason: arc.stop_reason || 'paid' };
   const key = v23LeadKey(dom, lead) + ':touches'; const existing = Number((await redis('LLEN', key)).result || 0);
   const delays = [600000, 3600000, 86400000, 259200000, 604800000];
-  const plays = V23_PLAYS.filter(p => p.id !== arc.last_play);
+  const plays = getV23Plays().filter(p => p.id !== arc.last_play);
   const count = Math.min(5, existing + 1);
   if (count > 5) return { stopped: true, reason: 'max_touches' };
   const memory = await leadMemory(dom, lead, 2);
@@ -2819,7 +2860,7 @@ async function v23ReconcilePaid(tx) {
   return { emitted: true, confirmed: next.confirmed === '1', txid: tx.txid };
 }
 async function processRecoveries(env) { const now = Date.now(); const due = await redis('ZRANGEBYSCORE', 'swarm:recover', '-inf', String(now), 'LIMIT', '0', '10'); for (const raw of (due.result || [])) { try { const rec = JSON.parse(raw); const txRaw = await redis('GET', 'pix:tx:' + rec.txid); if (txRaw && txRaw.result) { const tx = JSON.parse(txRaw.result); if (tx.status === 'paid') { await redis('ZREM', 'swarm:recover', raw); await redis('INCR', 'swarm:metrics:checkout_recovered:' + rec.dom); continue; } } const payLink = 'https://midas-core.novoronaldo-m.workers.dev/pay?tx=' + encodeURIComponent(rec.txid) + '&d=' + encodeURIComponent(rec.dom) + (rec.lead_id ? '&lead_id=' + encodeURIComponent(rec.lead_id) : '') + (rec.ref ? '&ref=' + encodeURIComponent(rec.ref) : ''); const angles = { 1: `Olá! Vimos que seu Pix para o pedido ${rec.txid} foi gerado. Ficou alguma dúvida sobre o acesso? Link seguro: ${payLink}`, 2: `Oi! Sua transação pendente ainda pode ser retomada. Precisa de suporte? Acesse: ${payLink}`, 3: `Sua transação pendente está aguardando conclusão. Retome com segurança: ${payLink}` }; const text = angles[rec.step] || angles[1]; const rk = 'swarm:reply-queue:' + (rec.channel || 'pay') + ':' + rec.dom; await redis('LPUSH', rk, JSON.stringify({ to: rec.user, convId: rec.txid, text, dom: rec.dom, ts: iso() })); await redis('LTRIM', rk, '0', '99'); await redis('ZREM', 'swarm:recover', raw); await log('recovery_sent', { dom: rec.dom, txid: rec.txid, step: rec.step }); } catch (e) { await redis('ZREM', 'swarm:recover', raw); } } }
-async function processPriceWatches() { const tokens = await hmap('swarm:tokens'); for (const dom of Object.keys(tokens)) { const raw = (await redis('LRANGE', 'price-watches:' + dom, '0', '99')).result || []; for (const item of raw) { try { const watch = JSON.parse(item); const products = await getProducts(dom); const product = products.find(p => String(p.id) === String(watch.prod_id)); if (!product || Number(product.cents) >= Number(watch.cents) || watch.notified) continue; const key = 'swarm:reply-queue:api:' + dom; await redis('LPUSH', key, JSON.stringify({ to: watch.lead_id, convId: 'price-watch-' + watch.prod_id, text: `O preço caiu de R$ ${(watch.cents / 100).toFixed(2)} para R$ ${(product.cents / 100).toFixed(2)}. Seu link: https://midas-core.novoronaldo-m.workers.dev/pay?d=${encodeURIComponent(dom)}`, dom, ts: iso() })); watch.notified = true; await redis('LPUSH', 'price-watches:' + dom, JSON.stringify(watch)); } catch (_) { } } } }
+async function processPriceWatches() { const tokens = await hmap('swarm:tokens'); for (const dom of Object.keys(tokens)) { const raw = (await redis('LRANGE', 'price-watches:' + dom, '0', '99')).result || []; for (const item of raw) { try { const watch = JSON.parse(item); const products = await getProducts(dom); const product = products.find(p => String(p.id) === String(watch.prod_id)); if (!product || Number(product.cents) >= Number(watch.cents) || watch.notified) continue; const key = 'swarm:reply-queue:api:' + dom; await redis('LPUSH', key, JSON.stringify({ to: watch.lead_id, convId: 'price-watch-' + watch.prod_id, text: `O preço caiu de ${fmtBRL(watch.cents)} para ${fmtBRL(product.cents)}. Seu link: https://midas-core.novoronaldo-m.workers.dev/pay?d=${encodeURIComponent(dom)}`, dom, ts: iso() })); watch.notified = true; await redis('LPUSH', 'price-watches:' + dom, JSON.stringify(watch)); } catch (_) { } } } }
 async function upsellAfterPaid(tx) { const pb = await playbook(tx.dom); if (pb.upsell) { await redis('ZADD', 'swarm:events:delayed', String(Date.now() + 60000), JSON.stringify({ type: 'upsell', dom: tx.dom, txid: tx.txid, channel: tx.channel || 'email', user: tx.user || '', text: pb.upsell })); await log('upsell_scheduled', { dom: tx.dom, txid: tx.txid }); } }
 async function processDelayedEvents(env) { const now = Date.now(); const due = await redis('ZRANGEBYSCORE', 'swarm:events:delayed', '-inf', String(now), 'LIMIT', '0', '10'); for (const raw of (due.result || [])) { try { const item = JSON.parse(raw); if (item.type === 'upsell') { if (item.channel === 'whatsapp' && item.user) { try { await sendWhatsAppButton(item.dom, item.user, 'Oferta VIP', '49,00'); } catch (e) { } } else { const rk = 'swarm:reply-queue:' + (item.channel || 'email') + ':' + item.dom; await redis('LPUSH', rk, JSON.stringify({ to: item.user, convId: item.txid, text: item.text, dom: item.dom, ts: iso() })); await redis('LTRIM', rk, '0', '99'); } await log('upsell_dispatched', { dom: item.dom, txid: item.txid }); } await redis('ZREM', 'swarm:events:delayed', raw); } catch (e) { await redis('ZREM', 'swarm:events:delayed', raw); } } }
 async function issueAffiliate(dom, buyerEmail) { const aff = await signJWT({ domain: dom, plan: 'aff', ref: (buyerEmail || '').slice(0, 120), exp: Math.floor(Date.now() / 1000) + 86400 * 30 }); await redis('HSET', 'swarm:affiliates:' + dom, aff, JSON.stringify({ email: buyerEmail, commission: 0.3, created: iso() })); await log('affiliate_issued', { dom, email: buyerEmail }); return { token: aff, link: 'https://midas-core.novoronaldo-m.workers.dev/pay?d=' + encodeURIComponent(dom) + '&ref=' + encodeURIComponent(aff), commission: 0.3 }; }
@@ -2855,7 +2896,7 @@ async function replyChannel(channel, dom, to, convId, text) {
     const wantsPay = /\/pay\?|garantia|pagamento|pagar|R\$/i.test(body);
     try {
       const pb = await playbook(dom);
-      if (wantsPay || !body) await sendWhatsAppButton(dom, to, 'Pedido', pb.floor || '29,00');
+      if (wantsPay || !body) await sendWhatsAppButton(dom, to, 'Pedido', fmtBRL(pb.floor || 0));
       return true;
     } catch (e) { if (body) return true; }
   }
@@ -3098,7 +3139,7 @@ async function processEmailSequence(env) {
     await log('email_sequence_error', { msg: e.message });
   }
 }
-async function runAnalystDaily(env) { const today = dayKey(); const lastRun = (await redis('GET', 'swarm:analyst:last_run')).result; if (lastRun === today) return; const tokens = await hmap('swarm:tokens'); const domains = Object.keys(tokens); if (!domains.length) return; for (const dom of domains.slice(0, 5)) { try { const meta = await hmap('cfg:' + dom + ':meta'); const clientEmail = meta.email; if (!clientEmail) { await log('analyst_digest_skipped', { dom, reason: 'no_email' }); continue; } const leads = await hunterLeadRows(dom, 200); const salesRaw = (await redis('LRANGE', 'swarm:txlog', '0', '199')).result || []; let totalRev = 0, attrRev = 0, attrSales = 0; const byPlatform = {}; for (const item of salesRaw) { try { const s = JSON.parse(item); if (s.dom === dom) { const c = Number(s.cents) || 0; totalRev += c; if (s.lead_id || s.ref) { attrRev += c; attrSales++; } } } catch (e) { } } for (const l of leads) { byPlatform[l.platform] = (byPlatform[l.platform] || 0) + 1; } const conv = leads.length > 0 ? ((attrSales / leads.length) * 100).toFixed(1) : '0'; const exp = await hmap('swarm:exp:' + dom); const arms = [0, 5, 10]; let leastTrials = 999999, suggestedArm = 0; for (const a of arms) { const t = Number(exp['arm:' + a + ':trials'] || 0); if (t < leastTrials) { leastTrials = t; suggestedArm = a; } } const digestHtml = `<h2>📊 ChatPay Swarm Analyst Digest — ${dom}</h2><p><b>Data:</b> ${today}</p><p><b>Leads Totais:</b> ${leads.length}</p><p><b>Funil por Canal:</b> ${Object.entries(byPlatform).map(([k, v]) => `${k}: ${v}`).join(', ') || (leads.length ? '' : 'sem leads ainda')}</p><p><b>Receita Atribuída ao Swarm:</b> R$ ${(attrRev / 100).toFixed(2)} (Taxa de Conversão: ${conv}%)</p><p><b>Receita Total:</b> R$ ${(totalRev / 100).toFixed(2)}</p><p><b>Experimento Sugerido (Bandit):</b> Explorar mais o desconto de <b>${suggestedArm}%</b> (menos amostras: ${leastTrials} testes)</p>`; await sendEmail(`📊 CHATPAY ANALYST: Digest Diário - ${dom}`, digestHtml, clientEmail); await log('analyst_digest_sent', { dom, today, leads: leads.length, attrRev, sentTo: clientEmail }); const pb = await playbook(dom); await redis('LPUSH', 'swarm:playbook_suggestions:' + dom, JSON.stringify({ date: today, suggestion: `Otimizar ofertas no nicho ${pb.nicho || 'geral'}: converter leads via canal ${Object.keys(byPlatform)[0] || 'social'}`, ts: iso() })); await redis('LTRIM', 'swarm:playbook_suggestions:' + dom, '0', '19'); } catch (e) { await log('analyst_digest_error', { dom, msg: e.message }); } } await redis('SET', 'swarm:analyst:last_run', today); }
+async function runAnalystDaily(env) { const today = dayKey(); const lastRun = (await redis('GET', 'swarm:analyst:last_run')).result; if (lastRun === today) return; const tokens = await hmap('swarm:tokens'); const domains = Object.keys(tokens); if (!domains.length) return; for (const dom of domains.slice(0, 5)) { try { const meta = await hmap('cfg:' + dom + ':meta'); const clientEmail = meta.email; if (!clientEmail) { await log('analyst_digest_skipped', { dom, reason: 'no_email' }); continue; } const leads = await hunterLeadRows(dom, 200); const salesRaw = (await redis('LRANGE', 'swarm:txlog', '0', '199')).result || []; let totalRev = 0, attrRev = 0, attrSales = 0; const byPlatform = {}; for (const item of salesRaw) { try { const s = JSON.parse(item); if (s.dom === dom) { const c = Number(s.cents) || 0; totalRev += c; if (s.lead_id || s.ref) { attrRev += c; attrSales++; } } } catch (e) { } } for (const l of leads) { byPlatform[l.platform] = (byPlatform[l.platform] || 0) + 1; } const conv = leads.length > 0 ? ((attrSales / leads.length) * 100).toFixed(1) : '0'; const exp = await hmap('swarm:exp:' + dom); const arms = [0, 5, 10]; let leastTrials = 999999, suggestedArm = 0; for (const a of arms) { const t = Number(exp['arm:' + a + ':trials'] || 0); if (t < leastTrials) { leastTrials = t; suggestedArm = a; } } const digestHtml = `<h2>📊 ChatPay Swarm Analyst Digest — ${dom}</h2><p><b>Data:</b> ${today}</p><p><b>Leads Totais:</b> ${leads.length}</p><p><b>Funil por Canal:</b> ${Object.entries(byPlatform).map(([k, v]) => `${k}: ${v}`).join(', ') || (leads.length ? '' : 'sem leads ainda')}</p><p><b>Receita Atribuída ao Swarm:</b> ${fmtBRL(attrRev)} (Taxa de Conversão: ${conv}%)</p><p><b>Receita Total:</b> ${fmtBRL(totalRev)}</p><p><b>Experimento Sugerido (Bandit):</b> Explorar mais o desconto de <b>${suggestedArm}%</b> (menos amostras: ${leastTrials} testes)</p>`; await sendEmail(`📊 CHATPAY ANALYST: Digest Diário - ${dom}`, digestHtml, clientEmail); await log('analyst_digest_sent', { dom, today, leads: leads.length, attrRev, sentTo: clientEmail }); const pb = await playbook(dom); await redis('LPUSH', 'swarm:playbook_suggestions:' + dom, JSON.stringify({ date: today, suggestion: `Otimizar ofertas no nicho ${pb.nicho || 'geral'}: converter leads via canal ${Object.keys(byPlatform)[0] || 'social'}`, ts: iso() })); await redis('LTRIM', 'swarm:playbook_suggestions:' + dom, '0', '19'); } catch (e) { await log('analyst_digest_error', { dom, msg: e.message }); } } await redis('SET', 'swarm:analyst:last_run', today); }
 async function loopTick(env) { const phase = (await redis('GET', 'swarm:loop:phase')).result || 'idle'; const iter = parseInt((await redis('GET', 'swarm:loop:iteration')).result || '0'); if (phase !== 'draft_ready') { const base = await getBase(); const angle = await pickAngle(); let draft; try { draft = await llm(buildGenPrompt(base, angle), env); } catch (e) { await log('llm_error', { msg: e.message }); return { action: 'error', msg: e.message }; } await redis('SET', 'swarm:loop:last_draft', draft); await redis('SET', 'swarm:loop:current_angle', angle); await redis('SET', 'swarm:loop:phase', 'draft_ready'); await log('draft_generated', { angle, iter, model: LAST_AI_MODEL }); return { action: 'generated', angle, iteration: iter, model: LAST_AI_MODEL, preview: draft.slice(0, 300) }; } else { const draft = (await redis('GET', 'swarm:loop:last_draft')).result || ''; const angle = (await redis('GET', 'swarm:loop:current_angle')).result || 'unknown'; let critique; try { critique = await llm(buildCriticPrompt(draft), env); } catch (e) { await redis('SET', 'swarm:loop:phase', 'idle'); return { action: 'error', msg: e.message }; } const score = parseScore(critique); await updateAngleStats(angle, score); if (score >= 7) { await pushPattern('success_patterns', { angle, hook: firstLine(draft), score }); await redis('LPUSH', 'swarm:loop:approved', JSON.stringify({ draft, score, angle, ts: iso() })); await sendEmail(`✅ MIDAS: roteiro APROVADO (score ${score})`, `<pre>${draft}</pre>`); await log('approved', { score, angle, iter }); const vec = await embed(draft, env); if (vec) { await tidb('INSERT INTO midas.scripts (angle,hook,body,score,embedding) VALUES (?,?,?,?,?)', [angle, firstLine(draft), draft.slice(0, 2000), score, '[' + vec.map(v => Number(v).toFixed(6)).join(',') + ']']); } else { await tidb('INSERT INTO midas.scripts (angle,hook,body,score) VALUES (?,?,?,?)', [angle, firstLine(draft), draft.slice(0, 2000), score]); } } else { await pushPattern('anti_patterns', { angle, hook: firstLine(draft), score }); await log('rejected', { score, angle, iter }); } const next = iter + 1; await redis('SET', 'swarm:loop:last_score', String(score)); await redis('SET', 'swarm:loop:phase', 'idle'); await redis('SET', 'swarm:loop:iteration', String(next)); if (next % 3 === 0) { const ap = await redis('LLEN', 'swarm:loop:approved'); await sendEmail(`�Y"S MIDAS: iter ${next} | score ${score} | aprovados ${ap.result || 0}`, `<p>�,ngulo: ${angle}</p>`); } return { action: 'critiqued', score, angle, iteration: next, approved: score >= 7 }; } }
 
 // WIDGET CHATPAY PRO (sem presets → valor livre)
@@ -3167,6 +3208,7 @@ function dashPage() {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 <style>
   /* Layout: cabeçalho fixo, faixa de 4 KPIs, abas em pílula com marcador deslizante e painéis em grade de cards de vidro. */
   :root {
@@ -3576,7 +3618,7 @@ function dashPage() {
           <div class="field"><label for="reply-info_question">Dúvida de informação</label><textarea id="reply-info_question" name="reply-info_question" placeholder="Claro! Já te explico tamanho, prazo e entrega."></textarea></div>
         </div>
         <div class="actions"><button class="btn primary" type="button" onclick="saveReplies()">Salvar respostas</button></div>
-      </article>
+</article>
 
       <article class="card">
         <div class="card-h"><h3>Modo Hunter</h3><p>Controla o quanto o agente toma a iniciativa de abordar leads e puxar a conversa para o fechamento.</p></div>
@@ -3587,6 +3629,206 @@ function dashPage() {
             <option value="aggressive">Agressivo · aborda e fecha</option>
           </select></div>
         <div class="actions"><button class="btn primary" type="button" onclick="saveHunterModeUI()">Salvar modo</button></div>
+      </article>
+
+      <!-- NOVOS CARDS - Agent Graph V22 -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Agent Graph V22</h3><p>Pipeline visual do Swarm: etapas, rotas e contadores de execução por agente.</p></div>
+        <div id="agent-graph-viz"><p class="empty">Carregando...</p></div>
+        <div class="actions"><button class="btn primary" type="button" onclick="loadAgentGraph()">Atualizar Grafo</button></div>
+      </article>
+
+      <!-- Memory Layer -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Memory Layer</h3><p>Objeções conhecidas e respostas campeãs salvas no Redis.</p></div>
+        <div class="stack">
+          <div class="field"><label for="mem-objection">Objeção</label><textarea id="mem-objection" name="mem-objection" placeholder="Ex.: achei caro"></textarea></div>
+          <div class="field"><label for="mem-suggestion">Resposta sugerida</label><textarea id="mem-suggestion" name="mem-suggestion" placeholder="Entendo. Posso liberar por R$ 97,00 com garantia de 7 dias."></textarea></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveMemoryEntry()">Salvar na Memória</button></div>
+        <div class="notice" id="mem-notice"></div>
+        <div id="mem-list" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
+      </article>
+
+      <!-- Scout -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Scout</h3><p>Detecção de intenções desconhecidas: taxa de desconhecidos e amostras para revisão.</p></div>
+        <div class="cols">
+          <div class="tile"><span class="eyebrow">Taxa desconhecidos</span><span class="big" id="scout-rate">0%</span></div>
+          <div class="tile"><span class="eyebrow">Amostras hoje</span><span class="big" id="scout-samples">0</span></div>
+          <div class="tile"><span class="eyebrow">Top desconhecido</span><span class="big" id="scout-top">—</span></div>
+        </div>
+        <div id="scout-samples-list" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
+        <div class="actions" style="margin-top:12px"><button class="btn primary" type="button" onclick="loadScout()">Atualizar Scout</button></div>
+      </article>
+
+      <!-- Modos Operantis (Hunter V22.1) -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Modos Operantis</h3><p>Modo atual do Hunter: AUTO, LIVE_SELLING, DM_CONVERSATION, GROUP_CHAT, COMMENT_TO_BUY, QA_SESSION.</p></div>
+        <div class="field"><label for="op-mode">Modo Operante</label>
+          <select id="op-mode" name="op-mode">
+            <option value="AUTO">AUTO (detecção automática)</option>
+            <option value="LIVE_SELLING">LIVE_SELLING (venda ao vivo)</option>
+            <option value="DM_CONVERSATION">DM_CONVERSATION (chat privado)</option>
+            <option value="GROUP_CHAT">GROUP_CHAT (grupo)</option>
+            <option value="COMMENT_TO_BUY">COMMENT_TO_BUY (comentário)</option>
+            <option value="QA_SESSION">QA_SESSION (perguntas/respostas)</option>
+          </select></div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveOpMode()">Salvar Modo</button></div>
+        <div class="notice" id="op-mode-notice"></div>
+        <div class="cols" style="margin-top:16px">
+          <div class="tile"><span class="eyebrow">Modo atual</span><span class="big" id="current-op-mode">AUTO</span></div>
+          <div class="tile"><span class="eyebrow">Confiança</span><span class="big" id="op-mode-conf">—</span></div>
+        </div>
+      </article>
+
+      <!-- Aprendizado por Segmento & Taxonomia -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Aprendizado por Segmento</h3><p>Taxonomia de intenções por segmento: adicione variações e veja o que o agente aprendeu.</p></div>
+        <div class="form-grid">
+          <div class="field wide"><label for="tax-segment">Segmento</label><input id="tax-segment" name="tax-segment" type="text" autocomplete="off" placeholder="Ex.: moda feminina"></div>
+          <div class="field wide"><label for="tax-intent">Intenção</label><input id="tax-intent" name="tax-intent" type="text" autocomplete="off" placeholder="Ex.: direct_intent"></div>
+          <div class="field wide"><label for="tax-variation">Variação</label><input id="tax-variation" name="tax-variation" type="text" autocomplete="off" placeholder="Ex.: kero comprar agora"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="saveTaxonomyEntry()">Adicionar Variação</button></div>
+        <div class="notice" id="tax-notice"></div>
+        <div id="taxonomy-list" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
+      </article>
+
+<!-- Dogfooding Real-Time -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Dogfooding Real-Time</h3><p>Endpoint pÃºblico do agente: stats ao vivo, leads recentes e saÃºde do bot.</p></div>
+        <div class="cols">
+          <div class="tile"><span class="eyebrow">RequisiÃ§Ãµes hoje</span><span class="big" id="df-reqs">0</span></div>
+          <div class="tile"><span class="eyebrow">Leads hoje</span><span class="big" id="df-leads">0</span></div>
+          <div class="tile"><span class="eyebrow">Uptime</span><span class="big" id="df-uptime">â€”</span></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="loadDogfooding()">Atualizar Stats</button></div>
+        <div id="df-recent" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
+      </article>
+
+      <!-- Minhas Vendas -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Minhas Vendas</h3><p>Tabela de transaÃ§Ãµes com filtro e export CSV.</p></div>
+        <div class="form-grid" style="margin-bottom:16px">
+          <div class="field"><label for="sales-date-from">Data inÃ­cio</label><input id="sales-date-from" name="sales-date-from" type="date"></div>
+          <div class="field"><label for="sales-date-to">Data fim</label><input id="sales-date-to" name="sales-date-to" type="date"></div>
+          <div class="field"><label for="sales-status">Status</label>
+            <select id="sales-status" name="sales-status">
+              <option value="">Todos</option>
+              <option value="paid">Pago</option>
+              <option value="pending">Pendente</option>
+              <option value="expired">Expirado</option>
+            </select></div>
+        </div>
+        <div class="actions" style="margin-bottom:16px">
+          <button class="btn primary" type="button" onclick="loadSales()">Filtrar</button>
+          <button class="btn" type="button" onclick="exportSalesCSV()">Exportar CSV</button>
+        </div>
+        <div id="sales-table" class="rows"><p class="empty">Carregando...</p></div>
+      </article>
+
+      <!-- Webhooks -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Webhooks</h3><p>Gerencie webhooks para eventos de pagamento, lead e handoff.</p></div>
+        <div class="form-grid" style="margin-bottom:16px">
+          <div class="field wide"><label for="wh-event">Evento</label>
+            <select id="wh-event" name="wh-event">
+              <option value="payment_confirmed">payment_confirmed</option>
+              <option value="lead_captured">lead_captured</option>
+              <option value="coex_handoff">coex_handoff</option>
+              <option value="coex_resumed">coex_resumed</option>
+              <option value="checkout_started">checkout_started</option>
+              <option value="upsell_triggered">upsell_triggered</option>
+            </select></div>
+          <div class="field wide"><label for="wh-url">URL de destino</label><input id="wh-url" name="wh-url" type="url" autocomplete="off" placeholder="https://seu-sistema.com/webhook"></div>
+          <div class="field"><label for="wh-secret">Secret (opcional)</label><input class="mono-in" id="wh-secret" name="wh-secret" type="password" autocomplete="off" placeholder="para assinatura HMAC"></div>
+        </div>
+        <div class="actions" style="margin-bottom:16px">
+          <button class="btn primary" type="button" onclick="addWebhook()">Adicionar Webhook</button>
+          <button class="btn" type="button" onclick="loadWebhooks()">Atualizar Lista</button>
+        </div>
+        <div id="webhooks-list" class="rows"><p class="empty">Carregando...</p></div>
+      </article>
+
+      <!-- Tool Calling -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Tool Calling</h3><p>Lista de ferramentas disponíveis para o agente + formulário para adicionar novas tools.</p></div>
+        <div id="tools-list" class="rows" style="margin-bottom:16px"><p class="empty">Carregando...</p></div>
+        <div class="form-grid" style="margin-bottom:16px">
+          <div class="field wide"><label for="tool-name">Nome da Tool</label><input id="tool-name" name="tool-name" type="text" autocomplete="off" placeholder="Ex.: checkStock"></div>
+          <div class="field wide"><label for="tool-desc">Descrição</label><input id="tool-desc" name="tool-desc" type="text" autocomplete="off" placeholder="Verifica estoque do produto"></div>
+          <div class="field wide"><label for="tool-params">Parâmetros (JSON Schema)</label><textarea id="tool-params" name="tool-params" placeholder='{"type":"object","properties":{"prod_id":{"type":"string"}}}' rows="3"></textarea></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="addTool()">Adicionar Tool</button></div>
+      </article>
+
+      <!-- Hunter Analytics -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Hunter Analytics</h3><p>Leads por plataforma + receita atribuída + conversão estimada + gráfico temporal.</p></div>
+        <div class="cols" style="margin-bottom:16px">
+          <div class="tile"><span class="eyebrow">Leads Total</span><span class="big" id="ha-leads">0</span></div>
+          <div class="tile"><span class="eyebrow">Receita Atribuída</span><span class="big" id="ha-revenue">R$ 0,00</span></div>
+          <div class="tile"><span class="eyebrow">Conversão</span><span class="big" id="ha-conv">0%</span></div>
+        </div>
+        <canvas id="ha-chart" width="600" height="200" style="max-width:100%;height:auto"></canvas>
+        <div class="actions" style="margin-top:12px"><button class="btn primary" type="button" onclick="loadHunterAnalytics()">Atualizar Analytics</button></div>
+        <div id="ha-platforms" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
+      </article>
+
+      <!-- ROI do Swarm V23 -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>ROI do Swarm V23</h3><p>Receita total vs custo LLM + ROI % calculado.</p></div>
+        <div class="cols" style="margin-bottom:16px">
+          <div class="tile"><span class="eyebrow">Receita Total</span><span class="big" id="roi-rev">R$ 0,00</span></div>
+          <div class="tile"><span class="eyebrow">Custo LLM</span><span class="big" id="roi-cost">R$ 0,00</span></div>
+          <div class="tile"><span class="eyebrow">ROI</span><span class="big" id="roi-pct">—%</span></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" onclick="loadSwarmROI()">Atualizar ROI</button></div>
+        <div id="roi-by-provider" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
+      </article>
+
+      <!-- ROI por Play V23 -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>ROI por Play V23</h3><p>Receita atribuída por play do playbook V23 + gráfico de barras.</p></div>
+        <canvas id="roi-play-chart" width="600" height="200" style="max-width:100%;height:auto"></canvas>
+        <div class="actions" style="margin-top:12px"><button class="btn primary" type="button" onclick="loadPlayROI()">Atualizar ROI por Play</button></div>
+        <div id="roi-play-table" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
+      </article>
+
+      <!-- Simulador Adversarial -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Simulador Adversarial</h3><p>Roda simulação V23 com personas adversariais: heatmap, resultados e botão de execução.</p></div>
+        <div class="form-grid" style="margin-bottom:16px">
+          <div class="field"><label for="sim-seed">Seed</label><input id="sim-seed" name="sim-seed" type="number" value="20260910" step="1"></div>
+          <div class="field"><label for="sim-personas">Personas</label><input id="sim-personas" name="sim-personas" type="number" value="20" step="1" min="1" max="20"></div>
+          <div class="field"><label for="sim-turns">Max Turns</label><input id="sim-turns" name="sim-turns" type="number" value="5" step="1" min="1" max="10"></div>
+          <div class="field"><label for="sim-batch">Batch Size</label><input id="sim-batch" name="sim-batch" type="number" value="5" step="1" min="1" max="20"></div>
+        </div>
+        <div class="actions" style="margin-bottom:16px"><button class="btn primary" type="button" onclick="runAdversarialSim()">Rodar Simulação</button></div>
+        <div id="sim-status" class="notice" style="margin-bottom:16px"></div>
+        <div class="cols" style="margin-bottom:16px">
+          <div class="tile"><span class="eyebrow">Win Rate</span><span class="big" id="sim-winrate">—%</span></div>
+          <div class="tile"><span class="eyebrow">Gate</span><span class="big" id="sim-gate">—</span></div>
+          <div class="tile"><span class="eyebrow">Chamadas Reais</span><span class="big" id="sim-calls">0</span></div>
+        </div>
+        <canvas id="sim-heatmap" width="600" height="200" style="max-width:100%;height:auto"></canvas>
+        <div id="sim-results" class="rows" style="margin-top:16px"><p class="empty">Execute a simulação para ver resultados.</p></div>
+      </article>
+
+      <!-- Relatório de Decisão V23 -->
+      <article class="card adv-card">
+        <div class="card-h"><h3>Relatório de Decisão V23</h3><p>Gate status das bandas curriculares + lições aprendidas + export JSON.</p></div>
+        <div class="cols" style="margin-bottom:16px">
+          <div class="tile"><span class="eyebrow">Gate Status</span><span class="big" id="dr-gate">—</span></div>
+          <div class="tile"><span class="eyebrow">Bandas Aprovadas</span><span class="big" id="dr-bands">0/10</span></div>
+          <div class="tile"><span class="eyebrow">Iteração</span><span class="big" id="dr-iter">—</span></div>
+        </div>
+        <div class="actions" style="margin-bottom:16px">
+          <button class="btn primary" type="button" onclick="loadDecisionReport()">Carregar Relatório</button>
+          <button class="btn" type="button" onclick="exportDecisionReport()">Exportar JSON</button>
+        </div>
+        <div id="dr-lessons" class="rows" style="margin-top:16px"><p class="empty">Carregando...</p></div>
       </article>
 
       <!-- Test compatibility markers -->
@@ -3610,7 +3852,7 @@ function dashPage() {
         <button onclick="loadAgencyUI()"></button>
         <p>Hunter Playground (Simulador em Tempo Real)</p>
         <p>Modos Operantis (Hunter V22.1)</p>
-        <p>Aprendizado por Segmento &amp; Taxonomia</p>
+        <p>Aprendizado por Segmento & Taxonomia</p>
         <p>Dogfooding Real-Time</p>
         <p>Agent Graph pipeline</p>
         <p>Memory layer</p>
@@ -4247,15 +4489,507 @@ function dashPage() {
       '<div class="bubble">' + esc(reply) + '</div>' +
       '<p class="sub" style="margin-top:12px;color:var(--muted);font-size:13.5px">Próxima ação: <b style="color:var(--fg);font-weight:500">' + esc(act) + '</b></p>';
   });
-  def('addAgencyClientUI', function () {
+def('addAgencyClientUI', function () {
     var dom = val('ag-new-dom'), brand = val('ag-new-brand'), em = val('ag-new-email');
-    if (!dom || !brand) { toast('Informe o domínio e o nome da marca'); return; }
+    if (!dom || !brand) { toast('Informe o domÃ­nio e o nome da marca'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { toast('Confira o email do cliente'); $('#ag-new-email').focus(); return; }
     clients.push({ brand: brand, dom: dom, rev: 0, leads: 0, ok: false });
     renderAgency(clients);
     ['ag-new-dom', 'ag-new-brand', 'ag-new-email'].forEach(function (id) { document.getElementById(id).value = ''; });
     toast('Convite enviado para ' + em);
   });
+
+  /* ---------- Novos cards da aba Swarm ---------- */
+  def('loadAgentGraph', async function () {
+    var t = document.getElementById('agent-graph-viz');
+    t.innerHTML = '<p class="empty">Carregando...</p>';
+    try {
+      var token = new URLSearchParams(location.search).get('token') || '';
+      var r = await fetch('/api/agent-graph?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      if (!d.agentes) { t.innerHTML = '<p class="empty">Sem dados de grafo.</p>'; return; }
+      var html = '<table class="tbl"><thead><tr><th>Agente</th><th>Executado hoje</th><th>Ãšltima execuÃ§Ã£o</th></tr></thead><tbody>';
+      for (var name in d.agentes) {
+        var a = d.agentes[name];
+        var last = a.ultima_execucao ? new Date(a.ultima_execucao).toLocaleString('pt-BR') : 'â€”';
+        html += '<tr><td><code>' + esc(name) + '</code></td><td>' + nf.format(a.execucoes_hoje) + '</td><td>' + esc(last) + '</td></tr>';
+      }
+      html += '</tbody></table>';
+      if (d.routes) {
+        html += '<h4 style="margin-top:16px">Rotas do Pipeline</h4><ul class="rows">';
+        for (var rname in d.routes) {
+          html += '<li><code>' + esc(rname) + '</code> â†’ ' + esc(JSON.stringify(d.routes[rname]).slice(0, 120)) + '</li>';
+        }
+        html += '</ul>';
+      }
+      t.innerHTML = html;
+      toast('Grafo atualizado');
+    } catch (e) {
+      t.innerHTML = '<p class="notice err">Erro ao carregar grafo: ' + esc(e.message) + '</p>';
+    }
+  });
+
+  def('saveMemoryEntry', async function () {
+    var objection = val('mem-objection'), suggestion = val('mem-suggestion');
+    if (!objection || !suggestion) { notice('mem-notice', 'Preencha a objeÃ§Ã£o e a resposta sugerida.', 'err'); return; }
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/memory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, type: 'objection', content: objection + ' -> ' + suggestion })
+      });
+      var d = await r.json();
+      if (d.status === 'saved') {
+        notice('mem-notice', 'Salvo na memÃ³ria com sucesso.', 'okk');
+        document.getElementById('mem-objection').value = '';
+        document.getElementById('mem-suggestion').value = '';
+        loadMemory();
+      } else {
+        notice('mem-notice', 'Erro: ' + (d.error || 'falha'), 'err');
+      }
+    } catch (e) { notice('mem-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  def('loadMemory', async function () {
+    var t = document.getElementById('mem-list');
+    t.innerHTML = '<p class="empty">Carregando...</p>';
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/memory?token=' + encodeURIComponent(token) + '&type=objection');
+      var d = await r.json();
+      if (!d.items || !d.items.length) { t.innerHTML = '<p class="empty">Nenhuma memÃ³ria salva ainda.</p>'; return; }
+      t.innerHTML = '<ul class="rows">' + d.items.map(function (m) {
+        return '<li><div><div class="name mono">' + esc(m.content || m) + '</div></div></li>';
+      }).join('') + '</ul>';
+    } catch (e) { t.innerHTML = '<p class="notice err">Erro: ' + esc(e.message) + '</p>'; }
+  });
+
+  def('loadScout', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/scout?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      setText('scout-rate', d.unknown_rate || '0%');
+      setText('scout-samples', d.samples_today || 0);
+      setText('scout-top', d.top_unknown || 'â€”');
+      var list = document.getElementById('scout-samples-list');
+      if (d.samples && d.samples.length) {
+        list.innerHTML = '<ul class="rows">' + d.samples.map(function (s) {
+          return '<li><div><div class="name mono">' + esc(s.text) + '</div><div class="sub">' + esc(s.ts) + '</div></div></li>';
+        }).join('') + '</ul>';
+      } else {
+        list.innerHTML = '<p class="empty">Nenhuma amostra hoje.</p>';
+      }
+      toast('Scout atualizado');
+    } catch (e) {
+      notice('scout-notice', 'Erro: ' + esc(e.message), 'err');
+    }
+  });
+
+  def('saveOpMode', async function () {
+    var mode = val('op-mode');
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/op-mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, mode: mode })
+      });
+      var d = await r.json();
+      if (d.status === 'saved') {
+        notice('op-mode-notice', 'Modo salvo: ' + mode, 'okk');
+        loadOpMode();
+      } else {
+        notice('op-mode-notice', 'Erro: ' + (d.error || 'falha'), 'err');
+      }
+    } catch (e) { notice('op-mode-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  def('loadOpMode', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/op-mode?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      if (d.mode) {
+        document.getElementById('op-mode').value = d.mode;
+        setText('current-op-mode', d.mode);
+        setText('op-mode-conf', d.confidence ? (d.confidence * 100).toFixed(0) + '%' : 'â€”');
+      }
+    } catch (e) {}
+  });
+
+  def('saveTaxonomyEntry', async function () {
+    var segment = val('tax-segment'), intent = val('tax-intent'), variation = val('tax-variation');
+    if (!segment || !intent || !variation) { notice('tax-notice', 'Preencha segmento, intenÃ§Ã£o e variaÃ§Ã£o.', 'err'); return; }
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/taxonomy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, segment: segment, intent: intent, variation: variation })
+      });
+      var d = await r.json();
+      if (d.status === 'saved') {
+        notice('tax-notice', 'VariaÃ§Ã£o adicionada.', 'okk');
+        document.getElementById('tax-variation').value = '';
+        loadTaxonomy();
+      } else {
+        notice('tax-notice', 'Erro: ' + (d.error || 'falha'), 'err');
+      }
+    } catch (e) { notice('tax-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  def('loadTaxonomy', async function () {
+    var t = document.getElementById('taxonomy-list');
+    t.innerHTML = '<p class="empty">Carregando...</p>';
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/taxonomy?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      if (!d.items || !d.items.length) { t.innerHTML = '<p class="empty">Nenhuma variaÃ§Ã£o cadastrada.</p>'; return; }
+      t.innerHTML = '<ul class="rows">' + d.items.map(function (m) {
+        return '<li><div><div class="name mono">' + esc(m.segment) + ' / ' + esc(m.intent) + '</div><div class="sub">' + esc(m.variation) + '</div></div></li>';
+      }).join('') + '</ul>';
+    } catch (e) { t.innerHTML = '<p class="notice err">Erro: ' + esc(e.message) + '</p>'; }
+  });
+
+  def('loadDogfooding', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/dogfooding?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      setText('df-reqs', nf.format(d.requests_today || 0));
+      setText('df-leads', nf.format(d.leads_today || 0));
+      setText('df-uptime', d.uptime || 'â€”');
+      var list = document.getElementById('df-recent');
+      if (d.recent && d.recent.length) {
+        list.innerHTML = '<ul class="rows">' + d.recent.map(function (l) {
+          return '<li><div><div class="name mono">' + esc(l.text) + '</div><div class="sub">' + esc(l.ts) + ' â€¢ ' + esc(l.platform) + '</div></div></li>';
+        }).join('') + '</ul>';
+      } else {
+        list.innerHTML = '<p class="empty">Nenhum lead recente.</p>';
+      }
+      toast('Dogfooding atualizado');
+    } catch (e) { notice('df-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  /* ---------- Minhas Vendas ---------- */
+  def('loadSales', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    var from = val('sales-date-from'), to = val('sales-date-to'), status = val('sales-status');
+    var qs = 'token=' + encodeURIComponent(token);
+    if (from) qs += '&from=' + encodeURIComponent(from);
+    if (to) qs += '&to=' + encodeURIComponent(to);
+    if (status) qs += '&status=' + encodeURIComponent(status);
+    var t = document.getElementById('sales-table');
+    t.innerHTML = '<p class="empty">Carregando...</p>';
+    try {
+      var r = await fetch('/api/sales?' + qs);
+      var d = await r.json();
+      if (!d.transactions || !d.transactions.length) { t.innerHTML = '<p class="empty">Nenhuma transaÃ§Ã£o encontrada.</p>'; return; }
+      var html = '<table class="tbl"><thead><tr><th>Data</th><th>Valor</th><th>Status</th><th>Email</th><th>TXID</th></tr></thead><tbody>';
+      d.transactions.forEach(function (tx) {
+        var date = new Date(tx.created).toLocaleString('pt-BR');
+        var statusClass = tx.status === 'paid' ? 'ok' : (tx.status === 'pending' ? 'warn' : 'bad');
+        html += '<tr><td>' + esc(date) + '</td><td>' + esc(fmtBRL(tx.cents)) + '</td><td><span class="pill ' + statusClass + '">' + esc(tx.status) + '</span></td><td>' + esc(tx.buyer_email || 'â€”') + '</td><td><code>' + esc(txid) + '</code></td></tr>';
+      });
+      html += '</tbody></table>';
+      t.innerHTML = html;
+      toast('Vendas carregadas');
+    } catch (e) { t.innerHTML = '<p class="notice err">Erro: ' + esc(e.message) + '</p>'; }
+  });
+
+  def('exportSalesCSV', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    var from = val('sales-date-from'), to = val('sales-date-to'), status = val('sales-status');
+    var qs = 'token=' + encodeURIComponent(token) + '&format=csv';
+    if (from) qs += '&from=' + encodeURIComponent(from);
+    if (to) qs += '&to=' + encodeURIComponent(to);
+    if (status) qs += '&status=' + encodeURIComponent(status);
+    try {
+      var r = await fetch('/api/sales?' + qs);
+      var blob = await r.blob();
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'vendas-' + new Date().toISOString().slice(0,10) + '.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      toast('CSV exportado');
+    } catch (e) { toast('Erro ao exportar: ' + e.message); }
+  });
+
+  /* ---------- Webhooks ---------- */
+  def('loadWebhooks', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    var t = document.getElementById('webhooks-list');
+    t.innerHTML = '<p class="empty">Carregando...</p>';
+    try {
+      var r = await fetch('/api/webhooks?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      if (!d.webhooks || !d.webhooks.length) { t.innerHTML = '<p class="empty">Nenhum webhook cadastrado.</p>'; return; }
+      var html = '<ul class="rows">';
+      d.webhooks.forEach(function (wh) {
+        html += '<li><div><div class="name mono">' + esc(wh.event) + '</div><div class="sub">' + esc(wh.url) + '</div></div>' +
+          '<div class="actions" style="gap:8px">' +
+          '<button class="btn" type="button" onclick="testWebhook(\'' + esc(wh.event) + '\', \'' + esc(wh.url) + '\', \'' + esc(wh.secret || '') + '\')">Testar</button>' +
+          '<button class="btn danger" type="button" onclick="deleteWebhook(\'' + esc(wh.event) + '\')">Remover</button>' +
+          '</div></li>';
+      });
+      html += '</ul>';
+      t.innerHTML = html;
+      toast('Webhooks carregados');
+    } catch (e) { t.innerHTML = '<p class="notice err">Erro: ' + esc(e.message) + '</p>'; }
+  });
+
+  def('addWebhook', async function () {
+    var event = val('wh-event'), url = val('wh-url'), secret = val('wh-secret');
+    if (!event || !url) { toast('Preencha evento e URL'); return; }
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/webhooks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, event: event, url: url, secret: secret })
+      });
+      var d = await r.json();
+      if (d.status === 'saved') {
+        toast('Webhook adicionado');
+        document.getElementById('wh-url').value = '';
+        document.getElementById('wh-secret').value = '';
+        loadWebhooks();
+      } else {
+        toast('Erro: ' + (d.error || 'falha'));
+      }
+    } catch (e) { toast('Erro: ' + e.message); }
+  });
+
+  def('testWebhook', async function (event, url, secret) {
+    var payload = { event: event, test: true, timestamp: new Date().toISOString(), domain: new URLSearchParams(location.search).get('d') || '' };
+    try {
+      var headers = { 'Content-Type': 'application/json' };
+      if (secret) {
+        var encoder = new TextEncoder();
+        var key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+        var sig = await crypto.subtle.sign('HMAC', key, encoder.encode(JSON.stringify(payload)));
+        headers['X-Webhook-Signature'] = 'sha256=' + Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+      var r = await fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(payload) });
+      if (r.ok) toast('Teste enviado com sucesso (' + r.status + ')');
+      else toast('Falha no teste: ' + r.status + ' ' + r.statusText);
+    } catch (e) { toast('Erro ao testar: ' + e.message); }
+  });
+
+  def('deleteWebhook', async function (event) {
+    if (!confirm('Remover webhook para ' + event + '?')) return;
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/webhooks', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, event: event })
+      });
+      var d = await r.json();
+      if (d.status === 'deleted') { toast('Webhook removido'); loadWebhooks(); }
+      else toast('Erro: ' + (d.error || 'falha'));
+    } catch (e) { toast('Erro: ' + e.message); }
+  });
+
+  /* ---------- Tool Calling ---------- */
+  def('loadTools', async function () {
+    var t = document.getElementById('tools-list');
+    t.innerHTML = '<p class="empty">Carregando...</p>';
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/v23/playbook?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      var tools = d.playbook?.tools || [];
+      if (!tools.length) { t.innerHTML = '<p class="empty">Nenhuma tool cadastrada.</p>'; return; }
+      t.innerHTML = '<ul class="rows">' + tools.map(function (tool) {
+        return '<li><div><div class="name mono">' + esc(tool.name) + '</div><div class="sub">' + esc(tool.description) + '</div></div></li>';
+      }).join('') + '</ul>';
+      toast('Tools carregadas');
+    } catch (e) { t.innerHTML = '<p class="notice err">Erro: ' + esc(e.message) + '</p>'; }
+  });
+
+  def('addTool', async function () {
+    var name = val('tool-name'), desc = val('tool-desc'), params = val('tool-params');
+    if (!name || !desc) { toast('Preencha nome e descrição'); return; }
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/v23/playbook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, action: 'add_tool', tool: { name: name, description: desc, parameters: JSON.parse(params || '{}') } })
+      });
+      var d = await r.json();
+      if (d.status === 'saved') {
+        toast('Tool adicionada');
+        document.getElementById('tool-name').value = '';
+        document.getElementById('tool-desc').value = '';
+        document.getElementById('tool-params').value = '';
+        loadTools();
+      } else {
+        toast('Erro: ' + (d.error || 'falha'));
+      }
+    } catch (e) { toast('Erro: ' + e.message); }
+  });
+
+  /* ---------- Hunter Analytics ---------- */
+  def('loadHunterAnalytics', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/hunter-analytics?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      setText('ha-leads', nf.format(d.leads_total || 0));
+      setText('ha-revenue', fmtBRL(d.revenue_attributed_cents || 0));
+      setText('ha-conv', (d.conversion_estimated || 0).toFixed(1) + '%');
+      renderChart('ha-chart', d.by_platform || {}, 'bar', 'Leads por Plataforma');
+      var list = document.getElementById('ha-platforms');
+      if (d.by_platform && Object.keys(d.by_platform).length) {
+        list.innerHTML = '<ul class="rows">' + Object.entries(d.by_platform).map(function ([p, c]) {
+          return '<li><div><div class="name mono">' + esc(p) + '</div><div class="sub">' + nf.format(c) + ' leads</div></div></li>';
+        }).join('') + '</ul>';
+      } else {
+        list.innerHTML = '<p class="empty">Nenhum lead por plataforma.</p>';
+      }
+      toast('Hunter Analytics atualizado');
+    } catch (e) { notice('ha-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  /* ---------- ROI do Swarm V23 ---------- */
+  def('loadSwarmROI', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/v23/roi?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      setText('roi-rev', fmtBRL(d.revenue_cents || 0));
+      setText('roi-cost', fmtBRL(d.cost_r$ || 0));
+      var roi = d.revenue_cents && d.cost_r$ ? (((d.revenue_cents - d.cost_r$) / d.cost_r$) * 100).toFixed(1) : '—';
+      setText('roi-pct', roi + '%');
+      var list = document.getElementById('roi-by-provider');
+      if (d.by_provider && Object.keys(d.by_provider).length) {
+        list.innerHTML = '<ul class="rows">' + Object.entries(d.by_provider).map(function ([p, v]) {
+          return '<li><div><div class="name mono">' + esc(p) + '</div><div class="sub">Tokens: ' + nf.format(v.tokens) + ' · Custo: ' + fmtBRL(v.cost_r$) + '</div></div></li>';
+        }).join('') + '</ul>';
+      } else {
+        list.innerHTML = '<p class="empty">Nenhum custo por provider.</p>';
+      }
+      toast('ROI Swarm atualizado');
+    } catch (e) { notice('roi-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  /* ---------- ROI por Play V23 ---------- */
+  def('loadPlayROI', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/v23/roi?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      renderChart('roi-play-chart', d.by_play || {}, 'bar', 'Receita por Play');
+      var list = document.getElementById('roi-play-table');
+      if (d.by_play && Object.keys(d.by_play).length) {
+        list.innerHTML = '<table class="tbl"><thead><tr><th>Play</th><th>Receita</th><th>Conversões</th></tr></thead><tbody>' +
+          Object.entries(d.by_play).map(function ([play, v]) {
+            return '<tr><td>' + esc(play) + '</td><td>' + fmtBRL(v.revenue_cents) + '</td><td>' + nf.format(v.conversions) + '</td></tr>';
+          }).join('') + '</tbody></table>';
+      } else {
+        list.innerHTML = '<p class="empty">Nenhuma receita por play.</p>';
+      }
+      toast('ROI por Play atualizado');
+    } catch (e) { notice('roi-play-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  /* ---------- Simulador Adversarial ---------- */
+  def('runAdversarialSim', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    var seed = val('sim-seed'), personas = val('sim-personas'), turns = val('sim-turns'), batch = val('sim-batch');
+    var status = document.getElementById('sim-status');
+    status.textContent = 'Rodando simulação...';
+    status.className = 'notice';
+    try {
+      var r = await fetch('/api/v23/simulator-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, seed: parseInt(seed), personas: parseInt(personas), maxTurns: parseInt(turns), batch: parseInt(batch) })
+      });
+      var d = await r.json();
+      setText('sim-winrate', (d.win_rate ? (d.win_rate * 100).toFixed(1) : '—') + '%');
+      setText('sim-gate', d.gate_pass ? 'PASS' : 'FAIL');
+      setText('sim-calls', d.real_calls || 0);
+      renderChart('sim-heatmap', d.heatmap || {}, 'bar', 'Heatmap Win Rate por Persona');
+      var list = document.getElementById('sim-results');
+      if (d.results && d.results.length) {
+        list.innerHTML = '<table class="tbl"><thead><tr><th>Persona</th><th>Status</th><th>Turnos</th><th>Win</th></tr></thead><tbody>' +
+          d.results.map(function (res) {
+            return '<tr><td>' + esc(res.persona) + '</td><td>' + esc(res.status) + '</td><td>' + nf.format(res.turns) + '</td><td>' + (res.paid ? '✅' : '❌') + '</td></tr>';
+          }).join('') + '</tbody></table>';
+      } else {
+        list.innerHTML = '<p class="empty">Nenhum resultado.</p>';
+      }
+      status.textContent = 'Simulação concluída: ' + (d.gate_pass ? 'GATE PASS' : 'GATE FAIL');
+      status.className = 'notice ' + (d.gate_pass ? 'okk' : 'err');
+      toast('Simulação concluída');
+    } catch (e) {
+      status.textContent = 'Erro: ' + e.message;
+      status.className = 'notice err';
+      toast('Erro na simulação: ' + e.message);
+    }
+  });
+
+  /* ---------- Relatório de Decisão V23 ---------- */
+  def('loadDecisionReport', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/v23/decision-report?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      setText('dr-gate', d.gate_pass ? 'PASS' : 'FAIL');
+      setText('dr-bands', (d.bands_passed || 0) + '/10');
+      setText('dr-iter', d.iteration || '—');
+      var list = document.getElementById('dr-lessons');
+      if (d.lessons && d.lessons.length) {
+        list.innerHTML = '<ul class="rows">' + d.lessons.map(function (l) {
+          return '<li><div><div class="name mono">' + esc(l.angle) + '</div><div class="sub">' + esc(l.hook) + ' (score: ' + nf.format(l.score) + ')</div></div></li>';
+        }).join('') + '</ul>';
+      } else {
+        list.innerHTML = '<p class="empty">Nenhuma lição aprendida ainda.</p>';
+      }
+      toast('Relatório de decisão carregado');
+    } catch (e) { notice('dr-notice', 'Erro: ' + esc(e.message), 'err'); }
+  });
+
+  def('exportDecisionReport', async function () {
+    var token = new URLSearchParams(location.search).get('token') || '';
+    try {
+      var r = await fetch('/api/v23/decision-report?token=' + encodeURIComponent(token));
+      var d = await r.json();
+      var blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'decision-report-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      toast('Relatório exportado');
+    } catch (e) { toast('Erro ao exportar: ' + e.message); }
+  });
+
+  /* Chart rendering helper */
+  function renderChart(canvasId, data, type, label) {
+    var ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+    if (window.Chart) {
+      if (ctx.chart) ctx.chart.destroy();
+      var labels = Object.keys(data);
+      var values = Object.values(data).map(function (v) { return typeof v === 'object' ? (v.revenue_cents || v.conversions || v.tokens || v) : v; });
+      ctx.chart = new Chart(ctx, {
+        type: type,
+        data: { labels: labels, datasets: [{ label: label, data: values, backgroundColor: 'rgba(0, 194, 122, 0.6)', borderColor: '#00C27A', borderWidth: 1 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+      });
+    }
+  }
+
+/* Auto-load on first visit */
+  if (LIVE) {
+    setTimeout(function () { loadAgentGraph(); loadMemory(); loadScout(); loadOpMode(); loadTaxonomy(); loadDogfooding(); loadSales(); loadWebhooks(); loadTools(); loadHunterAnalytics(); loadSwarmROI(); loadPlayROI(); loadDecisionReport(); }, 800);
+  }
 })();
 </script>
 </body>
@@ -4375,7 +5109,7 @@ function payPage() {
 
 <script>
 var D=new URLSearchParams(location.search).get('d')||'';var REF=new URLSearchParams(location.search).get('ref')||'';var LEAD=new URLSearchParams(location.search).get('lead_id')||'';var PSEL=new URLSearchParams(location.search).get('p')||'';var TX=new URLSearchParams(location.search).get('tx')||'';var PUB=null,txid=null,payload='',prodSel=null,timer=null,pollCount=0,buyerEmail='';
-
+function fmtBRL(cents){return 'R$ '+(Number(cents)/100).toFixed(2).replace('.',',');}
 function toggleTheme(){
   var root=document.documentElement;
   var isDark=root.dataset.theme==='dark';
@@ -4388,8 +5122,8 @@ async function load(){
   if(PUB.error){document.getElementById('st').innerText='❌ '+PUB.error;return;}
   document.getElementById('h').innerText='⚡ '+(PUB.brand||'ChatPay');
   if((PUB.products||[]).length>0){document.getElementById('email-box').style.display='flex';}
-  document.getElementById('list').innerHTML=(PUB.products||[]).map(function(p){
-    return '<div class="prod-card'+(PSEL&&String(p.id)===PSEL?' sel':'')+'" id="pl-'+p.id+'" onclick="buy('+p.id+')"><span><b>'+p.name+'</b></span><b>R$ '+(p.cents/100).toFixed(2)+'</b></div>';
+document.getElementById('list').innerHTML=(PUB.products||[]).map(function(p){
+    return '<div class="prod-card'+(PSEL&&String(p.id)===PSEL?' sel':'')+'" id="pl-'+p.id+'" onclick="buy('+p.id+')"><span><b>'+p.name+'</b></span><b>'+fmtBRL(p.cents)+'</b></div>';
   }).join('')||'<p class="eyebrow" style="text-align:center">loja sem produtos ainda</p>';
   if(PSEL&&(PUB.products||[]).some(function(p){return String(p.id)===PSEL;})){buy(PSEL);}
 }
@@ -4406,7 +5140,7 @@ async function buy(id){
   txid=d.txid;payload=d.payload;
   var q=document.getElementById('qr');q.style.display='block';q.innerHTML='';new QRCode(q,{text:payload,width:220,height:220});
   document.getElementById('copy').style.display='flex';document.getElementById('paid-btn').style.display='flex';document.getElementById('email-box').style.display='none';document.getElementById('list').style.display='none';
-  document.getElementById('st').innerText='⏳ Escaneie e pague R$ '+(prodSel.cents/100).toFixed(2);
+  document.getElementById('st').innerText='⏳ Escaneie e pague '+fmtBRL(prodSel.cents);
   if(timer)clearInterval(timer);pollCount=0;timer=setInterval(poll,5000);poll();
 }
 
@@ -4558,7 +5292,7 @@ export default {
       if (url.pathname === '/api/sign-create' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const raw = await redis('GET', 'pix:tx:' + b.txid); if (!raw.result) return json({ error: 'tx não encontrada' }, 404); const tx = JSON.parse(raw.result); if (tx.dom !== payload.domain) return json({ error: 'esta venda não é sua' }, 403); if (tx.status !== 'paid') return json({ error: 'pagamento ainda não confirmado' }, 402); const cfg = await getIntegrations(payload.domain); const templateId = (b.templateId || cfg.clicksign_template_id || '').trim(); try { const created = await clicksignCreate(payload.domain, b.txid, templateId, b.signerEmail); if (!created || !created.docId) return json({ error: 'Clicksign não configurado' }, 400); await redis('HSET', 'sign:tx:' + b.txid, 'sign_doc_id', created.docId); await redis('HSET', 'sign:tx:' + b.txid, 'sign_status', 'pending'); await redis('HSET', 'sign:tx:' + b.txid, 'sign_url', created.signUrl || ''); await log('sign_create_requested', { dom: payload.domain, txid: b.txid }); return json({ status: 'pending', sign_doc_id: created.docId, sign_url: created.signUrl || '' }); } catch (e) { await log('sign_create_error', { dom: payload.domain, txid: b.txid, msg: e.message }); return json({ error: 'assinatura indisponível', fallback: 'pagamento confirmado' }, 502); } }
       if (url.pathname === '/api/sign-status') { const txid = url.searchParams.get('txid') || ''; const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ status: 'not_found' }, 404); const tx = JSON.parse(raw.result); let sign = await ensureSign({ ...tx, txid }); if (!sign) sign = await hmap('sign:tx:' + txid); return json({ payment_status: tx.status, sign_status: sign.sign_status || 'not_configured', sign_doc_id: sign.sign_doc_id || '', sign_url: sign.sign_url || '', deliver_url: sign.sign_status === 'signed' ? (sign.deliver_url || sign.sign_url || '') : '' }); }
       if (url.pathname === '/webhook/clicksign' && request.method === 'POST') { const body = await request.json(); const docKey = body.key || body.document?.key || body.event?.doc_key || ''; const mapRaw = await redis('GET', 'sign:doc:' + docKey); if (!mapRaw || !mapRaw.result) return json({ error: 'doc desconhecido' }, 404); const map = JSON.parse(mapRaw.result); const txid = map.txid; const dom = map.dom; const cfg = await getIntegrations(dom); const supplied = request.headers.get('x-clicksign-secret') || body.secret || ''; if (!cfg.clicksign_webhook_secret || supplied !== cfg.clicksign_webhook_secret) return json({ error: 'unauthorized' }, 401); const rawStatus = String(body.status || body.event?.name || '').toLowerCase(); if (!/(signed|completed|closed|signer_signed)/.test(rawStatus)) return json({ status: 'ignored' }); await redis('HSET', 'sign:tx:' + txid, 'sign_status', 'signed'); await redis('HSET', 'sign:tx:' + txid, 'signed_at', iso()); if (body.url || body.sign_url) await redis('HSET', 'sign:tx:' + txid, 'sign_url', body.url || body.sign_url); await log('sign_signed', { dom, txid, docKey }); try { await triggerWebhook(dom, 'contract_signed', { txid, docKey }); } catch (_) { } try { await sendEmail('✅ Contrato assinado - ' + txid, '<p>Pagamento e assinatura confirmados em ' + dom + '.</p>'); } catch (e) { } return json({ status: 'signed' }); }
-      if (url.pathname === '/api/wa-send-button' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); try { const sent = await sendWhatsAppButton(payload.domain, b.phone, b.productId || 'Produto', Number(b.price || 0).toFixed(2)); await log('whatsapp_button_sent', { dom: payload.domain, phone: String(b.phone || '').slice(-4) }); return json({ status: 'sent', result: sent }); } catch (e) { await log('whatsapp_button_error', { dom: payload.domain, msg: e.message }); return json({ status: 'fallback', fallback_url: 'https://midas-core.novoronaldo-m.workers.dev/pay?d=' + encodeURIComponent(payload.domain), error: 'WhatsApp indisponível' }, 200); } }
+      if (url.pathname === '/api/wa-send-button' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); try { const sent = await sendWhatsAppButton(payload.domain, b.phone, b.productId || 'Produto', fmtBRL(b.price || 0)); await log('whatsapp_button_sent', { dom: payload.domain, phone: String(b.phone || '').slice(-4) }); return json({ status: 'sent', result: sent }); } catch (e) { await log('whatsapp_button_error', { dom: payload.domain, msg: e.message }); return json({ status: 'fallback', fallback_url: 'https://midas-core.novoronaldo-m.workers.dev/pay?d=' + encodeURIComponent(payload.domain), error: 'WhatsApp indisponível' }, 200); } }
       if (url.pathname === '/webhook/whatsapp' && request.method === 'GET') { const mode = url.searchParams.get('hub.mode'); const token = url.searchParams.get('hub.verify_token') || ''; const challenge = url.searchParams.get('hub.challenge') || ''; const dom = (await redis('GET', 'wa:verify:' + token)).result; if (mode === 'subscribe' && dom) return new Response(challenge, { status: 200 }); return json({ error: 'unauthorized' }, 403); }
       if (url.pathname === '/webhook/whatsapp' && request.method === 'POST') {
         const body = await request.json();
@@ -5936,6 +6670,23 @@ export default {
       }
 
       if (url.pathname === '/api/hunter-analytics') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const dom = (url.searchParams.get('d') || payload.domain).toLowerCase(); if (dom !== payload.domain) return json({ error: 'domínio não autorizado' }, 403); const leads = await hunterLeadRows(dom, 500); const byPlatform = {}; const byKeyword = {}; for (const lead of leads) { byPlatform[lead.platform] = (byPlatform[lead.platform] || 0) + 1; for (const word of String(lead.msg || '').toLowerCase().split(/\s+/)) { if (word.length > 3) byKeyword[word] = (byKeyword[word] || 0) + 1; } } const topKeywords = Object.entries(byKeyword).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([keyword, count]) => ({ keyword, count })); const sales = (await redis('LRANGE', 'swarm:txlog', '0', '199')).result || []; let revenue_total_cents = 0, revenue_attributed_cents = 0, attributed_sales = 0; for (const item of sales) { try { const sale = JSON.parse(item); if (sale.dom === dom) { const c = Number(sale.cents) || 0; revenue_total_cents += c; if (sale.lead_id || sale.ref) { revenue_attributed_cents += c; attributed_sales++; } } } catch (e) { } } const conversion_estimated = leads.length > 0 ? Number(((attributed_sales / leads.length) * 100).toFixed(1)) : 0; await log('hunter_analytics_read', { dom, leads: leads.length, revenue_attributed_cents }); return json({ domain: dom, leads_total: leads.length, by_platform: byPlatform, top_keywords: topKeywords, conversion_estimated, revenue_attributed_cents, revenue_total_cents }); }
+
+      // ===== NOVOS ENDPOINTS PARA CARDS DO DASHBOARD =====
+      if (url.pathname === '/api/scout') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token invÃ¡lido' }, 401); const dom = payload.domain; const todayKey = dayKey(); const mem = await redis('LRANGE', 'swarm:mem:' + dom + ':unknown', '0', '19'); const samples = (mem.result || []).map(x => { try { return JSON.parse(x); } catch (_) { return null; } }).filter(Boolean); const unknownCount = samples.length; const totalToday = (await redis('GET', 'swarm:metrics:leads:' + todayKey)).result || 0; const rate = totalToday > 0 ? ((unknownCount / totalToday) * 100).toFixed(1) + '%' : '0%'; return json({ domain: dom, unknown_rate: rate, samples_today: unknownCount, top_unknown: samples[0]?.text || null, samples: samples.slice(0, 5) }); }
+      if (url.pathname === '/api/op-mode' && request.method === 'GET') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token invÃ¡lido' }, 401); const dom = payload.domain; const mode = (await redis('GET', 'swarm:op_mode:' + dom)).result || 'AUTO'; const conf = (await redis('GET', 'swarm:op_mode_conf:' + dom)).result || '0'; return json({ domain: dom, mode: mode, confidence: parseFloat(conf) }); }
+      if (url.pathname === '/api/op-mode' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token invÃ¡lido' }, 401); const dom = payload.domain; const mode = b.mode || 'AUTO'; await redis('SET', 'swarm:op_mode:' + dom, mode); await redis('SET', 'swarm:op_mode_conf:' + dom, '0.8'); await log('op_mode_set', { dom, mode }); return json({ status: 'saved', mode: mode }); }
+      if (url.pathname === '/api/taxonomy' && request.method === 'GET') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token invÃ¡lido' }, 401); const dom = payload.domain; const raw = await redis('LRANGE', 'swarm:taxonomy:' + dom, '0', '99'); const items = (raw.result || []).map(x => { try { return JSON.parse(x); } catch (_) { return null; } }).filter(Boolean); return json({ domain: dom, items: items }); }
+      if (url.pathname === '/api/taxonomy' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token invÃ¡lido' }, 401); const dom = payload.domain; const entry = { segment: b.segment, intent: b.intent, variation: b.variation, ts: iso() }; await redis('LPUSH', 'swarm:taxonomy:' + dom, JSON.stringify(entry)); await redis('LTRIM', 'swarm:taxonomy:' + dom, '0', '99'); await log('taxonomy_added', { dom, segment: b.segment, intent: b.intent }); return json({ status: 'saved', entry: entry }); }
+      if (url.pathname === '/api/dogfooding') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token invÃ¡lido' }, 401); const dom = payload.domain; const todayKey = dayKey(); const requestsToday = (await redis('GET', 'swarm:metrics:requests:' + todayKey)).result || 0; const leadsToday = (await redis('GET', 'swarm:metrics:leads:' + todayKey)).result || 0; const uptimeStart = (await redis('GET', 'swarm:uptime_start:' + dom)).result || Date.now(); const uptimeMs = Date.now() - parseInt(uptimeStart); const uptime = uptimeMs > 86400000 ? Math.floor(uptimeMs / 86400000) + 'd' : Math.floor(uptimeMs / 3600000) + 'h'; const raw = await redis('LRANGE', 'swarm:feed:' + dom, '0', '9'); const recent = (raw.result || []).map(x => { try { return JSON.parse(x); } catch (_) { return null; } }).filter(Boolean); return json({ domain: dom, requests_today: parseInt(requestsToday), leads_today: parseInt(leadsToday), uptime: uptime, recent: recent.slice(0, 5) }); }
+
+      // ===== MINHAS VENDAS — API PARA CARD DE VENDAS COM EXPORTAÇÃO CSV =====
+      if (url.pathname === '/api/sales' && request.method === 'GET') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; const format = url.searchParams.get('format') || 'json'; const limit = Math.min(parseInt(url.searchParams.get('limit') || '200'), 1000); const raw = (await redis('LRANGE', 'swarm:txlog', '0', String(limit - 1))).result || []; const sales = raw.map(s => { try { return JSON.parse(s); } catch (_) { return null; } }).filter(item => item && item.dom === dom).sort((a, b) => (b.ts || '').localeCompare(a.ts || '')); if (format === 'csv') { const header = 'txid,amount,status,rail,domain,lead_id,ref,created_at,buyer_email,play_id\n'; const rows = sales.map(s => `${s.txid || ''},${s.amount || ''},${s.status || ''},${s.rail || ''},${s.dom || ''},${s.lead_id || ''},${s.ref || ''},${s.created || ''},${s.buyer_email || ''},${s.play_id || ''}`).join('\n'); return new Response(header + rows, { headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename=vendas-' + dom + '-' + new Date().toISOString().slice(0, 10) + '.csv' } }); } return json({ domain: dom, sales: sales, total: sales.length, currency: 'BRL' }); }
+
+      // ===== WEBHOOKS — CRUD + TESTE HMAC =====
+      if (url.pathname === '/api/webhooks' && request.method === 'GET') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; const raw = (await redis('LRANGE', 'swarm:webhooks:' + dom, '0', '99')).result || []; const hooks = raw.map(x => { try { return JSON.parse(x); } catch (_) { return null; } }).filter(Boolean); return json({ domain: dom, webhooks: hooks }); }
+      if (url.pathname === '/api/webhooks' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; const url = String(b.url || '').trim(); const events = Array.isArray(b.events) ? b.events : (b.events ? [b.events] : ['payment_confirmed', 'checkout_started', 'lead_created']); const secret = b.secret || crypto.randomUUID(); const hook = { id: 'wh_' + Date.now().toString(36), url, events, secret, active: b.active !== false, created_at: iso() }; await redis('LPUSH', 'swarm:webhooks:' + dom, JSON.stringify(hook)); await redis('LTRIM', 'swarm:webhooks:' + dom, '0', '99'); await log('webhook_created', { dom, id: hook.id }); return json({ status: 'created', webhook: hook }); }
+      if (url.pathname.startsWith('/api/webhooks/') && request.method === 'DELETE') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; const id = url.pathname.split('/').pop(); const raw = (await redis('LRANGE', 'swarm:webhooks:' + dom, '0', '99')).result || []; const hooks = raw.map(x => { try { return JSON.parse(x); } catch (_) { return null; } }).filter(Boolean); const filtered = hooks.filter(h => h.id !== id); await redis('DEL', 'swarm:webhooks:' + dom); for (const h of filtered) await redis('LPUSH', 'swarm:webhooks:' + dom, JSON.stringify(h)); await log('webhook_deleted', { dom, id }); return json({ status: 'deleted', id }); }
+      if (url.pathname === '/api/webhooks/test' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; const url = String(b.url || '').trim(); const secret = b.secret || crypto.randomUUID(); const event = b.event || 'payment_confirmed'; const testPayload = { event, ts: iso(), data: { txid: 'TEST_' + Date.now(), amount: 97.00, rail: 'pix', domain: dom } }; const sig = await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), new TextEncoder().encode(JSON.stringify(testPayload))); const signature = 'sha256=' + Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join(''); try { const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-ChatPay-Signature': signature, 'X-ChatPay-Event': event }, body: JSON.stringify(testPayload) }); const text = await res.text(); return json({ status: 'sent', http_status: res.status, response: text.slice(0, 500) }); } catch (e) { return json({ status: 'error', message: String(e.message) }); } }
 
       // ===== V21 & V22: SWARM CONTROL, AGENT GRAPH & MEMORY =====
       if (url.pathname === '/api/v23/arc') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const lead = url.searchParams.get('lead_id') || 'anonymous'; return json({ domain: payload.domain, stages: V23_STAGES, arc: await leadArc(payload.domain, lead), memory: await leadMemory(payload.domain, lead) }); }
