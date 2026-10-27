@@ -1,0 +1,15 @@
+[
+  {"id":"MirrorOpener","name":"Mirror opener","stage":"OPEN","template":"Entendo que você {mirror}. Segue o link oficial: {link}"},
+  {"id":"LabelEmpathy","name":"Label empathy","stage":"QUALIFY","template":"Entendo que {emotion}. Mas considere que você tem 7 dias de garantia para testar sem risco: {link}"},
+  {"id":"CalibratedQuestion","name":"Calibrated question","stage":"QUALIFY","template":"Se o preço não fosse problema, você começaria hoje?"},
+  {"id":"SocialProofSpecific","name":"Social proof specific","stage":"PROOF","template":"Veja resultados verificáveis de clientes: {link}"},
+  {"id":"AnchorValue","name":"Anchor value","stage":"VALUE","template":"Compare o valor do tempo poupado antes do preço: {link}"},
+  {"id":"LossAversion","name":"Loss aversion","stage":"RECOVER","template":"Se esperar, você mantém o problema atual. Se fizer sentido, avance: {link}"},
+  {"id":"MicroYes","name":"Micro yes","stage":"CLOSE","template":"Faz sentido começar simples? Então este é o checkout: {link}"},
+  {"id":"RiskReversal","name":"Risk reversal","stage":"CLOSE","template":"A garantia de 7 dias protege seu teste. Veja os detalhes: {link}"},
+  {"id":"ReciprocityGift","name":"Reciprocity gift","stage":"OPEN","template":"Aqui vai uma orientação gratuita para começar: {link}"},
+  {"id":"ScarcityHonest","name":"Scarcity honest","stage":"CLOSE","template":"Só uso prazo ou limite quando estiver configurado e verificável: {link}"},
+  {"id":"UnityLanguage","name":"Unity language","stage":"VALUE","template":"Aqui a gente começa pelo que é simples e seguro: {link}"},
+  {"id":"AuthorityProof","name":"Authority proof","stage":"PROOF","template":"Confira a credencial ou resultado verificável antes de decidir: {link}"},
+  {"id":"LastMileClose","name":"Last mile close","stage":"CLOSE","template":"Sua garantia de 7 dias começa assim que você pagar. Conclua com segurança aqui: {link}"}
+]
