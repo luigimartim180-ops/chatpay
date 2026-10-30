@@ -3325,7 +3325,8 @@ card.querySelector('#cpw-copy').onclick=function(){navigator.clipboard.writeText
 async function poll(){if(!txid)return;var r=await fetch(api+'/chatpay/status?txid='+txid);var d=await r.json();if(d.status==='paid'){clearInterval(timer);dot('paid');stMsg('✅ Pago R$ '+d.amount+' → confirmado!',true);if(window.onChatPayPaid)window.onChatPayPaid(d);}}
 })();`;
 
-function dashPage() {
+function dashPage(runtimeMode) {
+  const safeRuntimeMode = runtimeMode === 'staging' ? 'staging' : 'production';
   return `<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -3337,10 +3338,9 @@ function dashPage() {
 
   INTEGRAÇÃO COM O BACKEND
   - Todos os ids e onclick do briefing estão no HTML. Seus scripts podem preencher os elementos por id.
-  - As funções chamadas nos onclick (saveSwarm, saveReplies, loadUsageMetrics, etc.) têm uma versão de
-    demonstração no final deste arquivo. Cada uma só é criada se a sua versão ainda não existir em window.
-    Se o seu backend carregar depois, a sua função substitui a de demonstração sem conflito.
-  - Para desligar os dados de exemplo, defina window.CHATPAY_LIVE = true antes deste script.
+  - Implementações de demonstração só rodam quando ?mode=demo é explicitamente selecionado no harness local.
+  - No modo live, o painel usa GETs autenticados e bloqueia formulários e ações que possam escrever ou enviar.
+  - Dados reais são o padrão. ?mode=demo fica reservado ao harness local; ações de escrita ficam bloqueadas em modo live.
   - Os ids um-cost-today e um-tokens-today aparecem uma vez (card KPI). A aba "Custos" espelha esses
     valores automaticamente (data-mirror), porque ids duplicados quebram getElementById.
 -->
@@ -3591,6 +3591,7 @@ function dashPage() {
   .btn.danger { color: var(--bad); border-color: var(--bad); background: var(--bad-soft); }
   .btn.danger:hover { background: var(--bad); color: #0A0A0A; }
   .btn.sm { height: 38px; padding: 0 16px; font-size: 13.5px; }
+  .btn:disabled, button:disabled { opacity: .55; cursor: not-allowed !important; transform: none !important; box-shadow: none !important; }
 
   /* Selos, avisos, listas */
   .pill { display: inline-flex; align-items: center; gap: 7px; font-family: var(--f-mono); font-size: 11.5px; font-weight: 500; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
@@ -4042,7 +4043,7 @@ function dashPage() {
 
   <!-- ABA 2 · CUSTOS -->
   <section class="panel" role="tabpanel" id="p-custos" aria-labelledby="t-custos" hidden>
-    <div class="panel-h"><div><h2>Custos e uso de LLM</h2><p>Quanto cada provedor e cada agente consumiu. Alertas aparecem quando a quota ou o custo saem do normal.</p></div>
+    <div class="panel-h"><div><h2>Custos e uso de LLM</h2><p>Estimativas internas de uso e custo registradas pelo Worker; não substituem a quota Neurons nem a fatura Cloudflare.</p></div>
       <button class="btn" type="button" onclick="loadUsageMetrics()">Atualizar Métricas</button></div>
     <div class="cols">
       <div class="tile"><span class="eyebrow">Hoje</span><span class="big" data-mirror="um-cost-today">US$ 0,00</span><div class="tile-row"><span class="sub">tokens</span><span class="mono-v" data-mirror="um-tokens-today">0</span></div></div>
@@ -4052,7 +4053,7 @@ function dashPage() {
     <div class="grid">
       <article class="card"><div class="card-h"><h3>Por provedor</h3><p>Custo de hoje por provedor de LLM.</p></div><div id="um-by-provider"><p class="empty">Sem dados ainda. Clique em Atualizar Métricas.</p></div></article>
       <article class="card"><div class="card-h"><h3>Execuções por agente</h3><p>Quantas vezes cada agente rodou hoje.</p></div><div id="um-agents"><p class="empty">Sem dados ainda.</p></div></article>
-      <article class="card"><div class="card-h"><h3>Alertas</h3><p>Quota acima de 80% ou custo mais de 15% acima da média.</p></div><div id="um-alerts"><p class="empty">Nenhum alerta.</p></div></article>
+      <article class="card"><div class="card-h"><h3>Alertas</h3><p>Limiares calculados pelas métricas internas de uso e custo estimado.</p></div><div id="um-alerts"><p class="empty">Nenhum alerta.</p></div></article>
       <article class="card"><div class="card-h"><h3>Chamadas de voz</h3><p>Resumo do dia no Voice AI.</p></div><div id="voice-metrics"><p class="empty">Sem chamadas hoje.</p></div></article>
     </div>
   </section>
@@ -4242,13 +4243,15 @@ function dashPage() {
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
+window.CHATPAY_ENV = '${safeRuntimeMode}';
 (function () {
   'use strict';
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var LIVE = !!window.CHATPAY_LIVE;
+    var requestedMode = new URLSearchParams(location.search).get('mode');
+    var LIVE = window.CHATPAY_LIVE === true || requestedMode !== 'demo';
   var brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
   var usd = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'USD' });
   var nf = new Intl.NumberFormat('pt-BR');
@@ -4429,31 +4432,45 @@ function dashPage() {
     hit.addEventListener('pointerleave', leave);
   }
   var sparkEls = $$('[data-spark]');
-  function renderAllSparks() { sparkEls.forEach(renderSpark); }
+  function renderAllSparks() {
+    if (LIVE) {
+      sparkEls.forEach(function (el) { el.innerHTML = '<span class="empty">Histórico real não disponível.</span>'; });
+      return;
+    }
+    sparkEls.forEach(renderSpark);
+  }
   var lastW = 0;
   if ('ResizeObserver' in window) {
     new ResizeObserver(function () { var w = sparkEls[0] ? sparkEls[0].clientWidth : 0; if (w !== lastW) { lastW = w; renderAllSparks(); } }).observe(document.body);
   }
   renderAllSparks();
 
-  /* ---------- Renderizadores de demonstração ---------- */
+  /* ---------- Renderizadores de métricas ---------- */
   function renderProviders(list) {
-    var max = Math.max.apply(null, list.map(function (p) { return p.cost; }));
+    if (!list.length) { $('#um-by-provider').innerHTML = '<p class="empty">Nenhum uso por provedor registrado.</p>'; return; }
+    var max = Math.max(0, ...list.map(function (p) { return Number(p.cost) || 0; }));
     $('#um-by-provider').innerHTML = list.map(function (p) {
-      return '<div class="bar"><span class="name">' + esc(p.n) + '</span><span class="val">' + usd.format(p.cost) + ' · ' + nf.format(p.tokens) + ' tok</span><div class="rail"><div class="fill" style="--w:' + (p.cost / max * 100).toFixed(1) + '%"></div></div></div>';
+      var cost = Number(p.cost) || 0;
+      var formattedCost = p.currency === 'BRL' ? brl.format(cost) : usd.format(cost);
+      var width = max > 0 ? (cost / max * 100).toFixed(1) : '0';
+      return '<div class="bar"><span class="name">' + esc(p.n) + '</span><span class="val">' + formattedCost + ' · ' + nf.format(p.tokens || 0) + ' tok</span><div class="rail"><div class="fill" style="--w:' + width + '%"></div></div></div>';
     }).join('');
   }
   function renderAgents(list) {
-    var max = Math.max.apply(null, list.map(function (a) { return a.runs; }));
+    if (!list.length) { $('#um-agents').innerHTML = '<p class="empty">Nenhuma execução registrada.</p>'; return; }
+    var max = Math.max(0, ...list.map(function (a) { return Number(a.runs) || 0; }));
     $('#um-agents').innerHTML = list.map(function (a) {
-      return '<div class="bar"><span class="name">' + esc(a.n) + '</span><span class="val">' + nf.format(a.runs) + '</span><div class="rail"><div class="fill" style="--w:' + (a.runs / max * 100).toFixed(1) + '%"></div></div></div>';
+      var runs = Number(a.runs) || 0;
+      var width = max > 0 ? (runs / max * 100).toFixed(1) : '0';
+      return '<div class="bar"><span class="name">' + esc(a.n) + '</span><span class="val">' + nf.format(runs) + '</span><div class="rail"><div class="fill" style="--w:' + width + '%"></div></div></div>';
     }).join('');
   }
   function renderAlerts(list) {
-    $('#um-alerts').innerHTML = list.length ? list.map(function (a) { return '<div class="alert ' + a.k + '"><b>' + (a.k === 'warn' ? '!' : '✓') + '</b><span>' + esc(a.t) + '</span></div>'; }).join('') : '<div class="alert ok"><b>✓</b><span>Tudo dentro do normal.</span></div>';
+    $('#um-alerts').innerHTML = list.length ? list.map(function (a) { return '<div class="alert ' + a.k + '"><b>' + (a.k === 'warn' ? '!' : '✓') + '</b><span>' + esc(a.t) + '</span></div>'; }).join('') : '<div class="alert ok"><b>✓</b><span>' + (LIVE ? 'Nenhum alerta retornado pela API.' : 'Tudo dentro do normal.') + '</span></div>';
   }
   function renderVoice(v) {
-    $('#voice-metrics').innerHTML = '<div class="cols"><div class="tile"><span class="eyebrow">Chamadas</span><span class="big">' + nf.format(v.calls) + '</span></div><div class="tile"><span class="eyebrow">Duração média</span><span class="big">' + esc(v.avg) + '</span></div><div class="tile"><span class="eyebrow">Atendidas</span><span class="big">' + v.rate + '%</span></div></div>';
+    var rate = v.rate === null || v.rate === undefined ? '—' : v.rate + '%';
+    $('#voice-metrics').innerHTML = '<div class="cols"><div class="tile"><span class="eyebrow">Chamadas</span><span class="big">' + nf.format(v.calls || 0) + '</span></div><div class="tile"><span class="eyebrow">Duração média</span><span class="big">' + esc(v.avg || '—') + '</span></div><div class="tile"><span class="eyebrow">Atendidas</span><span class="big">' + esc(rate) + '</span></div></div>';
   }
   function renderCoex() {
     $('#coex-metrics').innerHTML = '<div class="cols"><div class="tile"><span class="eyebrow">Assumidas por humano</span><span class="big">14</span></div><div class="tile"><span class="eyebrow">Devolvidas ao bot</span><span class="big">11</span></div><div class="tile"><span class="eyebrow">Tempo médio humano</span><span class="big">6 min</span></div></div>';
@@ -4470,6 +4487,165 @@ function dashPage() {
     $('#ag-clients-list').innerHTML = clients.length ? clients.map(function (c) {
       return '<li><div><div class="name">' + esc(c.brand) + '</div><div class="sub mono">' + esc(c.dom) + '</div></div><span class="pill ' + (c.ok ? 'ok' : 'warn') + '">' + (c.ok ? 'ativo' : 'convite enviado') + '</span></li>';
     }).join('') : '<li><span class="empty">Nenhum cliente cadastrado.</span></li>';
+  }
+
+  function sessionToken() {
+    return new URLSearchParams(location.search).get('token') || '';
+  }
+  async function liveJson(path) {
+    var response = await fetch(path, { method: 'GET', cache: 'no-store' });
+    if (!response.ok) { var error = new Error('HTTP ' + response.status); error.status = response.status; throw error; }
+    return response.json();
+  }
+  function liveApiError(error) {
+    if (error && error.status === 401) return 'Token de sessão inválido ou expirado. Reabra o painel com um JWT de teste válido.';
+    if (error && error.status) return 'A API real respondeu HTTP ' + error.status + '. Nenhum dado de demonstração foi exibido.';
+    return 'Não foi possível consultar a API real. Nenhum dado de demonstração foi exibido.';
+  }
+  async function loadLiveOverview() {
+    if (!LIVE) return;
+    var token = sessionToken();
+    setText('token-display', token ? 'JWT configurado · oculto' : 'JWT ausente');
+    setText('dash-brand', '—');
+    setText('dash-domain', '—');
+    setText('metric-rev', '—');
+    setText('rev-delta', 'sem histórico');
+    setText('metric-leads', '—');
+    setText('leads-delta', 'sem histórico');
+    setText('um-cost-today', '—');
+    setText('um-tokens-today', '—');
+    setText('um-cost-week', '—');
+    setText('um-tokens-week', '—');
+    setText('um-cost-month', '—');
+    setText('um-tokens-month', '—');
+    pill('cost-pill', 'aguardando API', '');
+    $('#um-by-provider').innerHTML = '<p class="empty">Aguardando dados reais da API.</p>';
+    $('#um-agents').innerHTML = '<p class="empty">Aguardando dados reais da API.</p>';
+    $('#um-alerts').innerHTML = '<p class="empty">Aguardando dados reais da API.</p>';
+    $('#voice-metrics').innerHTML = '<p class="empty">Aguardando dados reais da API.</p>';
+    setText('h-mode-info', 'Consultando API…');
+    setText('agent-foot', 'Prévia somente leitura. Nenhuma mensagem, pagamento ou webhook será acionado.');
+    pill('agent-pill', 'consultando', 'warn');
+    if (!token) {
+      setText('h-mode-info', 'Autenticação necessária');
+      pill('agent-pill', 'sem JWT', 'bad');
+      notice('e4', 'Abra /dash com o JWT de uma loja de teste na query token. O token fica no navegador e não é exibido no painel.', 'warn');
+      return;
+    }
+    try {
+      var data = await liveJson('/api/hunter-analytics-v2?token=' + encodeURIComponent(token));
+      var domain = String(data.domain || '');
+      setText('dash-brand', window.CHATPAY_ENV === 'staging' ? 'Loja de staging' : 'Loja');
+      setText('dash-domain', domain || '—');
+      setText('metric-rev', brl.format((Number(data.revenue_total_cents) || 0) / 100));
+      setText('metric-leads', nf.format(Number(data.leads_total) || 0));
+      setText('h-mode-info', String(data.current_mode || 'sem configuração'));
+      if (domain) {
+        try {
+          var shop = await liveJson('/api/pub?d=' + encodeURIComponent(domain));
+          if (shop.brand) setText('dash-brand', String(shop.brand));
+          renderProds((Array.isArray(shop.products) ? shop.products : []).map(function (product) {
+            return { name: product.name, cents: Number(product.cents) || 0, deliver: product.deliver ? 'Entrega configurada' : '' };
+          }));
+        } catch (_) { renderProds([]); }
+      }
+      pill('agent-pill', 'API real · leitura', 'ok');
+      notice('e4', 'Métricas reais do Worker; prévia somente leitura. Custos são estimativas internas, não a quota Neurons nem a fatura Cloudflare.', 'okk');
+    } catch (error) {
+      setText('h-mode-info', 'Dados indisponíveis');
+      pill('agent-pill', error && error.status === 401 ? 'JWT inválido' : 'erro na API', 'bad');
+      notice('e4', liveApiError(error), 'err');
+    }
+  }
+  async function loadLiveUsageMetrics() {
+    var token = sessionToken();
+    if (!token) return;
+    try {
+      var data = await liveJson('/api/usage-metrics?token=' + encodeURIComponent(token));
+      var tokens = function (period) { return (Number(period && period.tokens_in) || 0) + (Number(period && period.tokens_out) || 0); };
+      setText('um-cost-today', brl.format(Number(data.today && data.today.cost_r$) || 0));
+      setText('um-tokens-today', nf.format(tokens(data.today)));
+      setText('um-cost-week', brl.format(Number(data.week && data.week.cost_r$) || 0));
+      setText('um-tokens-week', nf.format(tokens(data.week)));
+      setText('um-cost-month', brl.format(Number(data.month && data.month.cost_r$) || 0));
+      setText('um-tokens-month', nf.format(tokens(data.month)));
+      pill('cost-pill', 'estimativa do app', '');
+      var providers = Object.entries((data.today && data.today.by_provider) || {}).map(function (entry) {
+        return { n: entry[0], cost: Number(entry[1] && entry[1].cost_r$) || 0, tokens: Number(entry[1] && entry[1].tokens) || 0, currency: 'BRL' };
+      });
+      renderProviders(providers);
+      renderAgents(Object.entries(data.agents || {}).map(function (entry) { return { n: entry[0], runs: Number(entry[1]) || 0 }; }));
+      renderAlerts((data.alerts || []).map(function (alert) {
+        return { k: alert.severity === 'critical' ? 'warn' : 'warn', t: alert.message || alert.type || 'Alerta retornado pela API' };
+      }));
+      renderVoice({ calls: Number(data.voice && data.voice.calls_today) || 0, avg: '—', rate: null });
+    } catch (error) {
+      notice('e4', liveApiError(error), 'err');
+    }
+  }
+  function lockLivePreview() {
+    if (!LIVE) return;
+    document.body.setAttribute('data-chatpay-mode', 'live-readonly');
+    var banner = document.createElement('div');
+    banner.id = 'live-readonly-banner';
+    banner.setAttribute('role', 'status');
+    banner.style.cssText = 'position:sticky;top:0;z-index:99999;padding:10px 16px;background:#b7ff5a;color:#101010;font:600 13px system-ui;text-align:center';
+    var environment = window.CHATPAY_ENV === 'staging' ? 'STAGING' : 'PRODUÇÃO';
+    banner.textContent = environment + ' · DADOS REAIS · SOMENTE LEITURA · sem envio, pagamento ou webhook';
+    document.body.insertBefore(banner, document.body.firstChild);
+    var safeActions = new Set(['toggleTheme', 'toggleDashMode', 'loadUsageMetrics', 'loadAgentGraph', 'loadOpMode', 'loadTaxonomy', 'loadTools', 'loadSwarmROI', 'loadPlayROI', 'loadDecisionReport', 'exportDecisionReport']);
+    function lockButton(button) {
+      var match = (button.getAttribute('onclick') || '').match(/^\\s*([A-Za-z_$][\\w$]*)\\s*\\(/);
+      var action = match && match[1];
+      if (!button.classList.contains('tab') && button.id !== 'theme' && !safeActions.has(action)) {
+        button.disabled = true;
+        button.title = 'Desativado na prévia real somente leitura.';
+      }
+    }
+    function lockButtonsIn(node) {
+      if (!node || node.nodeType !== 1) return;
+      if (node.matches('button')) lockButton(node);
+      node.querySelectorAll('button').forEach(lockButton);
+    }
+    $$('button').forEach(lockButton);
+    if ('MutationObserver' in window) {
+      new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) { mutation.addedNodes.forEach(lockButtonsIn); });
+      }).observe(document.body, { childList: true, subtree: true });
+    }
+    $$('input, textarea, select').forEach(function (field) {
+      field.disabled = true;
+      field.placeholder = '';
+      if (field.tagName === 'SELECT') field.selectedIndex = -1;
+      else if (field.type === 'checkbox' || field.type === 'radio') field.checked = false;
+      else field.value = '';
+    });
+    var privatePlaceholders = {
+      'mem-list': 'Conteúdo de conversas oculto nesta prévia.',
+      'scout-samples-list': 'Amostras de mensagens ocultas nesta prévia.',
+      'df-recent': 'Mensagens recentes ocultas nesta prévia.',
+      'sales-table': 'Detalhes de vendas e dados de clientes ocultos nesta prévia.',
+      'webhooks-list': 'URLs e segredos de webhook omitidos nesta prévia.',
+      'ha-platforms': 'Use os KPIs reais do topo; a rota legada de analytics foi omitida nesta prévia.'
+    };
+    Object.keys(privatePlaceholders).forEach(function (id) {
+      var element = document.getElementById(id);
+      if (element) element.innerHTML = '<p class="empty">' + esc(privatePlaceholders[id]) + '</p>';
+    });
+    setText('scout-rate', '—');
+    setText('scout-samples', '—');
+    setText('scout-top', '—');
+    setText('df-reqs', '—');
+    setText('df-leads', '—');
+    setText('df-uptime', '—');
+    setText('ha-leads', '—');
+    setText('ha-revenue', '—');
+    setText('ha-conv', '—');
+    setText('sim-calls', '—');
+    setText('sim-winrate', '—');
+    notice('sim-status', 'Simulação desativada nesta prévia somente leitura.', 'warn');
+    var simResults = document.getElementById('sim-results');
+    if (simResults) simResults.innerHTML = '<p class="empty">Nenhuma simulação executada.</p>';
   }
 
   /* ---------- Dados de exemplo ---------- */
@@ -4562,6 +4738,7 @@ function dashPage() {
   });
   def('saveHunterModeUI', function () { var m = val('h-mode'); if (!killed) paintMode(m); toast('Modo Hunter atualizado'); });
   def('loadUsageMetrics', function () {
+    if (LIVE) return loadLiveUsageMetrics();
     var j = function (n) { return n * (.97 + Math.random() * .08); };
     usage.today.tok = Math.round(j(usage.today.tok)); usage.today.cost = +j(usage.today.cost).toFixed(2);
     paintUsage();
@@ -4870,8 +5047,8 @@ def('addAgencyClientUI', function () {
       d.webhooks.forEach(function (wh) {
         html += '<li><div><div class="name mono">' + esc(wh.event) + '</div><div class="sub">' + esc(wh.url) + '</div></div>' +
           '<div class="actions" style="gap:8px">' +
-          '<button class="btn" type="button" onclick="testWebhook(\'' + esc(wh.event) + '\', \'' + esc(wh.url) + '\', \'' + esc(wh.secret || '') + '\')">Testar</button>' +
-          '<button class="btn danger" type="button" onclick="deleteWebhook(\'' + esc(wh.event) + '\')">Remover</button>' +
+          '<button class="btn" type="button" onclick="testWebhook(\\'' + esc(wh.event) + '\\', \\'' + esc(wh.url) + '\\', \\'' + esc(wh.secret || '') + '\\')">Testar</button>' +
+          '<button class="btn danger" type="button" onclick="deleteWebhook(\\'' + esc(wh.event) + '\\')">Remover</button>' +
           '</div></li>';
       });
       html += '</ul>';
@@ -4939,7 +5116,7 @@ def('addAgencyClientUI', function () {
     t.innerHTML = '<p class="empty">Carregando...</p>';
     var token = new URLSearchParams(location.search).get('token') || '';
     try {
-      var r = await fetch('/api/v23/playbook?token=' + encodeURIComponent(token));
+      var r = await fetch('/api/swarm-status?token=' + encodeURIComponent(token));
       var d = await r.json();
       var tools = d.playbook?.tools || [];
       if (!tools.length) { t.innerHTML = '<p class="empty">Nenhuma tool cadastrada.</p>'; return; }
@@ -5125,9 +5302,14 @@ def('addAgencyClientUI', function () {
     }
   }
 
-/* Auto-load on first visit */
+/* Live staging/production view is read-only; only authenticated GET loaders run. */
   if (LIVE) {
-    setTimeout(function () { loadAgentGraph(); loadMemory(); loadScout(); loadOpMode(); loadTaxonomy(); loadDogfooding(); loadSales(); loadWebhooks(); loadTools(); loadHunterAnalytics(); loadSwarmROI(); loadPlayROI(); loadDecisionReport(); }, 800);
+    lockLivePreview();
+    loadLiveOverview();
+    if (sessionToken()) {
+      loadUsageMetrics();
+      setTimeout(function () { loadAgentGraph(); loadOpMode(); loadTaxonomy(); loadTools(); loadSwarmROI(); loadPlayROI(); loadDecisionReport(); }, 800);
+    }
   }
 })();
 </script>
@@ -5649,7 +5831,7 @@ export default {
       if (url.pathname === '/') return json({ name: 'MIDAS CORE V20 (SIGN+WA+ANALYTICS)', status: 'online', time: iso(), mp: !!(await mpToken()), start: '/start-page' });
 
       // ===== PAINEL / CHECKOUT / ONBOARDING =====
-      if (url.pathname === '/dash') return htmlOut(dashPage());
+      if (url.pathname === '/dash') return htmlOut(dashPage(CONFIG.sandboxMode ? 'staging' : 'production'));
       if (url.pathname === '/pay') return htmlOut(payPage());
       if (url.pathname === '/start-page') return htmlOut(startPage());
       if (url.pathname === '/api/pub') { const dom = (url.searchParams.get('d') || '').toLowerCase(); const meta = await hmap('cfg:' + dom + ':meta'); const prods = await getProducts(dom); if (!meta.brand) return json({ error: 'loja não encontrada' }); return json({ brand: meta.brand, products: prods }); }

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 import { harnessFaults, redisCommand, worker } from './harness.js';
 
 const env = {
@@ -98,6 +99,21 @@ assert.equal(countExternalProviderBlocks(), openAiBlocksBefore, 'sandbox never a
 const generatedTokenResponse = await worker.fetch(new Request('https://sandbox.test/generate-token?key=test-midas-secret&domain=sandbox.e2e.test'), env, {});
 assert.equal(generatedTokenResponse.status, 200);
 const generatedToken = (await generatedTokenResponse.json()).token;
+const liveDashboardResponse = await worker.fetch(new Request('https://sandbox.test/dash?token=' + encodeURIComponent(generatedToken)), env, {});
+assert.equal(liveDashboardResponse.status, 200);
+const liveDashboard = await liveDashboardResponse.text();
+assert.match(liveDashboard, /window\.CHATPAY_ENV = 'staging'/);
+assert.match(liveDashboard, /requestedMode !== 'demo'/, 'the dashboard defaults to the real Worker data path');
+assert.match(liveDashboard, /window\.CHATPAY_ENV === 'staging' \? 'STAGING'/);
+assert.match(liveDashboard, /DADOS REAIS · SOMENTE LEITURA/);
+assert.match(liveDashboard, /api\/hunter-analytics-v2\?token=/, 'live overview is fetched from an authenticated read API');
+assert.match(liveDashboard, /api\/usage-metrics\?token=/, 'live usage metrics are fetched from an authenticated read API');
+assert.match(liveDashboard, /api\/pub\?d=/, 'brand and product display uses the public catalog endpoint');
+assert.doesNotMatch(liveDashboard, /api\/me\?token=/, 'the preview avoids the sensitive endpoint that returns the token-bearing snippet');
+assert.match(liveDashboard, /Desativado na prévia real somente leitura/, 'live mode disables mutating controls');
+for (const [index, match] of [...liveDashboard.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].entries()) {
+  if (match[1].trim()) assert.doesNotThrow(() => new vm.Script(match[1]), `dashboard inline script ${index + 1} must parse`);
+}
 const e2eRequest = async (body, requestEnv = env) => worker.fetch(new Request('https://sandbox.test/api/sandbox-e2e', {
   method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: generatedToken, ...body })
 }), requestEnv, {});

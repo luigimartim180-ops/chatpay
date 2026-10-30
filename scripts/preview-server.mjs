@@ -50,8 +50,9 @@ async function readBody(req) {
 
 function makeLocalPath(rawUrl) {
   const url = new URL(rawUrl || '/', 'http://preview.local');
-  if (url.pathname === '/dash' && !url.searchParams.has('token')) {
-    url.searchParams.set('token', previewToken);
+  if (url.pathname === '/dash') {
+    if (!url.searchParams.has('token')) url.searchParams.set('token', previewToken);
+    url.searchParams.set('mode', 'demo');
   }
   return url.pathname + url.search;
 }
@@ -62,7 +63,13 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { mode: 'local-preview', demo: true, externalProviders: false });
   }
   if (url.pathname === '/') {
-    res.writeHead(302, { Location: '/dash?token=' + encodeURIComponent(previewToken), 'Cache-Control': 'no-store' });
+    res.writeHead(302, { Location: '/dash?token=' + encodeURIComponent(previewToken) + '&mode=demo', 'Cache-Control': 'no-store' });
+    return res.end();
+  }
+  if (url.pathname === '/dash' && (url.searchParams.get('mode') !== 'demo' || !url.searchParams.has('token'))) {
+    if (!url.searchParams.has('token')) url.searchParams.set('token', previewToken);
+    url.searchParams.set('mode', 'demo');
+    res.writeHead(302, { Location: url.pathname + url.search, 'Cache-Control': 'no-store' });
     return res.end();
   }
   if (req.method === 'OPTIONS') {

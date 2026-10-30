@@ -72,6 +72,12 @@ Arquivo `intent-taxonomy.json` com 8 categorias especializadas:
 
 ---
 
+## Dashboard real de staging
+
+Use um checkout autenticado pelo Wrangler e execute `wrangler dev --remote --port 4173`. Abra `/dash?token=<JWT-de-teste>` no endereço local do Wrangler. O dashboard usa GETs somente leitura ao Worker real, oculta o JWT na interface e bloqueia formulários e ações de escrita, pagamentos, envios e webhooks. Sem JWT válido, mostra estado de autenticação/API e não substitui métricas por dados de demonstração. A estimativa de custo interna não representa a quota Neurons nem a fatura Cloudflare. Não cole nem grave o JWT no chat ou no repositório.
+
+`npm run preview` continua sendo um harness local deliberadamente sintético e sempre exibe um banner de preview; ele não representa staging nem métricas reais.
+
 ## Preview visual local
 
 ```bash
