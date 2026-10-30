@@ -25,7 +25,7 @@ assert.deepEqual(await statusResponse.json(), {
   configComplete: true,
   missingConfig: [],
   sandboxReady: true,
-  e2eRunnerAvailable: false,
+  e2eRunnerAvailable: true,
   workersAiMaxAttempts: 1,
   workersAiMaxTokens: 256
 });
@@ -40,7 +40,7 @@ const partialStatus = await partialStatusResponse.json();
 assert.equal(partialStatus.sandboxMode, true);
 assert.deepEqual(partialStatus.missingConfig, ['REDIS_URL', 'REDIS_TOKEN']);
 assert.equal(partialStatus.sandboxReady, false);
-assert.equal(partialStatus.e2eRunnerAvailable, false);
+assert.equal(partialStatus.e2eRunnerAvailable, true);
 assert.equal(JSON.stringify(partialStatus).includes('not-returned'), false, 'status reports names, never secret values');
 const apiConfirm = await worker.fetch(new Request('https://sandbox.test/api/confirm', {
   method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}'
@@ -95,6 +95,66 @@ assert.equal(sandboxProviderCalls.length, 1, 'sandbox routes configured third-pa
 assert.match(sandboxProviderCalls[0].model, /^@cf\//);
 assert.equal(countExternalProviderBlocks(), openAiBlocksBefore, 'sandbox never attempts the configured external LLM provider');
 
+const generatedTokenResponse = await worker.fetch(new Request('https://sandbox.test/generate-token?key=test-midas-secret&domain=sandbox.e2e.test'), env, {});
+assert.equal(generatedTokenResponse.status, 200);
+const generatedToken = (await generatedTokenResponse.json()).token;
+const e2eRequest = async (body, requestEnv = env) => worker.fetch(new Request('https://sandbox.test/api/sandbox-e2e', {
+  method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: generatedToken, ...body })
+}), requestEnv, {});
+const unconfirmedStart = await e2eRequest({ action: 'start', maxTurns: 10 });
+assert.equal(unconfirmedStart.status, 400, 'E2E start requires explicit staging-Redis and zero-cost acknowledgements');
+const overLimitStart = await e2eRequest({ action: 'start', maxTurns: 11, confirmStagingRedis: true, confirmZeroCost: true });
+assert.equal(overLimitStart.status, 400, 'E2E hard limit is 10 turns');
+const e2eStart = await e2eRequest({ action: 'start', maxTurns: 10, confirmStagingRedis: true, confirmZeroCost: true });
+assert.equal(e2eStart.status, 200);
+const { runId } = await e2eStart.json();
+assert.match(runId, /^[a-f0-9]{32}$/);
+const statusOnly = await e2eRequest({ action: 'status', runId });
+assert.equal(statusOnly.status, 200);
+assert.equal((await statusOnly.json()).totalAiCalls, 0, 'status polling performs no inference');
+const outOfOrder = await e2eRequest({ action: 'turn', runId, turn: 2 });
+assert.equal(outOfOrder.status, 409, 'turns must be sequential');
+const realStart = await e2eRequest({ action: 'start', maxTurns: 1, confirmStagingRedis: true, confirmZeroCost: true });
+const realRunId = (await realStart.json()).runId;
+const localAI = { async run(model, input) {
+  if (model === '@cf/baai/bge-base-en-v1.5') return { data: [[0.1, 0.2]] };
+  if (String(input?.prompt || '').includes('Gere somente a próxima mensagem')) return { response: 'Como funciona para uma pequena loja?' };
+  return { response: 'É uma solução prática para centralizar conversas no chat.' };
+} };
+const realTurnResponse = await e2eRequest({ action: 'turn', runId: realRunId, turn: 1 }, { ...env, AI: localAI });
+assert.equal(realTurnResponse.status, 200);
+const realTurnResult = await realTurnResponse.json();
+assert.equal(realTurnResult.status, 'completed');
+assert.match(realTurnResult.turn.customer, /Como funciona/);
+assert.ok(realTurnResult.turn.agent, 'the Worker pipeline returns a reply with the local AI stub');
+assert.equal(realTurnResult.turn.customerAiCalls, 1);
+assert.ok(realTurnResult.turn.agentAiCalls >= 1, 'agent-side Workers AI calls are instrumented');
+assert.deepEqual(redisCommand('LRANGE', `swarm:reply-queue:sandbox_e2e_${realRunId}:sandbox.e2e.test`, '0', '10').result, [], 'E2E reply is returned to the runner, never queued for a channel');
+assert.deepEqual(redisCommand('LRANGE', `lead:sandbox.e2e.test:sandbox_e2e_${realRunId}:touches`, '0', '10').result, [], 'synthetic leads do not schedule future customer touches');
+const cancelStart = await e2eRequest({ action: 'start', maxTurns: 2, confirmStagingRedis: true, confirmZeroCost: true });
+const cancelRunId = (await cancelStart.json()).runId;
+const cancelled = await e2eRequest({ action: 'cancel', runId: cancelRunId });
+assert.equal(cancelled.status, 200);
+assert.equal((await cancelled.json()).status, 'cancelled');
+const cancelledStatus = await e2eRequest({ action: 'status', runId: cancelRunId });
+assert.equal((await cancelledStatus.json()).totalAiCalls, 0, 'cancellation between turns consumes no inference');
+const cancelledTurn = await e2eRequest({ action: 'turn', runId: cancelRunId, turn: 1 });
+assert.equal((await cancelledTurn.json()).status, 'cancelled');
+const paidModelStart = await e2eRequest({ action: 'start', maxTurns: 1, confirmStagingRedis: true, confirmZeroCost: true });
+const paidModelRunId = (await paidModelStart.json()).runId;
+let paidModelAttempts = 0;
+const paidModelEnv = { ...env, AI: { async run() { paidModelAttempts += 1; throw Object.assign(new Error('paid model access denied'), { status: 403, code: 5035 }); } } };
+const paidModelTurn = await e2eRequest({ action: 'turn', runId: paidModelRunId, turn: 1 }, paidModelEnv);
+assert.equal(paidModelTurn.status, 403, 'Paid-only model errors abort with HTTP 403');
+assert.equal((await paidModelTurn.json()).abortReason, 'workers_ai_paid_model_blocked');
+assert.equal(paidModelAttempts, 1, 'Paid-only model errors never fall back or retry');
+const quotaStart = await e2eRequest({ action: 'start', maxTurns: 10, confirmStagingRedis: true, confirmZeroCost: true });
+const quotaRunId = (await quotaStart.json()).runId;
+const quotaEnv = { ...env, AI: { async run() { throw Object.assign(new Error('daily free neuron allocation exhausted'), { status: 429, code: 3036 }); } } };
+const quotaTurn = await e2eRequest({ action: 'turn', runId: quotaRunId, turn: 1 }, quotaEnv);
+assert.equal(quotaTurn.status, 429, 'Workers AI quota errors abort the run');
+assert.equal((await quotaTurn.json()).abortReason, 'workers_ai_quota');
+
 const masked = worker.maskChannelSecrets({
   llm_provider: 'workers_ai',
   llm_model: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
@@ -108,4 +168,4 @@ assert.equal('secret' in masked.webhooks[0], false);
 assert.equal(JSON.stringify(masked).includes('never-return-this'), false);
 assert.equal(JSON.stringify(masked).includes('webhook-secret'), false);
 
-console.log('sandbox outbound guard, Workers AI bounds and secret redaction: PASS');
+console.log('sandbox guards, E2E orchestration gates (local AI stub) and secret redaction: PASS');

@@ -3046,7 +3046,8 @@ async function replyChannel(channel, dom, to, convId, text) {
 }
 async function runAgentPipelineCore(event, env) {
   const dom = event.dom;
-  await redis('INCR', 'swarm:scout:seen:' + dom);
+  const isSandboxE2E = CONFIG.sandboxMode && event?.metadata?.sandbox_e2e === true;
+  if (!isSandboxE2E) await redis('INCR', 'swarm:scout:seen:' + dom);
   const pb = await playbook(dom);
   const directorResult = await directorAgent(event, env);
   const pipeline = directorResult.pipeline;
@@ -3114,13 +3115,13 @@ async function runAgentPipelineCore(event, env) {
           if (ci.intent === 'ignore') {
             const explicitBuy = /\b(quero\s+comprar|quero\s+pagar|vou\s+comprar|pagar\s+agora)\b/i.test(String(context.text || ''));
             if (explicitBuy && ci.mode !== 'optout' && ci.mode !== 'toxic') context.intent = 'buy';
-            else { if (ci.mode !== 'optout' && ci.mode !== 'toxic') await scoutUnknown(dom, { ...event, intent: ci.intent }); return { status: 'ignored' }; }
+            else { if (!isSandboxE2E && ci.mode !== 'optout' && ci.mode !== 'toxic') await scoutUnknown(dom, { ...event, intent: ci.intent }); return { status: 'ignored' }; }
           }
           if (ci.intent !== 'ignore') context.intent = ci.intent;
           const nextStage = ci.intent === 'buy' ? 'CLOSE' : ci.intent === 'objection' ? 'QUALIFY' : ci.intent === 'info_question' ? 'VALUE' : ci.intent === 'mild_interest' ? 'QUALIFY' : 'OPEN';
           const currentArc = await leadArc(dom, context.lead_id);
           await updateLeadArc(dom, context.lead_id, { stage: nextStage, turn: String(Number(currentArc.turn || 0) + 1), last_intent: ci.intent });
-          if (Number(ci.confidence || 0) < 0.5) await scoutUnknown(dom, { ...event, intent: ci.intent });
+          if (!isSandboxE2E && Number(ci.confidence || 0) < 0.5) await scoutUnknown(dom, { ...event, intent: ci.intent });
           if (isLive && context.intent === 'buy') {
             try {
               await redis('ZADD', 'swarm:live_batch:' + dom, String(Date.now()), JSON.stringify({ user: event.user || '', convId: event.convId || '', text: event.text || '', ts: iso() }));
@@ -3171,17 +3172,19 @@ async function runAgentPipelineCore(event, env) {
     if (context.reply) {
       if (!honestyJudge(context.reply).approved) context.reply = 'Posso explicar os detalhes com transparência e garantia de 7 dias, sem promessas exageradas: ' + ('https://midas-core.novoronaldo-m.workers.dev/pay?d=' + encodeURIComponent(dom));
       const supervision = await supervisionConfig(dom); const ticketCents = Number(context.ticket_cents || context.amount || 9700);
-      if (supervision.active && ticketCents >= supervision.min_ticket_cents) {
+      if (!isSandboxE2E && supervision.active && ticketCents >= supervision.min_ticket_cents) {
         const approvalId = 'AP' + Date.now().toString(36); const approval = { id: approvalId, dom, user: event.user || '', convId: event.convId || '', channel: event.channel || 'api', reply: context.reply, created_at: iso(), status: 'pending' };
         await redis('SET', 'approve:' + dom + ':' + approvalId, JSON.stringify(approval)); await redis('LPUSH', 'approve:' + dom + ':pending', JSON.stringify(approval)); await redis('LTRIM', 'approve:' + dom + ':pending', '0', '49'); await log('approval_queued', { dom, approval_id: approvalId }); return { status: 'awaiting_approval', approval_id: approvalId };
       }
-      await scheduleTouches(dom, context.lead_id, event);
-      await replyChannel(event.channel || 'unknown', dom, event.user, event.convId, context.reply);
-      try {
-        const feedItem = JSON.stringify({ ts: iso(), channel: event.channel || 'unknown', user: event.user || '', text: String(event.text || '').slice(0, 100), reply: context.reply.slice(0, 140), intent: context.intent || 'buy' });
-        await redis('ZADD', 'swarm:feed:' + dom, String(Date.now()), feedItem);
-        await redis('ZREMRANGEBYRANK', 'swarm:feed:' + dom, '0', '-51');
-      } catch (_) { }
+      if (!isSandboxE2E) {
+        await scheduleTouches(dom, context.lead_id, event);
+        await replyChannel(event.channel || 'unknown', dom, event.user, event.convId, context.reply);
+        try {
+          const feedItem = JSON.stringify({ ts: iso(), channel: event.channel || 'unknown', user: event.user || '', text: String(event.text || '').slice(0, 100), reply: context.reply.slice(0, 140), intent: context.intent || 'buy' });
+          await redis('ZADD', 'swarm:feed:' + dom, String(Date.now()), feedItem);
+          await redis('ZREMRANGEBYRANK', 'swarm:feed:' + dom, '0', '-51');
+        } catch (_) { }
+      }
       return { status: 'replied', reply: context.reply };
     }
     return { status: 'pipeline_completed', context };
@@ -3192,6 +3195,7 @@ async function runAgentPipelineCore(event, env) {
   } catch (err) {
     await log('pipeline_timeout_fallback', { dom, error: err.message });
     if (event.type === 'lead' || event.type === 'whatsapp_intent') {
+      if (isSandboxE2E) return { status: 'pipeline_timeout' };
       const payLink = 'https://midas-core.novoronaldo-m.workers.dev/pay?d=' + encodeURIComponent(dom);
       await replyChannel(event.channel || 'unknown', dom, event.user, event.convId, 'Olá! Segue seu link seguro para compra via Pix: ' + payLink);
       return { status: 'replied_fallback' };
@@ -5390,6 +5394,235 @@ function abrirPainel(){location.href='/dash?token='+encodeURIComponent(TOKEN);}
 </html>`;
 }
 
+const SANDBOX_E2E_MAX_TURNS = 10;
+const SANDBOX_E2E_MAX_AI_CALLS = 64;
+const SANDBOX_E2E_TTL_SECONDS = 3600;
+const SANDBOX_E2E_SCENARIO = 'Você é um cliente sintético avaliando a oferta deste ambiente de teste. Converse naturalmente, faça perguntas e levante uma dúvida realista antes de decidir. Não forneça dados pessoais, e-mail, telefone, documentos, dados de pagamento ou URLs. Nunca afirme que comprou, pagou, fez Pix ou enviou comprovante. Não tente acionar ferramentas; produza somente a próxima mensagem curta do cliente em PT-BR.';
+function sandboxE2EKey(domain, runId) { return 'sandbox:e2e:' + domain + ':' + runId; }
+function sandboxE2EId() {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, value => value.toString(16).padStart(2, '0')).join('');
+}
+function sandboxE2EFailureKind(error) {
+  const value = [error?.status, error?.statusCode, error?.code, error?.message].map(x => String(x || '')).join(' ').toLowerCase();
+  if (/\b403\b|5035|paid[- ]only|paid model/.test(value)) return 'workers_ai_paid_model_blocked';
+  if (/\b429\b|3036|quota|neuron|allocation|used up/.test(value)) return 'workers_ai_quota';
+  return 'workers_ai_error';
+}
+function sandboxE2EUnsafeCustomerMessage(text) {
+  const value = String(text || '');
+  const claimsPayment = /\b(j[aá]\s*)?(?:paguei|comprei|transferi)\b|\b(?:fiz|enviei)\s+(?:o\s+)?pix\b|\bpix\s+(?:feito|enviado|pago)\b|\bpagamento\s+confirmado\b|\benviei\s+(?:o\s+)?comprovante\b/i.test(value);
+  const containsEmail = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(value);
+  const containsBrazilianPhone = /(?:\+?55\s*)?(?:\(?\d{2}\)?\s*)9?\d{4}[-\s]?\d{4}\b/.test(value);
+  const mentionsPersonalDetails = /\b(?:cpf|cnpj|rg|cep|meu nome|me chamo|minha rua|meu endere[cç]o|meu telefone|meu cart[aã]o)\b/i.test(value);
+  const hasLongNumber = (value.match(/\d[\d\s./-]{6,}\d/g) || []).some(group => (group.match(/\d/g) || []).length >= 8);
+  const containsUrl = /\b(?:https?:\/\/|www\.)\S+/i.test(value);
+  return claimsPayment || containsEmail || containsBrazilianPhone || mentionsPersonalDetails || hasLongNumber || containsUrl;
+}
+async function sandboxE2ESave(key, session) {
+  const saved = await redis('SET', key, JSON.stringify(session), 'EX', String(SANDBOX_E2E_TTL_SECONDS));
+  if (saved?.result !== 'OK') throw new Error('sandbox_e2e_storage_unavailable');
+}
+function sandboxE2EEnv(env, sessionKey, state) {
+  const binding = env.AI;
+  const ai = {
+    async run(model, input) {
+      if (state.failure) throw new Error('sandbox_e2e_aborted');
+      let counter;
+      try {
+        counter = await redis('INCR', sessionKey + ':ai_calls');
+        if (!Number.isInteger(Number(counter?.result)) || Number(counter.result) < 1) throw new Error('counter_unavailable');
+        if (Number(counter.result) === 1) await redis('EXPIRE', sessionKey + ':ai_calls', String(SANDBOX_E2E_TTL_SECONDS));
+      } catch (_) {
+        state.failure = 'ai_budget_unavailable';
+        throw new Error('sandbox_e2e_budget_unavailable');
+      }
+      if (Number(counter.result) > SANDBOX_E2E_MAX_AI_CALLS) {
+        state.failure = 'ai_call_limit';
+        throw new Error('sandbox_e2e_ai_call_limit');
+      }
+      state.callsThisTurn += 1;
+      if (state.role === 'customer') state.customerCalls += 1;
+      else {
+        state.agentCalls += 1;
+        state.agentModels.add(String(model || 'unknown'));
+      }
+      try {
+        return await binding.run.call(binding, model, input);
+      } catch (error) {
+        state.failure = sandboxE2EFailureKind(error);
+        throw new Error('sandbox_e2e_workers_ai_failed');
+      }
+    }
+  };
+  return new Proxy(env, {
+    get(target, property, receiver) {
+      if (property === 'AI') return ai;
+      if (property === 'SANDBOX_MODE') return 'true';
+      if (property === 'AI_MAX_ATTEMPTS') return '1';
+      if (property === 'AI_MAX_TOKENS') return '256';
+      if (property === 'ALLOW_PUBLIC_LLM_FALLBACK') return '0';
+      return Reflect.get(target, property, receiver);
+    }
+  });
+}
+async function handleSandboxE2E(request, env) {
+  if (!CONFIG.sandboxMode) return json({ error: 'sandbox_required', sandbox: false }, 409);
+  if (!env?.AI || typeof env.AI.run !== 'function') return json({ error: 'workers_ai_binding_missing' }, 503);
+  let body;
+  try { body = await request.json(); } catch (_) { return json({ error: 'invalid_json' }, 400); }
+  const payload = await verifyJWT(String(body.token || ''));
+  if (!payload || !payload.domain) return json({ error: 'unauthorized' }, 401);
+  const domain = String(payload.domain);
+  const action = String(body.action || '');
+  if (action === 'start') {
+    if (body.confirmStagingRedis !== true || body.confirmZeroCost !== true) return json({ error: 'explicit_staging_and_zero_cost_confirmation_required' }, 400);
+    const maxTurns = body.maxTurns === undefined ? SANDBOX_E2E_MAX_TURNS : Number(body.maxTurns);
+    if (!Number.isInteger(maxTurns) || maxTurns < 1 || maxTurns > SANDBOX_E2E_MAX_TURNS) return json({ error: 'max_turns_must_be_between_1_and_10' }, 400);
+    const runId = sandboxE2EId();
+    const key = sandboxE2EKey(domain, runId);
+    const session = {
+      runId,
+      domain,
+      status: 'running',
+      maxTurns,
+      turns: [],
+      activeTurn: null,
+      abortReason: null,
+      scenario: SANDBOX_E2E_SCENARIO,
+      createdAt: iso(),
+      updatedAt: iso(),
+      channel: 'sandbox_e2e_' + runId,
+      leadId: 'sandbox_e2e_' + runId
+    };
+    try {
+      await sandboxE2ESave(key, session);
+      const initializedCalls = await redis('SET', key + ':ai_calls', '0', 'EX', String(SANDBOX_E2E_TTL_SECONDS));
+      if (initializedCalls?.result !== 'OK') throw new Error('sandbox_e2e_storage_unavailable');
+    } catch (_) { return json({ error: 'sandbox_e2e_storage_unavailable' }, 503); }
+    return json({ status: 'running', runId, maxTurns, aiCallLimit: SANDBOX_E2E_MAX_AI_CALLS, expiresInSeconds: SANDBOX_E2E_TTL_SECONDS });
+  }
+  const runId = String(body.runId || '');
+  if (!/^[a-f0-9]{32}$/.test(runId)) return json({ error: 'invalid_run_id' }, 400);
+  const key = sandboxE2EKey(domain, runId);
+  let raw;
+  try { raw = await redis('GET', key); } catch (_) { return json({ error: 'sandbox_e2e_storage_unavailable' }, 503); }
+  if (!raw?.result) return json({ error: 'run_not_found' }, 404);
+  let session;
+  try { session = JSON.parse(raw.result); } catch (_) { return json({ error: 'run_state_invalid' }, 500); }
+
+  if (action === 'status') {
+    const callCount = await redis('GET', key + ':ai_calls');
+    return json({ runId, status: session.status, maxTurns: session.maxTurns, turnsCompleted: session.turns.length, activeTurn: session.activeTurn, abortReason: session.abortReason, totalAiCalls: Number(callCount?.result) || 0, transcript: session.turns });
+  }
+  if (action === 'cancel') {
+    if (session.status !== 'running') return json({ runId, status: session.status, turnsCompleted: session.turns.length });
+    let cancelLock;
+    try { cancelLock = await redis('SET', key + ':turn_lock', 'cancel', 'NX', 'EX', '300'); } catch (_) { return json({ error: 'sandbox_e2e_storage_unavailable' }, 503); }
+    if (!cancelLock || cancelLock.result !== 'OK') return json({ error: 'turn_in_progress_cannot_cancel' }, 409);
+    try {
+      const latest = await redis('GET', key);
+      if (!latest?.result) return json({ error: 'run_not_found' }, 404);
+      session = JSON.parse(latest.result);
+      if (session.status === 'running' && session.activeTurn) return json({ error: 'turn_in_progress_cannot_cancel' }, 409);
+      if (session.status === 'running') {
+        session.status = 'cancelled';
+        session.updatedAt = iso();
+        await sandboxE2ESave(key, session);
+      }
+      return json({ runId, status: session.status, turnsCompleted: session.turns.length });
+    } catch (_) { return json({ error: 'sandbox_e2e_storage_unavailable' }, 503); }
+    finally { try { await redis('DEL', key + ':turn_lock'); } catch (_) { } }
+  }
+  if (action !== 'turn') return json({ error: 'unsupported_action' }, 400);
+  if (session.status !== 'running') return json({ runId, status: session.status, turnsCompleted: session.turns.length, abortReason: session.abortReason, transcript: session.turns });
+  const turnNumber = Number(body.turn);
+  if (!Number.isInteger(turnNumber) || turnNumber < 1 || turnNumber > session.maxTurns) return json({ error: 'invalid_turn_number' }, 400);
+  if (turnNumber <= session.turns.length) return json({ runId, status: session.status, turnsCompleted: session.turns.length, turn: session.turns[turnNumber - 1], transcript: session.turns });
+  if (turnNumber !== session.turns.length + 1) return json({ error: 'turn_out_of_order', expectedTurn: session.turns.length + 1 }, 409);
+  let lock;
+  try { lock = await redis('SET', key + ':turn_lock', '1', 'NX', 'EX', '300'); } catch (_) { return json({ error: 'sandbox_e2e_storage_unavailable' }, 503); }
+  if (!lock || lock.result !== 'OK') return json({ error: 'turn_already_in_progress' }, 409);
+
+  const startedAt = Date.now();
+  const state = { role: 'customer', failure: null, callsThisTurn: 0, customerCalls: 0, agentCalls: 0, agentModels: new Set() };
+  try {
+    const latest = await redis('GET', key);
+    if (!latest?.result) return json({ error: 'run_not_found' }, 404);
+    session = JSON.parse(latest.result);
+    if (session.status !== 'running') return json({ runId, status: session.status, turnsCompleted: session.turns.length, abortReason: session.abortReason, transcript: session.turns });
+    if (session.activeTurn) return await sandboxE2EAbort(key, session, 'turn_indeterminate', turnNumber);
+    if (turnNumber <= session.turns.length) return json({ runId, status: session.status, turnsCompleted: session.turns.length, turn: session.turns[turnNumber - 1], transcript: session.turns });
+    if (turnNumber !== session.turns.length + 1) return json({ error: 'turn_out_of_order', expectedTurn: session.turns.length + 1 }, 409);
+    session.activeTurn = turnNumber;
+    session.updatedAt = iso();
+    await sandboxE2ESave(key, session);
+    const scopedEnv = sandboxE2EEnv(env, key, state);
+    const prior = session.turns.map(item => `Cliente: ${item.customer}\nChatPay: ${item.agent}`).join('\n');
+    const customerPrompt = `${session.scenario}\n\nConversa anterior:\n${prior || '(nenhuma; inicie a conversa)'}\n\nGere somente a próxima mensagem que este cliente enviaria agora, em uma ou duas frases curtas. Faça a conversa avançar naturalmente e baseie-se apenas nas respostas recebidas. Não use rótulos como Cliente:, não inclua dados pessoais e não afirme ter pago.`;
+    const generated = await runWorkersAI(customerPrompt, scopedEnv, { task: 'general' });
+    if (state.failure) return await sandboxE2EAbort(key, session, state.failure, turnNumber);
+    const customerText = String(generated.text || '').replace(/\s+/g, ' ').trim().slice(0, 500);
+    if (!customerText) return await sandboxE2EAbort(key, session, 'workers_ai_empty_response', turnNumber);
+    if (sandboxE2EUnsafeCustomerMessage(customerText)) return await sandboxE2EAbort(key, session, 'synthetic_customer_safety_guard', turnNumber);
+
+    state.role = 'agent';
+    const event = {
+      type: 'whatsapp_intent',
+      dom: domain,
+      channel: session.channel,
+      user: session.leadId,
+      convId: session.runId,
+      lead_id: session.leadId,
+      text: customerText,
+      metadata: { synthetic: true, sandbox_e2e: true, run_id: runId, turn: turnNumber }
+    };
+    const result = await processSwarmEvent(event, scopedEnv);
+    try { await redis('DEL', 'swarm:reply-queue:' + session.channel + ':' + domain); } catch (_) { }
+    if (state.failure) return await sandboxE2EAbort(key, session, state.failure, turnNumber, customerText);
+    if (!result || result.status !== 'replied' || !String(result.reply || '').trim()) {
+      state.failure = 'agent_no_reply';
+      return await sandboxE2EAbort(key, session, 'agent_no_reply', turnNumber, customerText);
+    }
+
+    const turn = {
+      turn: turnNumber,
+      customer: customerText,
+      agent: String(result.reply).slice(0, 1200),
+      customerModel: generated.model,
+      agentModels: Array.from(state.agentModels),
+      customerAiCalls: state.customerCalls,
+      agentAiCalls: state.agentCalls,
+      agentStatus: result.status,
+      durationMs: Date.now() - startedAt
+    };
+    session.turns.push(turn);
+    session.activeTurn = null;
+    session.updatedAt = iso();
+    if (session.turns.length >= session.maxTurns) session.status = 'completed';
+    await sandboxE2ESave(key, session);
+    const callCount = await redis('GET', key + ':ai_calls');
+    return json({ runId, status: session.status, maxTurns: session.maxTurns, turnsCompleted: session.turns.length, totalAiCalls: Number(callCount?.result) || 0, turn, transcript: session.turns });
+  } catch (_) {
+    if (session.activeTurn) return await sandboxE2EAbort(key, session, 'sandbox_e2e_internal_error', turnNumber);
+    return json({ error: 'sandbox_e2e_internal_error' }, 500);
+  } finally {
+    try { await redis('DEL', key + ':turn_lock'); } catch (_) { }
+  }
+}
+async function sandboxE2EAbort(key, session, reason, turnNumber, customerText = '') {
+  session.status = 'aborted';
+  session.abortReason = reason;
+  session.activeTurn = null;
+  session.updatedAt = iso();
+  if (customerText) session.turns.push({ turn: turnNumber, customer: customerText, agent: null, status: 'aborted', reason });
+  try { await sandboxE2ESave(key, session); } catch (_) { }
+  await log('sandbox_e2e_aborted', { domain: session.domain, run_id: session.runId, reason });
+  const status = reason === 'workers_ai_quota' ? 429 : reason === 'workers_ai_paid_model_blocked' ? 403 : 502;
+  return json({ runId: session.runId, status: 'aborted', abortReason: reason, turnsCompleted: session.turns.length, transcript: session.turns }, status);
+}
+
 export default {
   async fetch(request, env, ctx) {
     configure(env);
@@ -5402,10 +5635,11 @@ export default {
     if (url.pathname === '/api/sandbox-status' && request.method === 'GET') {
       const workersAiBindingConfigured = Boolean(env?.AI && typeof env.AI.run === 'function');
       const configComplete = faltando.length === 0;
-      return json({ sandboxMode: CONFIG.sandboxMode, externalHttpBlocked: CONFIG.sandboxMode, workersAiAllowed: true, workersAiBindingConfigured, configComplete, missingConfig: faltando, sandboxReady: CONFIG.sandboxMode && configComplete && workersAiBindingConfigured, e2eRunnerAvailable: false, workersAiMaxAttempts: CONFIG.sandboxMode ? 1 : null, workersAiMaxTokens: CONFIG.sandboxMode ? 256 : null });
+      return json({ sandboxMode: CONFIG.sandboxMode, externalHttpBlocked: CONFIG.sandboxMode, workersAiAllowed: true, workersAiBindingConfigured, configComplete, missingConfig: faltando, sandboxReady: CONFIG.sandboxMode && configComplete && workersAiBindingConfigured, e2eRunnerAvailable: true, workersAiMaxAttempts: CONFIG.sandboxMode ? 1 : null, workersAiMaxTokens: CONFIG.sandboxMode ? 256 : null });
     }
     if (faltando.length) return json({ error: 'config_incompleta', faltando }, 500);
     try {
+      if (url.pathname === '/api/sandbox-e2e' && request.method === 'POST') return await handleSandboxE2E(request, env);
       if (url.pathname === '/') return json({ name: 'MIDAS CORE V20 (SIGN+WA+ANALYTICS)', status: 'online', time: iso(), mp: !!(await mpToken()), start: '/start-page' });
 
       // ===== PAINEL / CHECKOUT / ONBOARDING =====
