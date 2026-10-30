@@ -42,7 +42,8 @@ export async function simulateConversation(persona, options = {}) {
     });
     if (response.status !== 200) throw new Error(`event rejected for ${persona.id}`);
     for (let tick = 0; tick < (neverBuyer ? 0 : 8); tick += 1) {
-      await worker.scheduled({ cron: '* * * * *' }, { AI: null }, {});
+      // The in-process harness intercepts Pollinations; this opt-in is test-only and never reaches production.
+      await worker.scheduled({ cron: '* * * * *' }, { AI: null, ALLOW_PUBLIC_LLM_FALLBACK: '1' }, {});
       await new Promise(resolve => setTimeout(resolve, 10));
     }
     const queued = await (await makeRequest('GET', `/api/reply-queue?token=${encodeURIComponent(started.token)}&channel=api`)).json();

@@ -1,5 +1,11 @@
 .env
-.env.local
+.env.*
+!.env.example
 *.pem
 node_modules/
 .wrangler/
+.runs/
+simulator/cache.json
+simulator/cache-real.json
+simulator/test-cache-*.json
+telegram-bot/chat_id.json

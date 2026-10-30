@@ -1,5 +1,7 @@
 import { createProviderChain, generateWithProviders } from './scripts/llm-providers.js';
+import { requireExternalTestOptIn } from './scripts/test-opt-in.mjs';
 
+requireExternalTestOptIn('provider');
 const chain = createProviderChain();
 
 // Teste REAL: Function calling com Groq

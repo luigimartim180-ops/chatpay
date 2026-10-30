@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { loadPersonas } from './simulate-conversation.js';
 import { REAL_CACHE, REAL_PROVIDERS, RUN_LOG, probeProviders, runProviderSimulation, sortProviderOrderByProbe } from './llm-providers.js';
 import { loadLabSecrets } from './secret-loader.js';
+import { requireExternalTestOptIn } from './test-opt-in.mjs';
 
 export const GRAPH_NODES = ['curioso', 'comparando', 'objeção_preço', 'objeção_confiança', 'quase', 'sumido', 'voltou', 'pago'];
 export const CURRICULUM = Array.from({ length: 10 }, (_, i) => ({
@@ -326,7 +327,8 @@ if (process.argv[1] && process.argv[1].endsWith('phase-e-simulator.js')) {
   const batchValue = valueFlag('--batch');
   const referenceFlag = process.argv.includes('--reference');
   const requireReal = process.argv.includes('--require-real');
-const noCache = process.argv.includes('--no-cache');
+  const noCache = process.argv.includes('--no-cache');
+  if (providerFlag || subsetFlag || turnsFlag || requireReal) requireExternalTestOptIn('provider');
   const labSecrets = loadLabSecrets();
   const realKeyNames = ['OPENROUTER_API_KEY', 'GROQ_API_KEY', 'GEMINI_API_KEY', 'GITHUB_MODELS_TOKEN', 'GITHUB_TOKEN', 'CEREBRAS_API_KEY'];
   const minRealCalls = Number(minRealCallsValue || (requireReal ? 20 : 0));

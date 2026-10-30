@@ -2,7 +2,9 @@
 
 import { createProviderChain, generateWithProviders } from './scripts/llm-providers.js';
 import fs from 'fs';
+import { requireExternalTestOptIn } from './scripts/test-opt-in.mjs';
 
+requireExternalTestOptIn('provider');
 const chain = createProviderChain();
 
 console.log('='.repeat(60));

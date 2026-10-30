@@ -105,7 +105,7 @@
 
 ### 4.8 Como os testes "mentem" (só a sessão sabe)
 - Os testes rodam num **harness in-process** (`test/harness.js`): `makeRequest` finge HTTP, MiniRedis finge Redis, `faults.*` injeta falhas. **Provam lógica, não produção.**
-- Validação real = os 3 scripts ao vivo: `scripts/smoke-live.js`, `scripts/smoke-12-personas.js` (contra prod, chat `998009360`) e `scripts/postdeploy-smoke.ps1`.
+- Validação real inclui os scripts ao vivo, mas eles agora exigem opt-in, `BASE` e `TELEGRAM_WEBHOOK_SECRET`; não executar contra produção antes de rotação/autorização.
 - Smokes ao vivo exigem **sequência única em processo único** (o script cuida disso com `seq = Date.now()`); não rode dois smokes em paralelo.
 - Harness `faults.aiRunner` é opt-in via getter — testes que "transcrevem áudio" ou "LLM respondeu" são simulações.
 
@@ -168,14 +168,17 @@
 # 1) sintaxe      node --check worker.js
 # 2) regressão    powershell -ExecutionPolicy Bypass -File scripts\predeploy-check.ps1   (precisa EXIT=0)
 # 3) deploy       npx.cmd wrangler deploy --name midas-core
-# 4) pós-deploy   scripts\postdeploy-smoke.ps1 ; scripts\security-audit.ps1
-# 5) ao vivo      node scripts\smoke-live.js ; node scripts\smoke-12-personas.js
+# 4) pós-deploy (após autorização; configure ALLOW_LIVE_API_TESTS=1, CHATPAY_API_BASE e CHATPAY_TOKEN explicitamente)
+scripts\postdeploy-smoke.ps1 ; scripts\security-audit.ps1
+# 5) ao vivo (somente após autorização/rotação; configure BASE e TELEGRAM_WEBHOOK_SECRET via cofre)
+$env:ALLOW_LIVE_API_TESTS = '1'
+node scripts\smoke-live.js ; node scripts\smoke-12-personas.js
 # 6) índice (só se KB mudar)  wrangler vectorize list-vectors kb-midas-core  (procedimento no runbook)
 # 7) FASE M       node scripts\phase-e-simulator.js --seed 20260910 --require-real --batch 5   (sem --provider!)
 ```
 
 - Deploy **só** com predeploy PASS. Anotar Version ID novo e rollback no runbook + `AGENTS.md`.
-- Smokes ao vivo: sequência única, processo único.
+- Smokes ao vivo: sequência única, processo único; exigem opt-in explícito e segredo carregado de cofre, nunca hard-coded.
 
 ---
 

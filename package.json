@@ -5,7 +5,9 @@
   "main": "worker.js",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "preview": "node --no-warnings scripts/preview-server.mjs",
+    "test": "node scripts/run-local-tests.mjs"
   },
   "dependencies": {
     "@tidbcloud/serverless": "^0.2.0"

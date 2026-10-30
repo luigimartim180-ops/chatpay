@@ -199,6 +199,8 @@ class MiniRedis {
 }
 
 const redisStore = new MiniRedis();
+export const TEST_TG_SHARED_SECRET = 'test-only-shared-webhook-secret';
+redisStore.command('SET', ['channel:config:telegram:_shared', JSON.stringify({ webhook_secret: TEST_TG_SHARED_SECRET })]);
 const realFetch = globalThis.fetch;
 const faults = { redisDelayMs: 0, llmStatus: 0, webhookFailures: 0, webhookAttempts: 0, webhookTimes: [], llmCalls: 0, llmCostR$: 0, llmUnavailable: true, telegramSends: 0, lastTelegramBody: null, callbackAnswers: 0, lastCallbackId: null, llmQueue: [], lastPrompt: '', chatActions: 0, getFileCalls: 0, vecUpserts: [], aiRunner: null, getFilePath: null, deepseekResponse: null, graphCalls: [] };
 const testEnv = {
@@ -213,7 +215,9 @@ const testEnv = {
   RESEND_KEY: 'test-resend-key',
   TARGET_EMAIL: 'test@example.com',
   MIDAS_SECRET: 'test-midas-secret',
-  JWT_SECRET: 'test-jwt-secret'
+  JWT_SECRET: 'test-jwt-secret',
+  // Only safe in this harness: global fetch is stubbed to a deterministic in-process response.
+  ALLOW_PUBLIC_LLM_FALLBACK: '1'
 };
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 

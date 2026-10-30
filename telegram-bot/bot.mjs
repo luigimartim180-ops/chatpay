@@ -1,181 +1,98 @@
-// == CHAT PAY: Bot Telegram Principal ==
-// Autor: Configuração ChatPay
-// Descrição: Bot Telegram com polling, comandos e envio de mensagens
-// Dependências: ZERO (apenas fetch nativo e fs)
+// Bot Telegram simples para desenvolvimento local.
+// O token deve ser fornecido por BOT_TOKEN no ambiente; nunca o grave no código.
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-// === 1. Importações e carregamento de config ===
-const fs = require('fs');
-const path = require('path');
+const BOT_TOKEN = (process.env.BOT_TOKEN || '').trim();
+if (!BOT_TOKEN) {
+  console.error('BOT_TOKEN não configurado. Defina a variável de ambiente antes de iniciar o bot.');
+  process.exit(1);
+}
 
-// Carregar token do .env (Node 18+ com experimental modulators ou process.env)
-const env = {
-  BOT_TOKEN: process.env.BOT_TOKEN || '8683827538:AAEGG7F0-b9wPCj-F3fEzKaf-4P5RyidImA'
-};
+const API_BASE = `https://api.telegram.org/bot${BOT_TOKEN}`;
+const CHAT_ID_PATH = path.join(path.dirname(fileURLToPath(import.meta.url)), 'chat_id.json');
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// Carregar chat_id salvo anteriormente
 let savedChatId = null;
-const chatIdPath = path.join('.', 'telegram-bot', 'chat_id.json');
-
-if (fs.existsSync(chatIdPath)) {
-  try {
-    const data = JSON.parse(fs.readFileSync(chatIdPath, 'utf8'));
-    savedChatId = data.chatId;
-    console.log('📦 Chat ID carregado do arquivo:', savedChatId);
-  } catch (e) {
-    console.log('⚠️ Erro ao ler chat_id.json, começando do zero:', e.message);
+try {
+  if (fs.existsSync(CHAT_ID_PATH)) {
+    savedChatId = JSON.parse(fs.readFileSync(CHAT_ID_PATH, 'utf8')).chatId ?? null;
+    if (savedChatId !== null) console.log('Chat ID local carregado.');
   }
+} catch (error) {
+  console.warn('Não foi possível ler chat_id.json:', error.message);
 }
 
-// === 2. Função deletar webhook ao iniciar ===
-async function deleteWebhook() {
-  try {
-    const resp = await fetch(`https://api.telegram.org/bot${savedChatId || TOKEN}/deleteWebhook`, {
-      method: 'POST'
-    });
-    const result = await resp.json();
-    console.log('✅ Webhook deletado (polling ativo)');
-    return result;
-  } catch (err) {
-    console.log('⚠️ Erro ao deletar webhook:', err.message);
-    return null;
+async function telegram(method, options = {}) {
+  const response = await fetch(`${API_BASE}/${method}`, options);
+  const result = await response.json();
+  if (!response.ok || !result.ok) {
+    throw new Error(result.description || `Telegram API HTTP ${response.status}`);
   }
+  return result.result;
 }
 
-// === 3. Função de envio de mensagem ===
-async function sendMessage(chat_id, text) {
-  try {
-    await fetch(
-      `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id, text })
-      }
-    );
-    // console.log(`📨 Mensagem enviada para ${chat_id}: ${text}`);
-  } catch (err) {
-    console.error('❌ Erro ao enviar mensagem:', err.message);
-  }
+async function sendMessage(chatId, text) {
+  await telegram('sendMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text })
+  });
 }
 
-// === 4. Função de polling (long getUpdates) ===
-async function getUpdates(offset = null) {
-  const url = offset !== null
-    ? `https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${offset}`
-    : `https://api.telegram.org/bot${TOKEN}/getUpdates`;
-
-  try {
-    const response = await fetch(url);
-    return await response.json();
-  } catch (err) {
-    console.error('❌ Erro ao buscar updates:', err.message);
-    return { ok: false, result: [] };
-  }
+async function getUpdates(offset) {
+  const query = new URLSearchParams({ offset: String(offset), timeout: '25' });
+  return telegram(`getUpdates?${query}`);
 }
 
-// === 5. Normalizar mensagem recebida ===
-function normalizeMessage(message) {
-  if (!message || !message.text) return null;
-
-  const text = message.text.trim();
-  const chat = message.chat;
-  return {
-    text: text,
+function saveChatId(message) {
+  const chat = message.chat || {};
+  const from = message.from || {};
+  const record = {
     chatId: chat.id,
-    firstName: chat.first_name || 'Unknown',
-    username: chat.username || 'Sem username',
-    isCommand: text.startsWith('/')
+    firstName: from.first_name || chat.first_name || 'Unknown',
+    username: from.username || '',
+    receivedAt: new Date().toISOString()
   };
+  fs.writeFileSync(CHAT_ID_PATH, `${JSON.stringify(record, null, 2)}\n`, { mode: 0o600 });
+  savedChatId = record.chatId;
+  return record;
 }
 
-// === 6. Loop principal do bot ===
 async function main() {
-  console.log('🤖 Bot Telegram iniciado!');
-  console.log('📡 Modo: Long Polling (getUpdates)');
-  console.log('');
+  console.log('Bot Telegram iniciado em long polling.');
+  console.log('Use um bot de desenvolvimento dedicado; este processo não altera webhooks.');
 
-  let lastOffset = 0;
-  let myChatId = savedChatId; // Começa com o salvo ou null
-
-  // Loop infinito de polling
+  let offset = 0;
   while (true) {
     try {
-      const data = await getUpdates(lastOffset);
+      const updates = await getUpdates(offset);
+      for (const update of updates) {
+        offset = update.update_id + 1;
+        const message = update.message;
+        if (!message?.text || message.chat?.id === undefined) continue;
 
-      if (data.ok && data.result && data.result.length > 0) {
-        for (const update of data.result) {
-          lastOffset = update.update_id + 1;
-          const normalized = normalizeMessage(update.message);
+        const chatId = message.chat.id;
+        const command = message.text.trim().split(/\s+/, 1)[0].split('@', 1)[0].toLowerCase();
 
-          if (!normalized) continue;
-
-          myChatId = normalized.chatId;
-
-          // Comandar handler
-          switch (normalized.text) {
-            case '/start':
-              // Boas-vindas + salvar/atualizar chat_id
-              const welcomeMsg = `👋 Olá, ${normalized.firstName}! Seja bem-vindo ao ChatPay Bot.\n\n🔢 Seu Chat ID é: \`${normalized.chatId}\`\nUse /id para confirmar.`;
-
-              await sendMessage(normalized.chatId, welcomeMsg);
-
-              // Salvar/atualizar chat_id.json
-              const chatData = {
-                chatId: normalized.chatId,
-                firstName: normalized.firstName,
-                username: normalized.username || 'Sem username',
-                receivedAt: new Date().toISOString()
-              };
-              fs.writeFileSync(
-                path.join('.', 'telegram-bot', 'chat_id.json'),
-                JSON.stringify(chatData, null, 2)
-              );
-              console.log('💾 chat_id.json atualizado com conversa atual');
-
-              // Responder no Telegram
-              await sendMessage(normalized.chatId, welcomeMsg);
-              break;
-
-            case '/id':
-              // Responder o chat id da conversa
-              const idReply = `🆔 Seu Chat ID é:\n\`${normalized.chatId}\`\n\nNome: ${normalized.firstName}\nUsername: @${normalized.username || 'N/A'}`;
-              await sendMessage(normalized.chatId, idReply);
-              console.log('📤 Respondeu /id para:', normalized.chatId);
-              break;
-
-            default:
-              // Comandos não reconhecidos
-              await sendMessage(normalized.chatId, '⚠️ Comando não reconhecido. Use /start ou /id.');
-              console.log('❓ Comando desconhecido:', normalized.text);
-              break;
-          }
+        if (command === '/start') {
+          const record = saveChatId(message);
+          await sendMessage(chatId, `Olá, ${record.firstName}! Bot ativo. Seu Chat ID é ${record.chatId}.`);
+        } else if (command === '/id') {
+          await sendMessage(chatId, `Seu Chat ID é ${chatId}.`);
+        } else {
+          await sendMessage(chatId, 'Comando não reconhecido. Use /start ou /id.');
         }
       }
-
-      // Atualizar offset para o próximo update
-      if (data.result && data.result.length > 0) {
-        lastOffset = data.result[data.result.length - 1].update_id + 1;
-      }
-
-    } catch (err) {
-      console.error('❌ Erro no loop principal:', err.message);
-      // Não derrubar o loop - apenas esperar próxima iteração
+    } catch (error) {
+      console.error('Falha no polling do Telegram:', error.message);
+      await sleep(3000);
     }
-
-    // Long polling: esperar 3 segundos entre cada verificação
-    await new Promise(resolve => setTimeout(resolve, 3000));
   }
 }
 
-// === 6. Execução ===
-// Verificar se temos token
-if (!TOKEN || TOKEN === '') {
-  console.error('❌ Token do bot não encontrado! Verifique o .env');
-  process.exit(1);
-}
-
-// Iniciar bot
-main().catch(err => {
-  console.error('❌ Erro ao iniciar bot:', err);
-  process.exit(1);
+main().catch(error => {
+  console.error('Falha ao iniciar o bot:', error.message);
+  process.exitCode = 1;
 });

@@ -1,5 +1,13 @@
 $ErrorActionPreference = 'Stop'
-$Base = if ($env:CHATPAY_API_BASE) { $env:CHATPAY_API_BASE.TrimEnd('/') } else { 'https://midas-core.novoronaldo-m.workers.dev' }
+if ($env:ALLOW_LIVE_API_TESTS -ne '1') {
+    Write-Host 'SKIP: defina ALLOW_LIVE_API_TESTS=1 para autorizar chamadas HTTP ao vivo.' -ForegroundColor Yellow
+    exit 2
+}
+if ([string]::IsNullOrWhiteSpace($env:CHATPAY_API_BASE)) {
+    Write-Host 'FAIL: CHATPAY_API_BASE explícito é obrigatório; nenhum alvo padrão de produção será usado.' -ForegroundColor Red
+    exit 1
+}
+$Base = $env:CHATPAY_API_BASE.TrimEnd('/')
 $Token = $env:CHATPAY_TOKEN
 $results = @()
 [void][System.Reflection.Assembly]::LoadWithPartialName('System.Net.Http')

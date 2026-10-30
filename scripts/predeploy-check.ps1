@@ -25,7 +25,11 @@ if ($missing.Count) { Fail ("Secrets ausentes: " + ($missing -join ', ')) }
 Pass '6 secrets presentes'
 
 Run-Step '2 node test-production-provider-boundary.js' { node test-production-provider-boundary.js }
-$tests = @('test\test-phase1.js','test\test-phase2.js','test\test-phase3-kb.js','test\test-phase4-mafel.js','test\test-wa-coex.js','test-v23.js','test-v22.4.js','test-v22.1.2.js','test-v22.1.1.js','test-v22.1.js','test-v22.js','test-v22.2.js','test-v22.2-channels.js','test-v21.js','test-v20.js','test-v24-ux.js','test-v24-ux-edge.js')
+# Preserve predeploy as an offline/local gate: never inherit a user's live API target/token into these suites.
+$env:BASE = 'http://127.0.0.1:8787'
+$env:TOKEN = ''
+$env:DOMAIN = 'offline.test'
+$tests = @('test\test-phase1.js','test\test-phase2.js','test\test-phase3-kb.js','test\test-phase4-mafel.js','test\test-wa-coex.js','test-v23.js','test-v22.4.js','test-v22.1.2.js','test-v22.1.1.js','test-v22.1.js','test-v22.js','test-v22.2.js','test-v22.2-channels.js','test-v24-ux.js','test-v24-ux-edge.js','test-v23-simulator.js','test-config-failfast.js')
 foreach ($test in $tests) { Run-Step "3 $test" { node $test } }
 Run-Step '3 demo' { node scripts/demo-conversation.js }
 Run-Step '3 simulador' { node scripts/phase-e-simulator.js }

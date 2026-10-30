@@ -43,7 +43,7 @@
 - [x] "Paguei" honesto sem fake-confirm (consulta tx real no Redis: `payment_status`).
 - [x] Dedup de bolha idêntica 10 min (`tg:lastreply:{chatId}` → `status:'deduped'`).
 - [x] Handoff irritado 2x (`handoff_irritado` + `tg:handoff`), comandos `/menu /preco /garantia /retomar`.
-- [x] Anti-injeção, rate limit `/start`, webhook secret `x-telegram-bot-api-secret-token: tg__shared`.
+- [x] Anti-injeção e rate limit `/start`; a configuração antiga de webhook usava `tg__shared` previsível (comprometido). A branch atual gera segredo aleatório e rejeita webhooks sem segredo; rotação na produção é obrigatória após deploy autorizado.
 
 ### 1.2 RAG / Vectorize / KB
 - [x] Upload de KB (`kbUpload`): chunking + embed `@cf/baai/bge-m3` (fallback `bge-large-en-v1.5` 1024) + espelho Redis `kb:{domain}` (merge por filename).
@@ -323,6 +323,8 @@ powershell -ExecutionPolicy Bypass -File scripts\upload-kb.ps1 -Domain chatpay.o
 powershell -ExecutionPolicy Bypass -File scripts\upload-kb.ps1 -Domain chatpay.oficial -File docs\kb\MAFEL-KB.md
 
 # 6) Smoke ao vivo (10 casos, chat 998009360) + 12 personas (17 asserts)
+# Somente após autorização/rotação; configure BASE e TELEGRAM_WEBHOOK_SECRET via cofre.
+$env:ALLOW_LIVE_API_TESTS = '1'
 node scripts\smoke-live.js
 node scripts\smoke-12-personas.js
 ```

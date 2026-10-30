@@ -72,26 +72,44 @@ Arquivo `intent-taxonomy.json` com 8 categorias especializadas:
 
 ---
 
-## Testes & Validação Automatizada
+## Preview visual local
 
-Para validar a integridade de todas as suites de testes:
-
-```powershell
-# 1. Checagem de sintaxe
-node --check worker.js
-
-# 2. Rodar suite V22.1 (Hunter Contextual & Modos Operantis — 54 testes)
-node test-v22.1.js
-
-# 3. Rodar suite V22 (Agent Graph, Memory & Multi-Model — 56 testes)
-node test-v22.js
-
-# 4. Rodar suite legada V21
-node test-v21.js
+```bash
+npm run preview
 ```
 
-## Seguranca
+Abre o dashboard em modo demonstrativo local (porta 4173). O preview usa o harness e dados sintéticos; não consulta Redis/Telegram, não chama modelos externos e não representa métricas reais.
 
-Nunca commitar: `REDIS_TOKEN`, `RESEND_KEY`, `MIDAS_SECRET`, `JWT_SECRET`, tokens MP.
-Use variáveis de usuário/máquina ou `CHATPAY_SECRETS_FILE` apontando para
-`C:\secrets\chatpay-secrets`; use `wrangler secret` para produção.
+## Testes & Validação Automatizada
+
+```bash
+# Regressão local offline: verifica sintaxe e executa suites com credenciais removidas
+npm test
+```
+
+`npm test` não chama Cloudflare, Redis, Telegram nem provedores de LLM. É um gate local baseado no harness; não substitui os smokes reais. O gate de deploy `scripts/predeploy-check.ps1` também exige PowerShell e Wrangler autenticado para conferir os secrets de produção. Smokes ao vivo devem ser executados separadamente, em sequência e com autorização do responsável.
+
+## Swarm de IA e modelos
+
+O Worker usa roteamento **quality-first com fallback limitado** em vez de escolher um modelo aleatório por chamada. Prioridade padrão (IDs já permitidos no código):
+
+1. `@cf/meta/llama-3.3-70b-instruct-fp8-fast`
+2. `@cf/qwen/qwen3-30b-a3b-fp8`
+3. `@cf/meta/llama-4-scout-17b-16e-instruct`
+4. `@cf/openai/gpt-oss-20b`
+5. `@cf/mistralai/mistral-small-3.1-24b-instruct`
+6. `@cf/meta/llama-3.2-3b-instruct`
+
+Por padrão tenta até três modelos por chamada. A ordem pode ser ajustada com `AI_MODEL_ORDER`; tarefas específicas aceitam `AI_MODEL_ORDER_REPLY`, `AI_MODEL_ORDER_QUALIFICATION`, `AI_MODEL_ORDER_CLASSIFICATION`, `AI_MODEL_ORDER_REVIEW` e `AI_MODEL_ORDER_CREATIVE`, permitindo separar geração, qualificação, classificação e crítica do swarm. Use apenas IDs permitidos em `worker.js`. `AI_MAX_ATTEMPTS` limita tentativas (padrão 3) e `AI_MAX_TOKENS` ajusta a saída. A ordem é uma política de capacidade configurada, não um benchmark ao vivo; disponibilidade e desempenho real dependem do binding do Workers AI.
+
+Para provedores externos configurados no playbook, `llm_model` tem precedência; alternativamente, configure `OPENAI_MODEL`, `ANTHROPIC_MODEL`, `DEEPSEEK_CHAT_MODEL` ou `DEEPSEEK_REASONER_MODEL`. O fallback público do Pollinations fica desligado por padrão porque enviaria prompts a um terceiro; só é habilitado explicitamente com `ALLOW_PUBLIC_LLM_FALLBACK=1`.
+
+## Sandbox de staging
+
+Defina `SANDBOX_MODE=true` como variável de texto do Worker de staging antes de qualquer teste. `GET /api/sandbox-status` responde mesmo quando a configuração geral está incompleta e devolve apenas nomes ausentes, nunca valores: `sandboxReady` só será `true` com sandbox ligado, Redis configurado e binding Workers AI presente. `e2eRunnerAvailable` permanece `false` até o runner autônomo real ser implementado e implantado. No sandbox, `REDIS_URL`, `REDIS_TOKEN`, `MIDAS_SECRET` e `JWT_SECRET` continuam obrigatórios; `RESEND_KEY` e `TARGET_EMAIL` deixam de ser pré-requisitos porque os envios de e-mail são bloqueados. Fora do sandbox, os seis continuam obrigatórios. Nesse modo, o Worker bloqueia requisições HTTP externas (mantendo somente Redis configurado), impede gravações TiDB e confirmações/criações reais de pagamento, registra ações de canal como `sandbox_would_send` e permite Workers AI com no máximo uma tentativa e 256 tokens por chamada. Mesmo que o playbook selecione OpenAI, Anthropic, DeepSeek ou outro provedor, o roteador usa exclusivamente o binding Workers AI no sandbox. O fallback público do Pollinations também fica bloqueado. O limite de 256 tokens é por chamada, não por execução completa; ele não substitui a verificação da franquia nem um teto global de chamadas.
+
+`SANDBOX_MODE` não garante custo zero de Workers AI: confira a cota e o uso reais da conta antes de executar. O guard é aplicado no Worker; não use o widget embarcado ou outros scripts executados diretamente no navegador para este teste.
+
+## Segurança
+
+Nunca commitar `REDIS_TOKEN`, `RESEND_KEY`, `MIDAS_SECRET`, `JWT_SECRET`, tokens MP ou `BOT_TOKEN` do Telegram. Use variáveis de ambiente/Cloudflare Secrets; não exiba o conteúdo de arquivos de segredo nos logs. Se um token já apareceu em arquivo ou histórico Git, revogue-o no provedor e gere um novo — apagar o arquivo atual não remove cópias do histórico.

@@ -213,6 +213,8 @@ node -e "require('./test/harness.js')"  # testa MiniRedis commands
 npx.cmd wrangler deploy --name midas-core
 
 # 5. Smoke pós-deploy
+# Somente após autorização/rotação; configure BASE e TELEGRAM_WEBHOOK_SECRET via cofre.
+$env:ALLOW_LIVE_API_TESTS = '1'
 node scripts\smoke-live.js
 node scripts\smoke-12-personas.js
 ```

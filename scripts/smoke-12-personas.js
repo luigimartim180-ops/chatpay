@@ -1,5 +1,10 @@
-const BASE = 'https://midas-core.novoronaldo-m.workers.dev';
-const H = { 'x-telegram-bot-api-secret-token': 'tg__shared', 'content-type': 'application/json' };
+import { requireExternalTestOptIn } from './test-opt-in.mjs';
+
+requireExternalTestOptIn('live');
+const BASE = (process.env.BASE || '').trim().replace(/\/+$/, '');
+const WEBHOOK_SECRET = (process.env.TELEGRAM_WEBHOOK_SECRET || '').trim();
+if (!BASE || !WEBHOOK_SECRET) throw new Error('Defina BASE e TELEGRAM_WEBHOOK_SECRET para autorizar o smoke ao vivo.');
+const H = { 'x-telegram-bot-api-secret-token': WEBHOOK_SECRET, 'content-type': 'application/json' };
 const CHAT = 998009360;
 let seq = Date.now();
 let pass = 0, fail = 0;

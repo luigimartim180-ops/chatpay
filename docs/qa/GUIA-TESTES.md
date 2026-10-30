@@ -1,6 +1,8 @@
 # GUIA-TESTES — FASE 2 (ManyChat / Menus / FSM / Handoff)
 
-Worker: `midas-core` · Webhook: `https://midas-core.novoronaldo-m.workers.dev/api/telegram-webhook?domain=_shared` · Secret header: `x-telegram-bot-api-secret-token: tg__shared` · Bot: `@ChatPayteste_bot` · Chat real: `998009360`.
+Worker: `midas-core` · Webhook: `https://midas-core.novoronaldo-m.workers.dev/api/telegram-webhook?domain=_shared` · autenticação: `x-telegram-bot-api-secret-token` com segredo aleatório configurado por bot (não registrar o valor neste guia) · Bot: `@ChatPayteste_bot` · Chat real: `998009360`.
+
+> **Segurança:** o valor histórico `tg__shared` era previsível e deve ser considerado comprometido. O código agora gera segredo aleatório ao configurar/reparar o webhook e rejeita configurações sem segredo. A instância de produção ainda precisa de deploy e rotação autorizados; não rode os smokes live antes disso.
 
 Consumo do cadastro da loja (`data/chatpay.oficial.json` → `loadStoreData` / fast-paths): ver [`docs/store-data.md`](../store-data.md).  
 Pagamento Pix (`/chatpay/charge`, Redis `pix:tx:`, confirmação): ver [`docs/pix-payment.md`](../pix-payment.md).  
@@ -34,6 +36,10 @@ Tags (`tg:tags:{chatId}`): `lead`, `comprador`, `pagante`, `irritado`, `injetor`
 | `garantia` | `callback_guarantee` |
 | `humano` | `callback_handoff` + handoff TTL 2h + links WhatsApp/Telegram |
 | `menu` | `callback_menu` |
+
+## Proteção dos smokes ao vivo
+
+Os scripts `scripts/smoke-live.js` e `scripts/smoke-12-personas.js` exigem `ALLOW_LIVE_API_TESTS=1`, `BASE` explícito e `TELEGRAM_WEBHOOK_SECRET` fornecido por um cofre autorizado. São testes com efeitos externos; não os rode sem autorização, segredo rotacionado e conta de teste apropriada.
 
 ## 12 personas — smoke ao vivo
 

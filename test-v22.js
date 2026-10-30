@@ -263,6 +263,10 @@ async function runLiveEndpointTests() {
     console.log('    $env:TOKEN = "your-jwt-token"; node test-v22.js');
     return;
   }
+  if (process.env.ALLOW_LIVE_API_TESTS !== '1') {
+    console.log('⏭️  Live endpoint calls are disabled. Set ALLOW_LIVE_API_TESTS=1 to authorize them explicitly.');
+    return;
+  }
 
   console.log(`\n--- 7. Testing Live Endpoints at ${BASE} ---`);
   const headers = { 'Content-Type': 'application/json' };

@@ -24,4 +24,25 @@ function scan(directory) {
 }
 scan(workspace);
 assert.deepEqual(forbiddenFiles, [], 'nenhum arquivo de segredo existe no workspace');
-console.log('produção sem providers de laboratório: passed');
+
+const telegramTokenPattern = /\b\d{8,12}:[A-Za-z0-9_-]{30,}\b/g;
+const exposedTelegramTokens = [];
+function scanTextForTelegramTokens(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.name === '.git' || entry.name === 'node_modules' || entry.name === '.wrangler') continue;
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      scanTextForTelegramTokens(fullPath);
+      continue;
+    }
+    let text;
+    try { text = fs.readFileSync(fullPath, 'utf8'); } catch (_) { continue; }
+    for (const [index, line] of text.split(/\r?\n/).entries()) {
+      if (telegramTokenPattern.test(line)) exposedTelegramTokens.push(`${path.relative(workspace, fullPath)}:${index + 1}`);
+      telegramTokenPattern.lastIndex = 0;
+    }
+  }
+}
+scanTextForTelegramTokens(workspace);
+assert.deepEqual(exposedTelegramTokens, [], 'nenhum token Telegram em texto puro no workspace');
+console.log('produção sem providers de laboratório nem token Telegram em texto puro: passed');

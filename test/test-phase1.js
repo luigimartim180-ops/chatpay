@@ -49,7 +49,10 @@ assert.ok(master.example.includes('?start='));
 const masterCfg = JSON.parse(redisCommand('GET', 'channel:config:telegram:_shared').result);
 assert.equal(masterCfg.role, 'master');
 assert.ok(masterCfg.webhook_url.includes('domain=_shared'));
-ok('master bot setup');
+assert.match(masterCfg.webhook_secret, /^[a-f0-9]{64}$/);
+assert.notEqual(masterCfg.webhook_secret, 'tg__shared');
+const tgSecret = masterCfg.webhook_secret;
+ok('master bot setup generates a random webhook secret');
 
 response = await makeRequest('GET', '/api/telegram/deep-link?token=' + encodeURIComponent(started.token));
 assert.equal(response.status, 200);
@@ -66,9 +69,11 @@ assert.equal(response.status, 400, 'rejects invalid domain');
 ok('deep link domain validation');
 
 const chatId = '998009360';
+const dedicatedSecret = 'test-only-dedicated-webhook-secret';
+seedRedis('channel:config:telegram:loja.fase1', { webhook_secret: dedicatedSecret, tg_bot_token: '123456:TESTTOKEN' });
 let wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: Number(chatId) }, text: '/start ' + dom }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 assert.equal(wh.status, 200);
 let body = await wh.json();
 assert.equal(body.intent, 'start_bound');
@@ -81,7 +86,7 @@ ok('deep link /start binds session');
 
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: Number(chatId) }, text: 'qual o preco?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(wh.status, 200);
 assert.equal(body.domain, dom, 'session routes subsequent message');
@@ -91,7 +96,7 @@ ok('session routes price inquiry');
 
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: 111222333 }, text: 'oi tudo bem' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'no_session');
 assert.equal(body.domain, null);
@@ -99,21 +104,21 @@ ok('no session → prompt deep link');
 
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: 444555666 }, text: '/start dom.inexistente.xyz' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'start_unknown');
 ok('inactive domain rejected');
 
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: 777888999 }, text: '/start !!' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'start_invalid');
 ok('invalid domain payload rejected');
 
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=loja.fase1', {
   message: { chat: { id: 555666777 }, text: 'qual o preco?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg_loja.fase1' });
+}, { 'x-telegram-bot-api-secret-token': dedicatedSecret });
 body = await wh.json();
 assert.equal(wh.status, 200);
 assert.equal(body.domain, 'loja.fase1');
@@ -127,10 +132,16 @@ wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
 assert.equal(wh.status, 403, 'bad secret rejected');
 ok('webhook secret enforcement');
 
+wh = await makeRequest('POST', '/api/telegram-webhook?domain=unconfigured.example', {
+  message: { chat: { id: 919191919 }, text: 'oi' }
+});
+assert.equal(wh.status, 503, 'missing webhook secret is rejected instead of bypassed');
+ok('webhook fails closed without configured secret');
+
 for (let i = 0; i < 6; i++) {
   wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
     message: { chat: { id: 313373 }, text: '/start ' + dom }
-  }, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+  }, { 'x-telegram-bot-api-secret-token': tgSecret });
   if (wh.status === 429) break;
 }
 assert.equal(wh.status, 429, 'start rate limit 5/min');
@@ -151,7 +162,7 @@ ok('facts + payment guards present');
 // Produto: resposta só com catálogo real
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: Number(chatId) }, text: 'qual é o nome do seu produto?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'product_info');
 assert.ok(body.reply.includes('Curso Fase1'), 'product name from catalog');
@@ -162,7 +173,7 @@ ok('product name from real catalog');
 redisCommand('DEL', 'tg:tx:' + chatId);
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: Number(chatId) }, text: 'paguei, confirmou meu pagamento?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'payment_status');
 assert.ok(!/Pagamento CONFIRMADO no sistema/i.test(body.reply), 'must not claim paid without Redis');
@@ -177,7 +188,7 @@ redisCommand('SET', 'swarm:pix:last_tx', 'CPTESTPAID');
 redisCommand('SET', 'tg:tx:' + chatId, 'CPTESTPAID');
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: Number(chatId) }, text: 'ja paguei' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'payment_status');
 assert.ok(!/Pagamento CONFIRMADO no sistema/i.test(body.reply), 'pending is not confirmed');
@@ -191,7 +202,7 @@ seedRedis('pix:tx:CPPAIDOK', JSON.stringify({
 redisCommand('SET', 'tg:tx:' + chatId, 'CPPAIDOK');
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: Number(chatId) }, text: 'status do pagamento' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'payment_confirmed');
 assert.ok(/Pagamento CONFIRMADO no sistema/i.test(body.reply), 'real paid is confirmed');
@@ -205,7 +216,7 @@ seedRedis('pix:tx:CPNOTPAID', JSON.stringify({
 redisCommand('SET', 'tg:tx:998009361', 'CPNOTPAID');
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   message: { chat: { id: 998009361 }, text: 'oi, como estou?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 // Se LLM (harness pollinations vazio) não falar de pagamento, segue; senão filtro age
 assert.ok(typeof body.reply === 'string');
@@ -219,12 +230,12 @@ const dupUpdate = {
 };
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared',
   { ...dupUpdate },
-  { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+  { 'x-telegram-bot-api-secret-token': tgSecret });
 assert.equal(wh.status, 200);
 const firstSends = harnessFaults.telegramSends;
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared',
   { ...dupUpdate },
-  { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+  { 'x-telegram-bot-api-secret-token': tgSecret });
 assert.equal(wh.status, 200, 'duplicate update still 200');
 assert.equal(harnessFaults.telegramSends, firstSends, 'second delivery must not send again');
 assert.ok(firstSends <= 1, 'at most one send for same update_id');
@@ -305,7 +316,7 @@ const llmBefore = harnessFaults.llmCalls;
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   update_id: 555001,
   message: { chat: { id: Number(chatId) }, text: 'vocês têm plano anual?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(wh.status, 200);
 assert.equal(body.intent, 'playbook_fallback');
@@ -320,7 +331,7 @@ ok('out of FAQ → menu with buttons, no LLM');
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   update_id: 555002,
   message: { chat: { id: Number(chatId) }, text: 'qual a garantia?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(wh.status, 200);
 assert.notEqual(body.intent, 'playbook_fallback', 'FAQ match is not fallback');
@@ -337,7 +348,7 @@ wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
     data: 'preco',
     message: { chat: { id: Number(chatId) }, message_id: 1, text: 'menu' }
   }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(wh.status, 200);
 assert.equal(body.intent, 'callback_price');
@@ -355,7 +366,7 @@ wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
     data: 'humano',
     message: { chat: { id: Number(chatId) }, message_id: 2, text: 'menu' }
   }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(wh.status, 200);
 assert.equal(body.intent, 'callback_handoff');
@@ -373,7 +384,7 @@ redisCommand('DEL', 'tg:tx:' + chatId);
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   update_id: 555005,
   message: { chat: { id: Number(chatId) }, text: 'paguei, confirmou?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.intent, 'payment_status');
 assert.ok(!/Pagamento CONFIRMADO no sistema/i.test(body.reply), 'T7 no regression on payment truth');
@@ -384,7 +395,7 @@ const groupChatId = '-100222333444';
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   update_id: 555006,
   message: { chat: { id: Number(groupChatId), type: 'supergroup' }, text: '/start@ChatPayteste_bot ' + dom }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(wh.status, 200);
 assert.equal(redisCommand('GET', 'session:' + groupChatId).result, dom, 'group /start@bot binds domain');
@@ -395,14 +406,14 @@ configureHarness({ telegramSends: 0 });
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   update_id: 555007,
   message: { chat: { id: Number(groupChatId), type: 'supergroup' }, text: 'qual a garantia?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.status, 'sent');
 const groupFirstSends = harnessFaults.telegramSends;
 wh = await makeRequest('POST', '/api/telegram-webhook?domain=_shared', {
   update_id: 555008,
   message: { chat: { id: Number(groupChatId), type: 'supergroup' }, text: 'qual a garantia?' }
-}, { 'x-telegram-bot-api-secret-token': 'tg__shared' });
+}, { 'x-telegram-bot-api-secret-token': tgSecret });
 body = await wh.json();
 assert.equal(body.status, 'sent', 'group duplicate reply still sent');
 assert.ok(harnessFaults.telegramSends > groupFirstSends, 'second group message actually sent');

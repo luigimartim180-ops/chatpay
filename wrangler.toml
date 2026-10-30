@@ -1,6 +1,7 @@
-name = "midas-core"
+name = "midas-core-staging"
 main = "worker.js"
 compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
 
 [ai]
 binding = "AI"
@@ -9,5 +10,6 @@ binding = "AI"
 binding = "VECTORIZE"
 index_name = "kb-midas-core"
 
-[triggers]
-crons = ["0 * * * *"]
+# Scheduled processing is intentionally disabled in staging to avoid background side effects.
+# [triggers]
+# crons = ["0 * * * *"]

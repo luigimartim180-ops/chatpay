@@ -132,7 +132,9 @@ seedRedis('loja:' + dom, {
   ok('fillKbVars unidades');
 }
 await makeRequest('POST', '/api/telegram/master', { token: started.token, tg_bot_token: '123456:TESTTOKEN' });
-const H = { 'x-telegram-bot-api-secret-token': 'tg__shared' };
+const tgSecret = JSON.parse(redisCommand('GET', 'channel:config:telegram:_shared').result).webhook_secret;
+assert.match(tgSecret, /^[a-f0-9]{64}$/);
+const H = { 'x-telegram-bot-api-secret-token': tgSecret };
 let updateSeq = 700000;
 async function send(text, id = chatId) {
   updateSeq += 1;

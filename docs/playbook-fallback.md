@@ -74,7 +74,7 @@ Contato: WhatsApp `wa.me/5511932270717` · Telegram `t.me/Tokenizeassets` (`TG_H
 ### Se botões “não fazem nada” no Telegram
 
 1. Webhook pode estar sem `allowed_updates: callback_query` → `POST /api/telegram/repair-webhook` com `{ "token": "<JWT owner>" }` (ou `?key=MIDAS_SECRET`).
-2. Secret do header deve ser `tg__shared` (mensagens e callbacks usam o mesmo).
+2. Configure o mesmo segredo aleatório do webhook em mensagens e callbacks. `tg__shared` era determinístico e está comprometido; nunca use esse valor. Após deploy, execute `/api/telegram/repair-webhook` com autorização administrativa para rotacionar o segredo no Telegram e no Redis.
 3. Probe esperado: callback `humano` → `intent=callback_handoff` + `wa.me` + `t.me` + `telegram_status=sent`.
 
 ## Testes e smoke

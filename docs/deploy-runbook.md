@@ -10,7 +10,7 @@
 3. **Editor:** executar `powershell -ExecutionPolicy Bypass -File scripts/predeploy-check.ps1`. O checklist precisa ficar totalmente verde.
 4. **Editor:** após o humano configurar os providers, executar `node scripts/phase-e-simulator.js --require-real` e conferir `simulator/report-decisao.md`.
 5. **Arquiteto:** registrar o carimbo/aprovação da rodada de referência neste documento ou no registro de mudança, sem valores secretos.
-6. **Humano:** registrar a versão atualmente em produção abaixo, executar `wrangler deploy` e então `powershell -ExecutionPolicy Bypass -File scripts/postdeploy-smoke.ps1`.
+6. **Humano:** registrar a versão atualmente em produção abaixo, executar `wrangler deploy` e então, após autorização, executar `scripts/postdeploy-smoke.ps1` e `scripts/security-audit.ps1`. Ambos exigem `ALLOW_LIVE_API_TESTS=1` e `CHATPAY_API_BASE` explícito; smokes Telegram também exigem `BASE` e `TELEGRAM_WEBHOOK_SECRET`.
 
 ## Critérios de ABORTAR
 
@@ -26,7 +26,7 @@
 - **Rollback imediato:** `6f296d08-3582-4bcb-871c-1673958f58f8` (deploy grupos + FASE M)
 - **Gate do deploy:** `predeploy-check.ps1` PASS (phase1 **33/33**, phase2 22/22, phase3 20/20, phase4 14/14, social 10/10, channels 32/32, v22/v23) · pós-deploy: `postdeploy-smoke.ps1` 6/6 PASS · smoke ao vivo 10/10 + 12 personas 17/17.
 - **Mudança:** Canais sociais operacionais (Instagram, YouTube, TikTok), endpoint universal de captura `/api/hunter-lead` com IA e novo painel de gestão de redes no Dashboard.
-- **Aprovador/arquiteto:** regressão verde + smoke ao vivo (banda/win_rate da FASE M segue escopo do P5/I4).
+- **Aprovador/arquiteto:** regressão verde + smoke ao vivo autorizado (banda/win_rate da FASE M segue escopo do P5/I4). Smokes exigem `ALLOW_LIVE_API_TESTS=1`, `BASE` e `TELEGRAM_WEBHOOK_SECRET`; não executar até rotacionar o segredo previsível legado `tg__shared`.
 
 ## Manutenção do índice Vectorize (`kb-midas-core`)
 
@@ -51,6 +51,6 @@ Se o índice for apagado/criado do zero, recriar o índice de metadata: `npx.cmd
 1. Interromper novos testes de produção.
 2. Registrar o Version ID que está sendo revertido e o motivo.
 3. Executar: `wrangler rollback <version-anterior>`.
-4. Reexecutar `scripts/postdeploy-smoke.ps1` e registrar o resultado.
+4. Com autorização, `ALLOW_LIVE_API_TESTS=1` e `CHATPAY_API_BASE` explícito configurados, reexecutar `scripts/postdeploy-smoke.ps1` e registrar o resultado; não usar alvo padrão de produção.
 
 Nunca inserir tokens, chaves, emails ou conteúdo de arquivos de segredo neste documento.

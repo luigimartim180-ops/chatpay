@@ -43,6 +43,10 @@ async function runTests() {
     console.log('✅ Arquivo de teste test-v21.js pronto para uso.');
     return;
   }
+  if (process.env.ALLOW_LIVE_API_TESTS !== '1') {
+    console.log('⏭️  Requisições live desativadas. Defina ALLOW_LIVE_API_TESTS=1 para autorizar explicitamente.');
+    return;
+  }
 
   const headers = { 'Content-Type': 'application/json' };
 

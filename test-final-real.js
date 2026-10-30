@@ -1,6 +1,8 @@
 import { createProviderChain, generateWithProviders } from './scripts/llm-providers.js';
 import fs from 'fs';
+import { requireExternalTestOptIn } from './scripts/test-opt-in.mjs';
 
+requireExternalTestOptIn('provider');
 const chain = createProviderChain();
 const workerCode = fs.readFileSync('worker.js', 'utf8');
 
@@ -60,6 +62,6 @@ console.log();
 // TEST 4: Status das chaves
 console.log('🔸 STATUS DAS CHAVES');
 console.log('-'.repeat(70));
-console.log('GROQ_API_KEY:', process.env.GROQ_API_KEY ? 'CONFIGURADA (' + process.env.GROQ_API_KEY.substring(0, 10) + '...)' : 'NÃO CONFIGURADA');
+console.log('GROQ_API_KEY:', process.env.GROQ_API_KEY ? 'CONFIGURADA' : 'NÃO CONFIGURADA');
 console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'CONFIGURADA (' + process.env.GEMINI_API_KEY.substring(0, 10) + '...)' : 'NÃO CONFIGURADA');
 console.log('REDIS_URL no Wrangler:', 'https://current-pheasant-114427.upstash.io (confirmado pelo usuario)');

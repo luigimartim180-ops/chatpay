@@ -1,4 +1,4 @@
-﻿import fs from 'node:fs';
+import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -264,9 +264,9 @@ export function createProviderChain({ fetchImpl = globalThis.fetch, ai = null, e
       const tokens = estimateTokens(reply || prompt);
       return { reply, ...telemetry('pollinations', { total_tokens: tokens }, tokens * 0.00002), usage: { total_tokens: tokens } };
     },
-    async mock(prompt) {
+async mock(prompt) {
       const reply = `Mock indisponível: ${String(prompt).slice(0, 120)}`;
-      return { reply, ...telemetry('mock', { total_tokens: estimateTokens(reply) }, 0), usage: { total_tokens: estimateTokens(reply) } };
+      return { reply, ...telemetry('mock', { total_tokens: estimateTokens(reply) }, 0, true), usage: { total_tokens: estimateTokens(reply) } };
     }
   };
 }

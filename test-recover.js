@@ -1,7 +1,13 @@
-// Teste simples para o endpoint /api/recover
-// Testa: email inválido, email não encontrado, email encontrado
+// Teste ao vivo para /api/recover — não execute contra produção sem autorização.
+// Testa: email inválido, email não encontrado, email encontrado.
+import { requireExternalTestOptIn } from './scripts/test-opt-in.mjs';
 
-const BASE = 'https://midas-core.novoronaldo-m.workers.dev';
+requireExternalTestOptIn('live');
+const BASE = (process.env.BASE || '').trim();
+if (!BASE) {
+  console.error('Defina BASE explicitamente para um ambiente de teste antes de continuar.');
+  process.exit(1);
+}
 
 async function testRecover() {
   console.log('=== Teste /api/recover ===\n');

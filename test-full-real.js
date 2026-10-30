@@ -1,7 +1,9 @@
 // TESTE REAL COMPLETO: Groq API + worker.js integration + tools
 import { createProviderChain, generateWithProviders } from './scripts/llm-providers.js';
 import fs from 'fs';
+import { requireExternalTestOptIn } from './scripts/test-opt-in.mjs';
 
+requireExternalTestOptIn('provider');
 const chain = createProviderChain();
 const workerCode = fs.readFileSync('worker.js', 'utf8');
 

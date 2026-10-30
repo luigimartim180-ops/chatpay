@@ -1,5 +1,5 @@
 // MIDAS CORE V20 — CHATPAY LINK + HUNTER API
-const CONFIG = { redisUrl: '', redisToken: '', resendKey: '', targetEmail: '', midasSecret: '', jwtSecret: '', telegramBotToken: '' };
+const CONFIG = { redisUrl: '', redisToken: '', resendKey: '', targetEmail: '', midasSecret: '', jwtSecret: '', telegramBotToken: '', sandboxMode: false };
 function configure(env = {}) {
   CONFIG.redisUrl = env.REDIS_URL ?? CONFIG.redisUrl;
   CONFIG.redisToken = env.REDIS_TOKEN ?? CONFIG.redisToken;
@@ -8,10 +8,33 @@ function configure(env = {}) {
   CONFIG.midasSecret = env.MIDAS_SECRET ?? CONFIG.midasSecret;
   CONFIG.jwtSecret = env.JWT_SECRET ?? CONFIG.jwtSecret;
   CONFIG.telegramBotToken = ((env.TELEGRAM_BOT_TOKEN ?? CONFIG.telegramBotToken) || '').trim();
+  CONFIG.sandboxMode = env.SANDBOX_MODE === true || ['1', 'true', 'yes'].includes(String(env.SANDBOX_MODE || '').trim().toLowerCase());
 }
+const nativeFetch = globalThis.fetch.bind(globalThis);
+async function guardedFetch(input, init = {}) {
+  if (!CONFIG.sandboxMode) return nativeFetch(input, init);
+  const rawUrl = typeof input === 'string' ? input : String(input?.url || input || '');
+  let target;
+  try { target = new URL(rawUrl); } catch (_) { target = null; }
+  let redisOrigin = '';
+  try { redisOrigin = CONFIG.redisUrl ? new URL(CONFIG.redisUrl).origin : ''; } catch (_) { }
+  if (target && redisOrigin && target.origin === redisOrigin) return nativeFetch(input, init);
+  const method = String(init.method || input?.method || 'GET').toUpperCase();
+  const host = target?.host || 'invalid-url';
+  try { await log('sandbox_would_send', { host, method }); } catch (_) { }
+  return new Response(JSON.stringify({ status: 'would_send', sandbox: true }), {
+    status: 403,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-ChatPay-Sandbox': 'blocked' }
+  });
+}
+const fetch = guardedFetch;
 const POLLINATIONS = 'https://text.pollinations.ai/';
 const ANGLES = ['ferramenta_ia_gratis', 'erro_fatal', 'direito_de_uso', 'automacao_sem_codigo', 'prompt_secreto', 'comparativo_ferramentas', 'bastidores_reais', 'tendencia_2026'];
-const MODELS = ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', '@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/mistralai/mistral-small-3.1-24b-instruct', '@cf/qwen/qwen3-30b-a3b-fp8', '@cf/openai/gpt-oss-20b', '@cf/meta/llama-3.2-3b-instruct'];
+// Quality-first order among the Workers AI models already supported by this Worker.
+// The 70B model is tried first; bounded fallbacks avoid per-request random model selection.
+const MODELS = ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', '@cf/qwen/qwen3-30b-a3b-fp8', '@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/openai/gpt-oss-20b', '@cf/mistralai/mistral-small-3.1-24b-instruct', '@cf/meta/llama-3.2-3b-instruct'];
+const AI_MODEL_ALLOWLIST = new Set(MODELS);
+const DEFAULT_AI_MODEL_ATTEMPTS = 3;
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Midas-Key' };
 const json = (o, s = 200) => new Response(JSON.stringify(o, null, 2), { status: s, headers: { ...CORS, 'Content-Type': 'application/json' } });
 const htmlOut = h => new Response(h, { headers: { ...CORS, 'Content-Type': 'text/html; charset=utf-8' } });
@@ -41,7 +64,7 @@ async function redisSetNx(key, value, ttlSec) {
     return true;
   }
 }
-async function tidb(sql, params) { const m = await hmap('swarm:tidb'); if (!m.url) return null; try { const { connect } = await import('https://esm.sh/@tidbcloud/serverless'); const conn = connect({ url: m.url }); return await conn.execute(sql, params || []); } catch (e) { return null; } }
+async function tidb(sql, params) { if (CONFIG.sandboxMode) { await log('sandbox_would_write_database', { operation: String(sql || '').trim().split(/\s+/)[0] || 'unknown' }); return { status: 'would_execute', sandbox: true }; } const m = await hmap('swarm:tidb'); if (!m.url) return null; try { const { connect } = await import('https://esm.sh/@tidbcloud/serverless'); const conn = connect({ url: m.url }); return await conn.execute(sql, params || []); } catch (e) { return null; } }
 const rows = r => (r && r.rows) ? r.rows : (Array.isArray(r) ? r : []);
 async function embed(text, env) { try { const e = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: text.slice(0, 500) }); const d = e.data; return Array.isArray(d) ? (Array.isArray(d[0]) ? d[0] : d) : null; } catch (e) { return null; } }
 async function signJWT(payload) { const header = { alg: 'HS256', typ: 'JWT' }; const b64 = s => btoa(JSON.stringify(s)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_'); const unsigned = b64(header) + '.' + b64(payload); const enc = new TextEncoder(); const key = await crypto.subtle.importKey('raw', enc.encode(CONFIG.jwtSecret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); const sig = await crypto.subtle.sign('HMAC', key, enc.encode(unsigned)); return unsigned + '.' + btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_'); }
@@ -50,7 +73,7 @@ const emv = (id, v) => id + String(v.length).padStart(2, '0') + v;
 function crc16(s) { let c = 0xFFFF; for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) { c = (c & 0x8000) ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF; } } return c.toString(16).toUpperCase().padStart(4, '0'); }
 function buildPix(key, amount, txid, name, city) { const acct = emv('00', 'br.gov.bcb.pix') + emv('01', key); let p = emv('00', '01') + emv('26', acct) + emv('52', '0000') + emv('53', '986'); if (amount) p += emv('54', amount); p += emv('58', 'BR') + emv('59', (name || 'MIDAS PAY').slice(0, 25)) + emv('60', (city || 'SAO PAULO').slice(0, 15)) + emv('62', emv('05', txid)) + '6304'; return p + crc16(p); }
 async function mpToken() { const m = await hmap('swarm:mp'); return m.token || ''; }
-async function mpCreate(amount, desc) { const token = await mpToken(); const r = await fetch('https://api.mercadopago.com/v1/payments', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Idempotency-Key': 'midas-' + Date.now() }, body: JSON.stringify({ transaction_amount: parseFloat(amount), description: desc || 'Compra via ChatPay', payment_method_id: 'pix', payer: { email: 'CONFIG.targetEmail' } }) }); return await r.json(); }
+async function mpCreate(amount, desc) { if (CONFIG.sandboxMode) { await log('sandbox_would_create_payment', { amount: Number(amount) || 0 }); return { status: 'would_create_payment', sandbox: true }; } const token = await mpToken(); const r = await fetch('https://api.mercadopago.com/v1/payments', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Idempotency-Key': 'midas-' + Date.now() }, body: JSON.stringify({ transaction_amount: parseFloat(amount), description: desc || 'Compra via ChatPay', payment_method_id: 'pix', payer: { email: 'CONFIG.targetEmail' } }) }); return await r.json(); }
 const firstLine = t => (t || '').split('\n')[0].slice(0, 120);
 function parseScore(t) { let m = (t || '').match(/SCORE:\s*([0-9]{1,2})/i) || (t || '').match(/([0-9]{1,2})\s*\/\s*10/); return m ? Math.max(1, Math.min(10, parseInt(m[1]))) : 5; }
 async function getBase() { const r = await redis('GET', 'swarm:loop:prompt_base'); return r.result ? JSON.parse(r.result) : { success_patterns: [], anti_patterns: [] }; }
@@ -66,18 +89,22 @@ async function resolvePix(dom) { if (dom) { const c = await hmap('cfg:' + dom + 
 async function getIntegrations(dom) { return await hmap('cfg:' + dom + ':integrations'); }
 async function saveIntegration(dom, values) { for (const [k, v] of Object.entries(values)) { if (v !== undefined) await redis('HSET', 'cfg:' + dom + ':integrations', k, String(v)); } }
 /** Campos de segredo nunca devolvidos em claro por endpoints de leitura de config. */
-const SECRET_CONFIG_FIELDS = ['wa_access_token', 'tg_bot_token', 'yt_api_key', 'ig_access_token', 'tt_client_secret', 'webhook_verify_token', 'wa_verify_token', 'apiKey', 'accessToken', 'clientSecret'];
+const SECRET_CONFIG_FIELDS = ['wa_access_token', 'tg_bot_token', 'yt_api_key', 'ig_access_token', 'tt_client_secret', 'webhook_verify_token', 'wa_verify_token', 'apiKey', 'accessToken', 'clientSecret', 'llm_key', 'clicksign_api_key'];
 /**
  * Substitui segredos por `*_set: true` — mantém o dashboard sabendo que a credencial
- * existe sem nunca devolver o valor em texto puro.
- * @param {Object} cfg
- * @returns {Object} cópia segura
+ * existe sem nunca devolver o valor em texto puro. A recursão cobre segredos em webhooks.
+ * @param {Object|Array} cfg
+ * @returns {Object|Array} cópia segura
  */
 function maskChannelSecrets(cfg) {
+  if (Array.isArray(cfg)) return cfg.map(maskChannelSecrets);
+  if (!cfg || typeof cfg !== 'object') return cfg;
   const out = {};
-  for (const [k, v] of Object.entries(cfg || {})) {
-    if (SECRET_CONFIG_FIELDS.includes(k)) { out[k + '_set'] = !!v; continue; }
-    out[k] = v;
+  for (const [k, v] of Object.entries(cfg)) {
+    const normalized = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const secretLike = SECRET_CONFIG_FIELDS.includes(k) || /(?:token|secret|password|apikey|accesskey|privatekey)$/.test(normalized) || normalized === 'key';
+    if (secretLike) { out[k + '_set'] = v !== undefined && v !== null && String(v).length > 0; continue; }
+    out[k] = maskChannelSecrets(v);
   }
   return out;
 }
@@ -260,9 +287,10 @@ function validateChannelConfig(channel, cfg) {
   return { valid: missing.length === 0, missing };
 }
 
-/** Gera secret_token do webhook Telegram (A-Za-z0-9_-) a partir do domínio */
-function telegramWebhookSecret(domain) {
-  return ('tg_' + String(domain || 'default')).replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 64);
+/** Gera secret_token criptograficamente aleatório (hex é permitido pelo Telegram). */
+function telegramWebhookSecret() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /** URL do webhook multi-tenant: /api/telegram-webhook?domain={dom} */
@@ -278,7 +306,7 @@ function telegramWebhookUrl(domain) {
  */
 async function setupTelegramWebhook(botToken, domain) {
   const url = telegramWebhookUrl(domain);
-  const secret = telegramWebhookSecret(domain);
+  const secret = telegramWebhookSecret();
   const token = String(botToken || '').trim();
   if (!token) return { ok: false, url, secret, description: 'bot_token vazio' };
   try {
@@ -1134,7 +1162,7 @@ async function resolveTgBotUsername(domain) {
  */
 async function setupTelegramMaster(botToken) {
   const url = 'https://midas-core.novoronaldo-m.workers.dev/api/telegram-webhook?domain=' + TG_SHARED_DOMAIN;
-  const secret = telegramWebhookSecret(TG_SHARED_DOMAIN);
+  const secret = telegramWebhookSecret();
   const token = String(botToken || '').trim();
   if (!token) return { ok: false, url, secret, description: 'bot_token vazio' };
   try {
@@ -1390,6 +1418,7 @@ async function ipRateLimit(request, scope, limitPerMin) {
 }
 
 async function sendWhatsAppButton(dom, to, product, price) {
+  if (CONFIG.sandboxMode) { await log('sandbox_would_send', { channel: 'whatsapp', kind: 'interactive_message' }); return { status: 'would_send', sandbox: true }; }
   // Load runtime channel config and merge with integration defaults
   const baseCfg = await getIntegrations(dom);
   const chCfg = await loadChannelConfig(dom, 'whatsapp');
@@ -1415,6 +1444,7 @@ async function sendWhatsAppButton(dom, to, product, price) {
  * @returns {Promise<Object|null>} resposta da Graph API ou null se não configurado
  */
 async function sendWhatsAppText(dom, to, text) {
+  if (CONFIG.sandboxMode) { await log('sandbox_would_send', { channel: 'whatsapp', kind: 'text_message' }); return { status: 'would_send', sandbox: true }; }
   const baseCfg = await getIntegrations(dom);
   const chCfg = await loadChannelConfig(dom, 'whatsapp');
   const cfg = { ...baseCfg, ...(chCfg || {}) };
@@ -1431,6 +1461,7 @@ async function sendWhatsAppText(dom, to, text) {
   return await response.json();
 }
 async function sendEmail(subject, html, to) {
+  if (CONFIG.sandboxMode) { await log('sandbox_would_send', { channel: 'email' }); return false; }
   if (!CONFIG.resendKey) return false;
   try {
     const res = await fetch('https://api.resend.com/emails', {
@@ -1451,19 +1482,84 @@ async function log(event, data) {
   } catch (_) { }
 }
 
-let LAST_AI_MODEL = MODELS[0];
-async function llm(prompt, env) {
-  LAST_AI_MODEL = MODELS[Math.floor(Math.random() * MODELS.length)];
-  if (env && env.AI) {
-    try {
-      const res = await env.AI.run(LAST_AI_MODEL, { prompt, max_tokens: 500 });
-      return res.response || '';
-    } catch (e) { }
+let LAST_AI_MODEL = 'unavailable';
+function parseAiModelList(value) {
+  if (Array.isArray(value)) return value.map(item => String(item || '').trim()).filter(Boolean);
+  return String(value || '').split(',').map(item => item.trim()).filter(Boolean);
+}
+function resolveAIModelOrder(env = {}, task = 'general') {
+  const suffix = String(task || 'general').toUpperCase().replace(/[^A-Z0-9]+/g, '_');
+  const candidates = [
+    ...parseAiModelList(env['AI_MODEL_' + suffix]),
+    ...parseAiModelList(env.AI_MODEL),
+    ...parseAiModelList(env['AI_MODEL_ORDER_' + suffix]),
+    ...parseAiModelList(env.AI_MODEL_ORDER),
+    ...MODELS
+  ];
+  return [...new Set(candidates.filter(model => AI_MODEL_ALLOWLIST.has(model)))];
+}
+function extractAIText(result) {
+  const candidates = [
+    result?.response,
+    result?.output_text,
+    result?.text,
+    result?.choices?.[0]?.message?.content,
+    result?.choices?.[0]?.text,
+    result?.content
+  ];
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) return candidate.trim();
+    if (Array.isArray(candidate)) {
+      const text = candidate.map(item => typeof item === 'string' ? item : item?.text || '').join('').trim();
+      if (text) return text;
+    }
   }
-  try {
-    const res = await fetch(POLLINATIONS + encodeURIComponent(prompt));
-    if (res.ok) return await res.text();
-  } catch (e) { }
+  return '';
+}
+async function runWorkersAI(prompt, env, { task = 'general' } = {}) {
+  if (!env?.AI || typeof env.AI.run !== 'function') return { text: '', model: '', attempted: [] };
+  const models = resolveAIModelOrder(env, task);
+  const configuredAttempts = Number(env.AI_MAX_ATTEMPTS);
+  const maxAttempts = Number.isInteger(configuredAttempts) && configuredAttempts > 0
+    ? Math.min(configuredAttempts, models.length)
+    : Math.min(DEFAULT_AI_MODEL_ATTEMPTS, models.length);
+  const configuredTokens = Number(env.AI_MAX_TOKENS);
+  const maxTokens = Number.isInteger(configuredTokens) && configuredTokens >= 64
+    ? Math.min(configuredTokens, 4000)
+    : 500;
+  const attemptLimit = CONFIG.sandboxMode ? Math.min(maxAttempts, 1) : maxAttempts;
+  const tokenLimit = CONFIG.sandboxMode ? Math.min(maxTokens, 256) : maxTokens;
+  const attempted = [];
+  for (const model of models.slice(0, attemptLimit)) {
+    attempted.push(model);
+    try {
+      const raw = await env.AI.run(model, { prompt: String(prompt || ''), max_tokens: tokenLimit });
+      const text = extractAIText(raw);
+      if (text) return { text, model, attempted };
+    } catch (_) { }
+  }
+  return { text: '', model: '', attempted };
+}
+async function llm(prompt, env, { task = 'general' } = {}) {
+  const result = await runWorkersAI(prompt, env, { task });
+  LAST_AI_MODEL = result.model || 'unavailable';
+  if (result.model) {
+    if (result.attempted.length > 1) {
+      await log('workers_ai_model_fallback', {
+        task,
+        selected_model: result.model,
+        failed_models: result.attempted.slice(0, -1)
+      });
+    }
+    return result.text;
+  }
+  // A public third-party inference endpoint receives customer prompts. Keep it opt-in only.
+  if (!CONFIG.sandboxMode && env?.ALLOW_PUBLIC_LLM_FALLBACK === '1') {
+    try {
+      const response = await fetch(POLLINATIONS + encodeURIComponent(String(prompt || '')));
+      if (response.ok) return (await response.text()).trim();
+    } catch (_) { }
+  }
   return '';
 }
 
@@ -1643,16 +1739,47 @@ async function routeCall(providers, { phoneNumber, language = 'pt-BR', useCase =
   throw new Error('No voice provider available: ' + JSON.stringify(errors));
 }
 
+function normalizeLLMProvider(value) {
+  const raw = String(value || 'workers_ai').trim().toLowerCase();
+  const aliases = {
+    'workers-ai': 'workers_ai',
+    'workers ai': 'workers_ai',
+    'deepseek-chat': 'deepseek_chat',
+    'deepseek-reasoner': 'deepseek_reasoner',
+    'openai-gpt-4o-mini': 'openai',
+    'anthropic-claude-3': 'anthropic'
+  };
+  return aliases[raw] || raw;
+}
+function resolveProviderModel(provider, playbook = {}, env = {}) {
+  const configured = String(playbook.llm_model || '').trim();
+  if (configured) return configured;
+  const envNames = {
+    openai: 'OPENAI_MODEL',
+    anthropic: 'ANTHROPIC_MODEL',
+    deepseek_chat: 'DEEPSEEK_CHAT_MODEL',
+    deepseek_reasoner: 'DEEPSEEK_REASONER_MODEL',
+    custom: 'CUSTOM_LLM_MODEL'
+  };
+  const defaults = {
+    openai: 'gpt-4o-mini',
+    anthropic: 'claude-3-haiku-20240307',
+    deepseek_chat: 'deepseek-chat',
+    deepseek_reasoner: 'deepseek-reasoner'
+  };
+  return String(env[envNames[provider]] || defaults[provider] || '').trim();
+}
 async function callLLM(prompt, pb, env) {
-  const provider = pb?.llm_provider || 'workers_ai';
+  const provider = normalizeLLMProvider(pb?.llm_provider || 'workers_ai');
+  const configuredModel = resolveProviderModel(provider, pb, env);
   const failsKey = 'swarm:llm:fails:' + (pb?.dom || 'default');
   const fails = Number((await redis('GET', failsKey)).result || 0);
-  const targetProvider = fails >= 2 ? 'workers_ai' : provider;
+  const targetProvider = CONFIG.sandboxMode || fails >= 2 ? 'workers_ai' : provider;
   const tools = pb?.tools || [];
   const functionCall = pb?.function_call || null;
   try {
     if (targetProvider === 'openai' && pb?.llm_key) {
-      const body = { model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], max_tokens: 300 };
+      const body = { model: configuredModel || 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], max_tokens: 300 };
       if (functionCall) body.function_call = functionCall;
       if (tools.length > 0) body.tools = tools;
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -1675,7 +1802,7 @@ async function callLLM(prompt, pb, env) {
       return msg.content || '';
     }
     if (targetProvider === 'anthropic' && pb?.llm_key) {
-      const body = { model: 'claude-3-haiku-20240307', messages: [{ role: 'user', content: prompt }], max_tokens: 300 };
+      const body = { model: configuredModel || 'claude-3-haiku-20240307', messages: [{ role: 'user', content: prompt }], max_tokens: 300 };
       if (functionCall) body.tool_choice = functionCall;
       if (tools.length > 0) body.tools = tools;
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1699,6 +1826,7 @@ async function callLLM(prompt, pb, env) {
     }
     if (targetProvider === 'custom' && pb?.llm_endpoint) {
       const body = { prompt };
+      if (configuredModel) body.model = configuredModel;
       if (tools.length > 0) body.tools = tools;
       if (functionCall) body.function_call = functionCall;
       const res = await fetch(pb.llm_endpoint, {
@@ -1720,7 +1848,7 @@ async function callLLM(prompt, pb, env) {
       const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: 'Bearer ' + pb.llm_key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'deepseek-chat', messages: [{ role: 'user', content: prompt }], max_tokens: 800 })
+        body: JSON.stringify({ model: configuredModel || 'deepseek-chat', messages: [{ role: 'user', content: prompt }], max_tokens: 800 })
       });
       if (!res.ok) throw new Error('DeepSeek HTTP ' + res.status);
       const d = await res.json();
@@ -1736,7 +1864,7 @@ async function callLLM(prompt, pb, env) {
       const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: 'Bearer ' + pb.llm_key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'deepseek-reasoner', messages: [{ role: 'user', content: prompt }], max_tokens: 3200 })
+        body: JSON.stringify({ model: configuredModel || 'deepseek-reasoner', messages: [{ role: 'user', content: prompt }], max_tokens: 3200 })
       });
       if (!res.ok) throw new Error('DeepSeek R1 HTTP ' + res.status);
       const d = await res.json();
@@ -1749,20 +1877,20 @@ async function callLLM(prompt, pb, env) {
       return d.choices?.[0]?.message?.content || '';
     }
     try {
-      const result = await llm(prompt, env);
+      const result = await llm(prompt, env, { task: pb?.llm_task || 'reply' });
       await trackLlmUsage(pb.dom, 'workers_ai', 0, 0, 0);
       return result;
     } catch (e) {
       await redis('INCR', failsKey);
       await redis('EXPIRE', failsKey, '3600');
-      const result = await llm(prompt, env);
+      const result = await llm(prompt, env, { task: pb?.llm_task || 'reply' });
       await trackLlmUsage(pb.dom, 'workers_ai', 0, 0, 0);
       return result;
     }
   } catch (e) {
     await redis('INCR', failsKey);
     await redis('EXPIRE', failsKey, '3600');
-    const result = await llm(prompt, env);
+    const result = await llm(prompt, env, { task: pb?.llm_task || 'reply' });
     await trackLlmUsage(pb.dom, 'workers_ai', 0, 0, 0);
     return result;
   }
@@ -1772,6 +1900,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function triggerWebhook(dom, event, data) {
   const pb = await playbook(dom);
   const whs = (pb.webhooks || []).filter(w => w.event === '*' || w.event === event);
+  if (CONFIG.sandboxMode && whs.length) { await log('sandbox_would_send', { channel: 'webhook', event, count: whs.length }); return { status: 'would_send', sandbox: true, count: whs.length }; }
   for (const wh of whs) {
     const payload = JSON.stringify({ event, data, dom, ts: iso() });
     const secret = wh.secret || CONFIG.midasSecret;
@@ -1983,7 +2112,7 @@ Memória do lead: "${(context.leadMemory || []).slice(0, 3).map(m => m.content).
 Classifique cada dimensão 0-10 e retorne APENAS JSON:
 {"bant": {"budget": N, "authority": N, "need": N, "timing": N}, "meddic": {"metrics": N, "economicBuyer": N, "decisionCriteria": N, "decisionProcess": N, "identifyPain": N, "champion": N}, "spin": {"situation": N, "problem": N, "implication": N, "needPayoff": N}, "methodology": "BANT|MEDDIC|SPIN", "reasoning": "máx 1 frase"}`;
     try {
-      const llmResult = await callLLM(prompt, { ...pb, llm_provider: llmProvider, llm_key: pb.llm_key }, env);
+      const llmResult = await callLLM(prompt, { ...pb, llm_provider: llmProvider, llm_key: pb.llm_key, llm_task: 'qualification' }, env);
       const m = String(llmResult || '').trim();
       const match = m.match(/\{[\s\S]*\}/);
       if (match) {
@@ -2437,7 +2566,7 @@ async function classifyIntentAdvanced(dom, text, context, env) {
 
   if (!await llmBudget(dom)) return { intent: 'ignore', confidence: 0, mode, keywords_matched: [] };
   try {
-    const answer = await llm('Responda apenas JSON {"intent":"buy|support|ignore","confidence":0..1} para a mensagem: ' + lower, env || { AI: null });
+    const answer = await llm('Responda apenas JSON {"intent":"buy|support|ignore","confidence":0..1} para a mensagem: ' + lower, env || { AI: null }, { task: 'classification' });
     const parsed = JSON.parse(answer.match(/\{[\s\S]*\}/)?.[0] || '{}');
     if (parsed.confidence >= requiredThreshold) {
       return { intent: parsed.intent || 'ignore', confidence: parsed.confidence, mode, keywords_matched: [] };
@@ -2574,7 +2703,7 @@ const prods = await getProducts(dom);
     const judgePrompt = `Voce e um auditor de compliance e vendas. Avalie se esta resposta de vendas para o cliente e profissional, sem promessas falsas, adequada e com menos de 280 caracteres. Responda SOMENTE JSON {"approved":true|false,"reason":"curto motivo"}.\nRESPOSTA: ${replyRaw}`;
     let judgeApproved = true;
     try {
-      const judgeRes = await llm(judgePrompt, env || { AI: null });
+      const judgeRes = await llm(judgePrompt, env || { AI: null }, { task: 'review' });
       const parsedJudge = JSON.parse(judgeRes.match(/\{[\s\S]*\}/)?.[0] || '{}');
       if (parsedJudge.approved === false) judgeApproved = false;
     } catch (e) { }
@@ -3140,7 +3269,7 @@ async function processEmailSequence(env) {
   }
 }
 async function runAnalystDaily(env) { const today = dayKey(); const lastRun = (await redis('GET', 'swarm:analyst:last_run')).result; if (lastRun === today) return; const tokens = await hmap('swarm:tokens'); const domains = Object.keys(tokens); if (!domains.length) return; for (const dom of domains.slice(0, 5)) { try { const meta = await hmap('cfg:' + dom + ':meta'); const clientEmail = meta.email; if (!clientEmail) { await log('analyst_digest_skipped', { dom, reason: 'no_email' }); continue; } const leads = await hunterLeadRows(dom, 200); const salesRaw = (await redis('LRANGE', 'swarm:txlog', '0', '199')).result || []; let totalRev = 0, attrRev = 0, attrSales = 0; const byPlatform = {}; for (const item of salesRaw) { try { const s = JSON.parse(item); if (s.dom === dom) { const c = Number(s.cents) || 0; totalRev += c; if (s.lead_id || s.ref) { attrRev += c; attrSales++; } } } catch (e) { } } for (const l of leads) { byPlatform[l.platform] = (byPlatform[l.platform] || 0) + 1; } const conv = leads.length > 0 ? ((attrSales / leads.length) * 100).toFixed(1) : '0'; const exp = await hmap('swarm:exp:' + dom); const arms = [0, 5, 10]; let leastTrials = 999999, suggestedArm = 0; for (const a of arms) { const t = Number(exp['arm:' + a + ':trials'] || 0); if (t < leastTrials) { leastTrials = t; suggestedArm = a; } } const digestHtml = `<h2>📊 ChatPay Swarm Analyst Digest — ${dom}</h2><p><b>Data:</b> ${today}</p><p><b>Leads Totais:</b> ${leads.length}</p><p><b>Funil por Canal:</b> ${Object.entries(byPlatform).map(([k, v]) => `${k}: ${v}`).join(', ') || (leads.length ? '' : 'sem leads ainda')}</p><p><b>Receita Atribuída ao Swarm:</b> ${fmtBRL(attrRev)} (Taxa de Conversão: ${conv}%)</p><p><b>Receita Total:</b> ${fmtBRL(totalRev)}</p><p><b>Experimento Sugerido (Bandit):</b> Explorar mais o desconto de <b>${suggestedArm}%</b> (menos amostras: ${leastTrials} testes)</p>`; await sendEmail(`📊 CHATPAY ANALYST: Digest Diário - ${dom}`, digestHtml, clientEmail); await log('analyst_digest_sent', { dom, today, leads: leads.length, attrRev, sentTo: clientEmail }); const pb = await playbook(dom); await redis('LPUSH', 'swarm:playbook_suggestions:' + dom, JSON.stringify({ date: today, suggestion: `Otimizar ofertas no nicho ${pb.nicho || 'geral'}: converter leads via canal ${Object.keys(byPlatform)[0] || 'social'}`, ts: iso() })); await redis('LTRIM', 'swarm:playbook_suggestions:' + dom, '0', '19'); } catch (e) { await log('analyst_digest_error', { dom, msg: e.message }); } } await redis('SET', 'swarm:analyst:last_run', today); }
-async function loopTick(env) { const phase = (await redis('GET', 'swarm:loop:phase')).result || 'idle'; const iter = parseInt((await redis('GET', 'swarm:loop:iteration')).result || '0'); if (phase !== 'draft_ready') { const base = await getBase(); const angle = await pickAngle(); let draft; try { draft = await llm(buildGenPrompt(base, angle), env); } catch (e) { await log('llm_error', { msg: e.message }); return { action: 'error', msg: e.message }; } await redis('SET', 'swarm:loop:last_draft', draft); await redis('SET', 'swarm:loop:current_angle', angle); await redis('SET', 'swarm:loop:phase', 'draft_ready'); await log('draft_generated', { angle, iter, model: LAST_AI_MODEL }); return { action: 'generated', angle, iteration: iter, model: LAST_AI_MODEL, preview: draft.slice(0, 300) }; } else { const draft = (await redis('GET', 'swarm:loop:last_draft')).result || ''; const angle = (await redis('GET', 'swarm:loop:current_angle')).result || 'unknown'; let critique; try { critique = await llm(buildCriticPrompt(draft), env); } catch (e) { await redis('SET', 'swarm:loop:phase', 'idle'); return { action: 'error', msg: e.message }; } const score = parseScore(critique); await updateAngleStats(angle, score); if (score >= 7) { await pushPattern('success_patterns', { angle, hook: firstLine(draft), score }); await redis('LPUSH', 'swarm:loop:approved', JSON.stringify({ draft, score, angle, ts: iso() })); await sendEmail(`✅ MIDAS: roteiro APROVADO (score ${score})`, `<pre>${draft}</pre>`); await log('approved', { score, angle, iter }); const vec = await embed(draft, env); if (vec) { await tidb('INSERT INTO midas.scripts (angle,hook,body,score,embedding) VALUES (?,?,?,?,?)', [angle, firstLine(draft), draft.slice(0, 2000), score, '[' + vec.map(v => Number(v).toFixed(6)).join(',') + ']']); } else { await tidb('INSERT INTO midas.scripts (angle,hook,body,score) VALUES (?,?,?,?)', [angle, firstLine(draft), draft.slice(0, 2000), score]); } } else { await pushPattern('anti_patterns', { angle, hook: firstLine(draft), score }); await log('rejected', { score, angle, iter }); } const next = iter + 1; await redis('SET', 'swarm:loop:last_score', String(score)); await redis('SET', 'swarm:loop:phase', 'idle'); await redis('SET', 'swarm:loop:iteration', String(next)); if (next % 3 === 0) { const ap = await redis('LLEN', 'swarm:loop:approved'); await sendEmail(`�Y"S MIDAS: iter ${next} | score ${score} | aprovados ${ap.result || 0}`, `<p>�,ngulo: ${angle}</p>`); } return { action: 'critiqued', score, angle, iteration: next, approved: score >= 7 }; } }
+async function loopTick(env) { const phase = (await redis('GET', 'swarm:loop:phase')).result || 'idle'; const iter = parseInt((await redis('GET', 'swarm:loop:iteration')).result || '0'); if (phase !== 'draft_ready') { const base = await getBase(); const angle = await pickAngle(); let draft; try { draft = await llm(buildGenPrompt(base, angle), env, { task: 'creative' }); } catch (e) { await log('llm_error', { msg: e.message }); return { action: 'error', msg: e.message }; } await redis('SET', 'swarm:loop:last_draft', draft); await redis('SET', 'swarm:loop:current_angle', angle); await redis('SET', 'swarm:loop:phase', 'draft_ready'); await log('draft_generated', { angle, iter, model: LAST_AI_MODEL }); return { action: 'generated', angle, iteration: iter, model: LAST_AI_MODEL, preview: draft.slice(0, 300) }; } else { const draft = (await redis('GET', 'swarm:loop:last_draft')).result || ''; const angle = (await redis('GET', 'swarm:loop:current_angle')).result || 'unknown'; let critique; try { critique = await llm(buildCriticPrompt(draft), env, { task: 'review' }); } catch (e) { await redis('SET', 'swarm:loop:phase', 'idle'); return { action: 'error', msg: e.message }; } const score = parseScore(critique); await updateAngleStats(angle, score); if (score >= 7) { await pushPattern('success_patterns', { angle, hook: firstLine(draft), score }); await redis('LPUSH', 'swarm:loop:approved', JSON.stringify({ draft, score, angle, ts: iso() })); await sendEmail(`✅ MIDAS: roteiro APROVADO (score ${score})`, `<pre>${draft}</pre>`); await log('approved', { score, angle, iter }); const vec = await embed(draft, env); if (vec) { await tidb('INSERT INTO midas.scripts (angle,hook,body,score,embedding) VALUES (?,?,?,?,?)', [angle, firstLine(draft), draft.slice(0, 2000), score, '[' + vec.map(v => Number(v).toFixed(6)).join(',') + ']']); } else { await tidb('INSERT INTO midas.scripts (angle,hook,body,score) VALUES (?,?,?,?)', [angle, firstLine(draft), draft.slice(0, 2000), score]); } } else { await pushPattern('anti_patterns', { angle, hook: firstLine(draft), score }); await log('rejected', { score, angle, iter }); } const next = iter + 1; await redis('SET', 'swarm:loop:last_score', String(score)); await redis('SET', 'swarm:loop:phase', 'idle'); await redis('SET', 'swarm:loop:iteration', String(next)); if (next % 3 === 0) { const ap = await redis('LLEN', 'swarm:loop:approved'); await sendEmail(`�Y"S MIDAS: iter ${next} | score ${score} | aprovados ${ap.result || 0}`, `<p>�,ngulo: ${angle}</p>`); } return { action: 'critiqued', score, angle, iteration: next, approved: score >= 7 }; } }
 
 // WIDGET CHATPAY PRO (sem presets → valor livre)
 const CHATPAY_JS = `(function(){
@@ -3593,11 +3722,11 @@ function dashPage() {
         <div class="form-grid">
           <div class="field wide"><label for="sw-provider">Provedor de LLM</label>
             <select id="sw-provider" name="sw-provider">
-              <option value="workers-ai">Workers AI</option>
-              <option value="deepseek-chat">DeepSeek Chat V3</option>
-              <option value="deepseek-reasoner">DeepSeek Reasoner R1</option>
-              <option value="openai-gpt-4o-mini">OpenAI GPT-4o-mini</option>
-              <option value="anthropic-claude-3">Anthropic Claude 3</option>
+              <option value="workers_ai">Workers AI</option>
+              <option value="deepseek_chat">DeepSeek Chat V3</option>
+              <option value="deepseek_reasoner">DeepSeek Reasoner R1</option>
+              <option value="openai">OpenAI GPT-4o-mini</option>
+              <option value="anthropic">Anthropic Claude 3</option>
             </select></div>
           <div class="field wide"><label for="sw-llm-key">Chave de API</label><input class="mono-in" id="sw-llm-key" name="sw-llm-key" type="password" autocomplete="off" placeholder="sk-••••••••••••••••"></div>
           <div class="field wide"><label for="sw-llm-endpoint">Endpoint (opcional)</label><input class="mono-in" id="sw-llm-endpoint" name="sw-llm-endpoint" type="url" autocomplete="off" placeholder="https://api.seuprovedor.com/v1"></div>
@@ -4376,7 +4505,7 @@ function dashPage() {
     var set = function (id, v) { var el = document.getElementById(id); if (el) el.value = v; };
     set('sw-nicho', 'Moda feminina em linho'); set('sw-tom', 'Consultivo e caloroso');
     set('sw-cap', '10'); set('sw-floor', '120'); set('sw-ceiling', '650');
-    set('sw-upsell', 'Kit com cinto de couro por +R$ 49'); set('sw-provider', 'deepseek-chat');
+    set('sw-upsell', 'Kit com cinto de couro por +R$ 49'); set('sw-provider', 'deepseek_chat');
     set('reply-buy', 'Perfeito! Vou gerar o Pix agora. Assim que o pagamento cair, já separo seu pedido.');
     set('reply-objection', 'Entendo. Consigo uma condição melhor se você fechar hoje. Posso te mostrar?');
     set('reply-mild_interest', 'Que bom que gostou! Quer ver outras peças que combinam com essa?');
@@ -5263,12 +5392,19 @@ function abrirPainel(){location.href='/dash?token='+encodeURIComponent(TOKEN);}
 
 export default {
   async fetch(request, env, ctx) {
-    const required = ['REDIS_URL', 'REDIS_TOKEN', 'RESEND_KEY', 'TARGET_EMAIL'];
-    const faltando = required.filter(key => !env || !env[key]);
-    if (faltando.length) return json({ error: 'config_incompleta', faltando }, 500);
     configure(env);
     const url = new URL(request.url);
+    const required = ['REDIS_URL', 'REDIS_TOKEN'];
+    if (!CONFIG.sandboxMode) required.push('RESEND_KEY', 'TARGET_EMAIL');
+    required.push('MIDAS_SECRET', 'JWT_SECRET');
+    const faltando = required.filter(key => !env || !env[key]);
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
+    if (url.pathname === '/api/sandbox-status' && request.method === 'GET') {
+      const workersAiBindingConfigured = Boolean(env?.AI && typeof env.AI.run === 'function');
+      const configComplete = faltando.length === 0;
+      return json({ sandboxMode: CONFIG.sandboxMode, externalHttpBlocked: CONFIG.sandboxMode, workersAiAllowed: true, workersAiBindingConfigured, configComplete, missingConfig: faltando, sandboxReady: CONFIG.sandboxMode && configComplete && workersAiBindingConfigured, e2eRunnerAvailable: false, workersAiMaxAttempts: CONFIG.sandboxMode ? 1 : null, workersAiMaxTokens: CONFIG.sandboxMode ? 256 : null });
+    }
+    if (faltando.length) return json({ error: 'config_incompleta', faltando }, 500);
     try {
       if (url.pathname === '/') return json({ name: 'MIDAS CORE V20 (SIGN+WA+ANALYTICS)', status: 'online', time: iso(), mp: !!(await mpToken()), start: '/start-page' });
 
@@ -5284,7 +5420,7 @@ export default {
       if (url.pathname === '/api/pix') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const pix = await resolvePix(payload.domain); return json(pix); }
       if (url.pathname === '/api/product' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; const prods = await getProducts(dom); const prod = { id: Date.now(), name: b.name || 'Produto', cents: parseInt(b.cents) || 0, deliver: b.deliver || '' }; prods.push(prod); await redis('SET', 'swarm:prods:' + dom, JSON.stringify(prods)); await log('product_created', { dom, prodId: prod.id }); return json({ status: 'created', product: prod }); }
       if (url.pathname === '/api/product-del' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; let prods = await getProducts(dom); prods = prods.filter(p => p.id !== b.id); await redis('SET', 'swarm:prods:' + dom, JSON.stringify(prods)); await log('product_deleted', { dom, id: b.id }); return json({ status: 'deleted' }); }
-      if (url.pathname === '/api/confirm' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); let txid = b.txid; const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ error: 'tx não encontrada' }, 404); const tx = JSON.parse(raw.result); if (tx.dom && tx.dom !== payload.domain) return json({ error: 'não autorizado' }, 403); tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } tx.real = true; await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await tidb('UPDATE midas.transactions SET status="paid", paid_at=NOW() WHERE txid=?', [txid]); await sendEmail(`✅ PIX CONFIRMADO: R$ ${tx.amount}`, `<p>tx ${txid}</p>`); try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } if (!tx.swarm_paid_emitted) { tx.swarm_paid_emitted = iso(); await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await emitSwarmEvent({ type: 'paid', dom: tx.dom, channel: tx.channel || 'pay', user: tx.user || '', txid, ref: tx.ref || '', lead_id: tx.lead_id || '', amount: tx.amount, arm: tx.arm }); } return json({ status: 'paid', txid }); }
+      if (url.pathname === '/api/confirm' && request.method === 'POST') { if (CONFIG.sandboxMode) return json({ error: 'sandbox_payment_confirmation_blocked', sandbox: true }, 409); const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); let txid = b.txid; const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ error: 'tx não encontrada' }, 404); const tx = JSON.parse(raw.result); if (tx.dom && tx.dom !== payload.domain) return json({ error: 'não autorizado' }, 403); tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } tx.real = true; await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await tidb('UPDATE midas.transactions SET status="paid", paid_at=NOW() WHERE txid=?', [txid]); await sendEmail(`✅ PIX CONFIRMADO: R$ ${tx.amount}`, `<p>tx ${txid}</p>`); try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } if (!tx.swarm_paid_emitted) { tx.swarm_paid_emitted = iso(); await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await emitSwarmEvent({ type: 'paid', dom: tx.dom, channel: tx.channel || 'pay', user: tx.user || '', txid, ref: tx.ref || '', lead_id: tx.lead_id || '', amount: tx.amount, arm: tx.arm }); } return json({ status: 'paid', txid }); }
       // ===== V20: SIGN + WHATSAPP + HUNTER ANALYTICS =====
       if (url.pathname === '/api/integration-clicksign' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); await saveIntegration(payload.domain, { clicksign_api_key: (b.apiKey || '').trim(), clicksign_template_id: (b.templateId || '').trim(), clicksign_webhook_secret: (b.webhookSecret || '').trim() }); await log('clicksign_config_updated', { dom: payload.domain, has_key: !!b.apiKey, has_template: !!b.templateId }); return json({ status: 'clicksign_configurado' }); }
       if (url.pathname === '/api/integration-whatsapp' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const phoneId = (b.phoneId || '').trim(); const verifyToken = (b.verifyToken || '').trim(); await saveIntegration(payload.domain, { wa_phone_id: phoneId, wa_access_token: (b.accessToken || '').trim(), wa_template_name: (b.templateName || '').trim(), wa_verify_token: verifyToken, wa_price: (b.price || '').trim() }); if (phoneId) await redis('SET', 'wa:phone:' + phoneId, payload.domain); if (verifyToken) await redis('SET', 'wa:verify:' + verifyToken, payload.domain); await log('whatsapp_config_updated', { dom: payload.domain, has_phone: !!phoneId, has_token: !!b.accessToken }); return json({ status: 'whatsapp_configurado' }); }
@@ -5774,9 +5910,8 @@ export default {
           const tgCfg = await loadChannelConfig(botConfigDomain, 'telegram');
           const expectedSecret = tgCfg.webhook_secret || '';
           const gotSecret = request.headers.get('x-telegram-bot-api-secret-token') || '';
-          if (expectedSecret && gotSecret !== expectedSecret) {
-            return json({ error: 'secret inválido' }, 403);
-          }
+          if (!expectedSecret) return json({ error: 'webhook secret não configurado' }, 503);
+          if (!gotSecret || gotSecret !== expectedSecret) return json({ error: 'secret inválido' }, 403);
 
           // T1: idempotência de update_id (Telegram pode reentregar o mesmo update)
           if (updateId !== undefined && updateId !== null && updateId !== '') {
@@ -6453,11 +6588,11 @@ export default {
 
       // Telegram channel-config GET: placeholder (legacy 501 Not Implemented) — configure via POST
       if ((url.pathname === '/api/channel-config/telegram' || url.pathname === '/api/channel-config/telegram/test') && request.method === 'GET') {
-        return json({ 
-          error: 'Telegram integration not yet implemented as channel-config GET (legacy 501). POST { token, tg_bot_token } to auto-setWebhook', 
+        return json({
+          error: 'Telegram integration not yet implemented as channel-config GET (legacy 501). POST { token, tg_bot_token } to auto-setWebhook',
           channel: 'telegram',
           status: 501,
-          help: 'POST /api/channel-config/telegram com tg_bot_token · webhook: /api/telegram-webhook?domain=' 
+          help: 'POST /api/channel-config/telegram com tg_bot_token · webhook: /api/telegram-webhook?domain='
         }, 200);
       }
 
@@ -6724,7 +6859,7 @@ export default {
       if (url.pathname === '/api/approvals' && request.method === 'GET') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const raw = (await redis('LRANGE', 'approve:' + payload.domain + ':pending', '0', '49')).result || []; return json({ approvals: raw.map(x => { try { return JSON.parse(x); } catch (_) { return null; } }).filter(Boolean) }); }
       if (url.pathname.startsWith('/api/approvals/') && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const id = url.pathname.split('/').pop(); const raw = await redis('GET', 'approve:' + payload.domain + ':' + id); if (!raw.result) return json({ error: 'aprovação não encontrada' }, 404); const item = JSON.parse(raw.result); item.status = 'approved'; item.edited_reply = String(b.edited_reply || item.reply || '').slice(0, 500); await redis('SET', 'approve:' + payload.domain + ':' + id, JSON.stringify(item)); await redis('LPUSH', 'swarm:reply-queue:' + (item.channel || 'api') + ':' + payload.domain, JSON.stringify({ to: item.user, convId: item.convId, text: item.edited_reply, dom: payload.domain, ts: iso() })); return json({ status: 'approved', id }); }
       if (url.pathname === '/api/swarm-config' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); if (b.kill !== undefined) await redis('SET', 'swarm:kill:' + payload.domain, b.kill ? '1' : '0'); if (b.cap !== undefined) await redis('HSET', 'swarm:caps:' + payload.domain, 'replies_hour', Math.max(1, Math.min(1000, parseInt(b.cap) || 20))); if (b.playbook) await redis('SET', 'swarm:playbook:' + payload.domain, JSON.stringify(b.playbook)); await log('swarm_config_updated', { dom: payload.domain, kill: !!b.kill }); return json({ status: 'configurado' }); }
-      if (url.pathname === '/api/swarm-status') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const g = await guardian(payload.domain); const pb = await playbook(payload.domain); const budget = await redis('GET', 'swarm:budget:' + payload.domain + ':' + dayKey()); const memCount = (await redis('LLEN', 'swarm:mem:' + payload.domain + ':objection')).result || 0; return json({ domain: payload.domain, guardian: g, budget_used: Number(budget.result) || 0, playbook: pb, memory_objections: memCount }); }
+      if (url.pathname === '/api/swarm-status') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const g = await guardian(payload.domain); const pb = await playbook(payload.domain); const budget = await redis('GET', 'swarm:budget:' + payload.domain + ':' + dayKey()); const memCount = (await redis('LLEN', 'swarm:mem:' + payload.domain + ':objection')).result || 0; return json({ domain: payload.domain, guardian: g, budget_used: Number(budget.result) || 0, playbook: maskChannelSecrets(pb), memory_objections: memCount }); }
       if (url.pathname === '/api/agent-graph') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const declared = ['classifyIntent', 'objectionHandler', 'craftReply', 'proofGenerator', 'timingOptimizer', 'competitorAnalyzer', 'upsellArchitect', 'upsellAfterPaid', 'scheduleRecovery', 'sendUpsell']; const counts = await hmap('agent:runs:' + payload.domain); const last = await hmap('agent:last:' + payload.domain); const agents = {}; for (const name of declared) agents[name] = { declarado: true, execucoes_hoje: Number(counts[name] || 0), ultima_execucao: last[name] || null }; return json({ domain: payload.domain, agentes: agents, pipeline: dispatch({ type: 'lead' }), routes: { lead: dispatch({ type: 'lead' }), whatsapp: dispatch({ type: 'whatsapp_intent' }), paid: dispatch({ type: 'paid' }), abandon: dispatch({ type: 'abandon' }), upsell: dispatch({ type: 'upsell' }) } }); }
       if (url.pathname === '/api/usage-metrics') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const dom = payload.domain; const todayKey = dayKey(); const dailyKey = 'swarm:llm:usage:' + dom + ':' + todayKey; const accumKey = 'swarm:llm:usage:' + dom; const todayRaw = await hmap(dailyKey); const accumRaw = await hmap(accumKey); const agentRuns = await hmap('agent:runs:' + dom); const agents = {}; for (const [name, val] of Object.entries(agentRuns || {})) agents[name] = Number(val) || 0; const sales = (await redis('LRANGE', 'swarm:txlog', '0', '199')).result || []; let totalRevenue = 0; for (const item of sales) { try { const s = JSON.parse(item); if (s.dom === dom) totalRevenue += Number(s.cents || 0); } catch (_) { } } const budgetRaw = await redis('GET', 'swarm:budget:' + dom + ':' + todayKey); const budgetUsed = Number(budgetRaw.result || 0); const todayTokensIn = Number(todayRaw.tokens_in || 0); const todayTokensOut = Number(todayRaw.tokens_out || 0); const todayCost = Number(todayRaw.cost_r$ || 0); const todayCalls = Number(todayRaw.calls || 0); const weekTokensIn = Number(accumRaw.tokens_in || 0); const weekTokensOut = Number(accumRaw.tokens_out || 0); const weekCost = Number(accumRaw.cost_r$ || 0); const weekCalls = Number(accumRaw.calls || 0); const byProvider = {}; for (const [key, val] of Object.entries(accumRaw || {})) { if (key.startsWith('cost_') && key !== 'cost_r$') { const prov = key.replace('cost_', ''); byProvider[prov] = { tokens: Number(accumRaw['tokens_' + prov] || 0), cost_r$: Number(val || 0) }; } }     const alerts = []; const quotaLimit = 100000; if (todayTokensIn + todayTokensOut >= quotaLimit * 0.8) alerts.push({ type: 'quota_80', message: 'Uso de tokens hoje atingiu 80% do limite diário', severity: 'warning' }); if (totalRevenue > 0 && todayCost / (totalRevenue / 100) > 0.15) alerts.push({ type: 'cost_15pct', message: 'Custo LLM hoje excede 15% da receita total', severity: 'critical' }); const voiceMetricsRaw = await hmap('swarm:voice:metrics:' + dom + ':' + todayKey); const voiceCalls = Number(voiceMetricsRaw.calls || 0); const voiceCostEst = Number(voiceMetricsRaw.cost_estimated || 0); return json({ domain: dom, today: { tokens_in: todayTokensIn, tokens_out: todayTokensOut, cost_r$: Number(todayCost.toFixed(4)), calls: todayCalls, by_provider: {} }, week: { tokens_in: weekTokensIn, tokens_out: weekTokensOut, cost_r$: Number(weekCost.toFixed(4)), calls: weekCalls, by_provider: byProvider }, month: { tokens_in: weekTokensIn, tokens_out: weekTokensOut, cost_r$: Number(weekCost.toFixed(4)), calls: weekCalls, by_provider: byProvider }, agents: agents, revenue_cents: totalRevenue, budget_used: budgetUsed, voice: { calls_today: voiceCalls, cost_estimated_r$: Number(voiceCostEst.toFixed(4)) }, alerts: alerts }); }
       if (url.pathname === '/api/memory' && request.method === 'GET') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const type = url.searchParams.get('type') || 'objection'; const query = url.searchParams.get('q') || ''; if (query) { const results = await rememberMemory(payload.domain, type, query, env); return json({ domain: payload.domain, type, query, results }); } const raw = await redis('LRANGE', 'swarm:mem:' + payload.domain + ':' + type, '0', '49'); return json({ domain: payload.domain, type, items: (raw.result || []).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean) }); }
@@ -6746,7 +6881,7 @@ export default {
       if (url.pathname === '/api/swarm-event' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const event = await emitSwarmEvent({ type: b.type || 'lead', dom: payload.domain, channel: b.channel || 'api', user: b.user || '', text: b.text || '', txid: b.txid, lead_id: b.lead_id || '', ref: b.ref || '' }); await log('swarm_event_emitted', { dom: payload.domain, type: event.type }); return json({ status: 'queued', event }); }
       if (url.pathname === '/api/reply-queue') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const channel = (url.searchParams.get('channel') || 'unknown').replace(/[^a-z0-9_-]/gi, ''); const key = 'swarm:reply-queue:' + channel + ':' + payload.domain; const raw = await redis('LRANGE', key, '0', '19'); await redis('DEL', key); return json({ channel, domain: payload.domain, items: (raw.result || []).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean) }); }
       if (url.pathname === '/api/swarm-config' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); if (b.kill !== undefined) await redis('SET', 'swarm:kill:' + payload.domain, b.kill ? '1' : '0'); if (b.cap !== undefined) await redis('HSET', 'swarm:caps:' + payload.domain, 'replies_hour', Math.max(1, Math.min(1000, parseInt(b.cap) || 20))); if (b.playbook) await redis('SET', 'swarm:playbook:' + payload.domain, JSON.stringify(b.playbook)); await log('swarm_config_updated', { dom: payload.domain, kill: !!b.kill }); return json({ status: 'configurado' }); }
-      if (url.pathname === '/api/swarm-status') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const g = await guardian(payload.domain); const pb = await playbook(payload.domain); const budget = await redis('GET', 'swarm:budget:' + payload.domain + ':' + dayKey()); const memCount = (await redis('LLEN', 'swarm:mem:' + payload.domain + ':objection')).result || 0; return json({ domain: payload.domain, guardian: g, budget_used: Number(budget.result) || 0, playbook: pb, memory_objections: memCount }); }
+      if (url.pathname === '/api/swarm-status') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const g = await guardian(payload.domain); const pb = await playbook(payload.domain); const budget = await redis('GET', 'swarm:budget:' + payload.domain + ':' + dayKey()); const memCount = (await redis('LLEN', 'swarm:mem:' + payload.domain + ':objection')).result || 0; return json({ domain: payload.domain, guardian: g, budget_used: Number(budget.result) || 0, playbook: maskChannelSecrets(pb), memory_objections: memCount }); }
       if (url.pathname === '/api/agent-graph') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); return json({ domain: payload.domain, pipeline: dispatch({ type: 'lead' }), routes: { lead: dispatch({ type: 'lead' }), whatsapp: dispatch({ type: 'whatsapp_intent' }), paid: dispatch({ type: 'paid' }), abandon: dispatch({ type: 'abandon' }), upsell: dispatch({ type: 'upsell' }) } }); }
       if (url.pathname === '/api/memory' && request.method === 'GET') { const payload = await verifyJWT(url.searchParams.get('token') || ''); if (!payload) return json({ error: 'token inválido' }, 401); const type = url.searchParams.get('type') || 'objection'; const query = url.searchParams.get('q') || ''; if (query) { const results = await rememberMemory(payload.domain, type, query, env); return json({ domain: payload.domain, type, query, results }); } const raw = await redis('LRANGE', 'swarm:mem:' + payload.domain + ':' + type, '0', '49'); return json({ domain: payload.domain, type, items: (raw.result || []).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean) }); }
       if (url.pathname === '/api/memory' && request.method === 'POST') { const b = await request.json(); const payload = await verifyJWT(b.token); if (!payload) return json({ error: 'token inválido' }, 401); const mem = await saveMemory(payload.domain, b.type || 'objection', b.content, b.metadata || {}, env); return json({ status: 'saved', memory: mem }); }
@@ -6770,13 +6905,13 @@ export default {
         const now = Date.now(); try { await sendEmail('🚀 Bem-vindo ao ChatPay', '<p>Olá! Sua conta <b>' + (b.brand || b.domain) + '</b> está ativa. Acesse seu painel e configure Pix + Hunter para vender no automático.</p>', b.email); } catch (_) { } await redis('ZADD', 'swarm:email_sequence', String(now + 86400000), JSON.stringify({ dom: b.domain, brand: b.brand || b.domain, email: b.email || '', step: 2 })); await redis('ZADD', 'swarm:email_sequence', String(now + 3 * 86400000), JSON.stringify({ dom: b.domain, brand: b.brand || b.domain, email: b.email || '', step: 3 })); return json({ token, domain: b.domain, plan: b.plan || 'paid', expires: new Date(exp * 1000).toISOString(), snippet });
       }
       if (url.pathname === '/generate-token') { if (url.searchParams.get('key') !== CONFIG.midasSecret) return json({ error: 'unauthorized' }, 401); const domain = url.searchParams.get('domain'); const plan = url.searchParams.get('plan') || 'paid'; const expDays = plan === 'agency' ? 365 : 30; const exp = Math.floor(Date.now() / 1000) + 86400 * expDays; const token = await signJWT({ domain, exp, iat: Math.floor(Date.now() / 1000), plan }); await redis('HSET', 'swarm:tokens', domain, token); await redis('HSET', 'cfg:' + domain + ':meta', 'brand', url.searchParams.get('brand') || domain); return json({ token, domain, plan, expires: new Date(exp * 1000).toISOString() }); }
-      if (url.pathname === '/chatpay/charge' && request.method === 'POST') { const b = await request.json(); const amount = (parseFloat(b.amount) || 1).toFixed(2); const demo = b.demo === '1' || b.demo === true; let dom = b.dom || ''; if (!dom && b.token) { const pv = await verifyJWT(b.token); if (pv) dom = pv.domain; } let ref = (b.ref || '').slice(0, 120); let lead_id = (b.lead_id || '').slice(0, 120); if (ref) { try { const aff = await verifyJWT(ref); if (!aff || aff.plan !== 'aff' || aff.domain !== dom) { await log('ref_invalid_rejected', { dom, reason: aff ? 'wrong_domain_or_plan' : 'bad_jwt' }); ref = ''; } } catch (e) { ref = ''; } } const arm = b.arm !== undefined ? parseInt(b.arm) : undefined; const pix = await resolvePix(dom); const token = await mpToken(); if (token && !demo) { const mp = await mpCreate(amount, b.desc); if (mp && mp.id && mp.point_of_interaction && mp.point_of_interaction.transaction_data) { const td = mp.point_of_interaction.transaction_data; const txid = 'MP' + String(mp.id); await redis('SET', 'pix:tx:' + txid, JSON.stringify({ amount, status: 'pending', mp_id: mp.id, desc: b.desc || '', dom, ref, lead_id, arm, play_id: b.play_id || b.play, buyer_email: b.buyer_email || '', created: iso(), rail: 'mercado_pago' })); await redis('SET', 'swarm:pix:last_tx', txid); await tidb('INSERT INTO midas.transactions (txid,client_domain,rail,amount_cents,status) VALUES (?,?,?,?,?)', [txid, dom || 'direct', 'mercado_pago', Math.round(parseFloat(amount) * 100), 'pending']); await log('chatpay_charge_mp', { txid, amount }); return json({ txid, payload: td.qr_code, amount, rail: 'mercado_pago' }); } } const txid = (demo ? 'MIDAS' : 'CP') + Date.now().toString().slice(-10); const payload = buildPix(pix.key || 'CONFIG.targetEmail', amount, txid, pix.name || 'MIDAS PAY', pix.city || 'SAO PAULO'); await redis('SET', 'pix:tx:' + txid, JSON.stringify({ amount, status: demo ? 'demo' : 'pending', demo, desc: b.desc || '', dom, ref, lead_id, arm, play_id: b.play_id || b.play, buyer_email: b.buyer_email || '', created: iso(), rail: 'pix_estatico' })); await redis('SET', 'swarm:pix:last_tx', txid); await tidb('INSERT INTO midas.transactions (txid,client_domain,rail,amount_cents,status) VALUES (?,?,?,?,?)', [txid, dom || 'direct', 'pix_estatico', Math.round(parseFloat(amount) * 100), 'pending']); await log('chatpay_charge', { txid, amount, dom }); return json({ txid, payload, amount, rail: 'pix_estatico' }); }
-      if (url.pathname === '/chatpay/status' || url.pathname === '/pay-status' || url.pathname === '/api/tx-status') { const txid = url.searchParams.get('txid') || url.searchParams.get('tx'); const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ status: 'not_found' }); const tx = JSON.parse(raw.result); if (tx.status !== 'paid' && tx.mp_id) { const mp = await mpStatus(tx.mp_id); if (mp && mp.status === 'approved') { tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await tidb('UPDATE midas.transactions SET status="paid", paid_at=NOW() WHERE txid=?', [txid]); await sendEmail(`✅ PIX AUTO-CONFIRMADO (MP): R$ ${tx.amount}`, `<p>tx ${txid} | loja ${tx.dom || 'direto'}</p>`); if(tx.buyer_email){ await sendEmail(`✅ Pagamento confirmado — seu acesso ChatPay`, `<p>Pagamento de R$ ${tx.amount} confirmado.</p><p>Pedido: ${txid}</p><p>Obrigado pela compra!</p>`, tx.buyer_email); } await log('mp_paid', { txid }); try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } } } if (tx.status === 'demo' && Date.now() - new Date(tx.created).getTime() > 15000) { tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await sendEmail(`✅ CHATPAY: venda demo (R$ ${tx.amount})`, `<p>tx ${txid}</p>`); if(tx.buyer_email){ await sendEmail(`✅ Pagamento confirmado — seu acesso ChatPay`, `<p>Pagamento de R$ ${tx.amount} confirmado.</p><p>Pedido: ${txid}</p><p>Obrigado pela compra!</p>`, tx.buyer_email); } try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } } if (tx.status === 'pending' && Date.now() - new Date(tx.created).getTime() > 86400000) { tx.status = 'expired'; } return json(await paymentResponse(txid, tx)); }
-      if (url.pathname === '/confirm') { const secret = request.headers.get('x-midas-secret') || url.searchParams.get('key'); if (secret !== env.MIDAS_SECRET) return json({ error: 'unauthorized' }, 401); let txid = url.searchParams.get('txid'); if (!txid && url.searchParams.get('last') === '1') txid = (await redis('GET', 'swarm:pix:last_tx')).result; if (!txid) return json({ error: 'sem txid' }); const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ error: 'tx nao encontrada' }); const tx = JSON.parse(raw.result); tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } tx.real = true; await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await tidb('UPDATE midas.transactions SET status="paid", paid_at=NOW() WHERE txid=?', [txid]); await sendEmail(`✅ PIX CONFIRMADO: R$ ${tx.amount}`, `<p>tx ${txid}</p>`); if(tx.buyer_email){ await sendEmail(`✅ Pagamento confirmado — seu acesso ChatPay`, `<p>Pagamento de R$ ${tx.amount} confirmado.</p><p>Pedido: ${txid}</p><p>Obrigado pela compra!</p>`, tx.buyer_email); } try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } if (!tx.swarm_paid_emitted) { tx.swarm_paid_emitted = iso(); await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await emitSwarmEvent({ type: 'paid', dom: tx.dom, channel: tx.channel || 'pay', user: tx.user || '', txid, ref: tx.ref || '', lead_id: tx.lead_id || '', amount: tx.amount, arm: tx.arm }); } return json({ status: 'paid', txid }); }
+      if (url.pathname === '/chatpay/charge' && request.method === 'POST') { if (CONFIG.sandboxMode) { await log('sandbox_would_create_payment', { channel: 'chatpay', amount: 0 }); return json({ status: 'would_create_payment', sandbox: true }, 202); } const b = await request.json(); const amount = (parseFloat(b.amount) || 1).toFixed(2); const demo = b.demo === '1' || b.demo === true; let dom = b.dom || ''; if (!dom && b.token) { const pv = await verifyJWT(b.token); if (pv) dom = pv.domain; } let ref = (b.ref || '').slice(0, 120); let lead_id = (b.lead_id || '').slice(0, 120); if (ref) { try { const aff = await verifyJWT(ref); if (!aff || aff.plan !== 'aff' || aff.domain !== dom) { await log('ref_invalid_rejected', { dom, reason: aff ? 'wrong_domain_or_plan' : 'bad_jwt' }); ref = ''; } } catch (e) { ref = ''; } } const arm = b.arm !== undefined ? parseInt(b.arm) : undefined; const pix = await resolvePix(dom); const token = await mpToken(); if (token && !demo) { const mp = await mpCreate(amount, b.desc); if (mp && mp.id && mp.point_of_interaction && mp.point_of_interaction.transaction_data) { const td = mp.point_of_interaction.transaction_data; const txid = 'MP' + String(mp.id); await redis('SET', 'pix:tx:' + txid, JSON.stringify({ amount, status: 'pending', mp_id: mp.id, desc: b.desc || '', dom, ref, lead_id, arm, play_id: b.play_id || b.play, buyer_email: b.buyer_email || '', created: iso(), rail: 'mercado_pago' })); await redis('SET', 'swarm:pix:last_tx', txid); await tidb('INSERT INTO midas.transactions (txid,client_domain,rail,amount_cents,status) VALUES (?,?,?,?,?)', [txid, dom || 'direct', 'mercado_pago', Math.round(parseFloat(amount) * 100), 'pending']); await log('chatpay_charge_mp', { txid, amount }); return json({ txid, payload: td.qr_code, amount, rail: 'mercado_pago' }); } } const txid = (demo ? 'MIDAS' : 'CP') + Date.now().toString().slice(-10); const payload = buildPix(pix.key || 'CONFIG.targetEmail', amount, txid, pix.name || 'MIDAS PAY', pix.city || 'SAO PAULO'); await redis('SET', 'pix:tx:' + txid, JSON.stringify({ amount, status: demo ? 'demo' : 'pending', demo, desc: b.desc || '', dom, ref, lead_id, arm, play_id: b.play_id || b.play, buyer_email: b.buyer_email || '', created: iso(), rail: 'pix_estatico' })); await redis('SET', 'swarm:pix:last_tx', txid); await tidb('INSERT INTO midas.transactions (txid,client_domain,rail,amount_cents,status) VALUES (?,?,?,?,?)', [txid, dom || 'direct', 'pix_estatico', Math.round(parseFloat(amount) * 100), 'pending']); await log('chatpay_charge', { txid, amount, dom }); return json({ txid, payload, amount, rail: 'pix_estatico' }); }
+      if (url.pathname === '/chatpay/status' || url.pathname === '/pay-status' || url.pathname === '/api/tx-status') { const txid = url.searchParams.get('txid') || url.searchParams.get('tx'); const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ status: 'not_found' }); const tx = JSON.parse(raw.result); if (tx.status !== 'paid' && tx.mp_id) { const mp = await mpStatus(tx.mp_id); if (mp && mp.status === 'approved') { tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await tidb('UPDATE midas.transactions SET status="paid", paid_at=NOW() WHERE txid=?', [txid]); await sendEmail(`✅ PIX AUTO-CONFIRMADO (MP): R$ ${tx.amount}`, `<p>tx ${txid} | loja ${tx.dom || 'direto'}</p>`); if(tx.buyer_email){ await sendEmail(`✅ Pagamento confirmado — seu acesso ChatPay`, `<p>Pagamento de R$ ${tx.amount} confirmado.</p><p>Pedido: ${txid}</p><p>Obrigado pela compra!</p>`, tx.buyer_email); } await log('mp_paid', { txid }); try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } } } if (!CONFIG.sandboxMode && tx.status === 'demo' && Date.now() - new Date(tx.created).getTime() > 15000) { tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await sendEmail(`✅ CHATPAY: venda demo (R$ ${tx.amount})`, `<p>tx ${txid}</p>`); if(tx.buyer_email){ await sendEmail(`✅ Pagamento confirmado — seu acesso ChatPay`, `<p>Pagamento de R$ ${tx.amount} confirmado.</p><p>Pedido: ${txid}</p><p>Obrigado pela compra!</p>`, tx.buyer_email); } try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } } if (tx.status === 'pending' && Date.now() - new Date(tx.created).getTime() > 86400000) { tx.status = 'expired'; } return json(await paymentResponse(txid, tx)); }
+      if (url.pathname === '/confirm') { if (CONFIG.sandboxMode) return json({ error: 'sandbox_payment_confirmation_blocked', sandbox: true }, 409); const secret = request.headers.get('x-midas-secret') || url.searchParams.get('key'); if (secret !== env.MIDAS_SECRET) return json({ error: 'unauthorized' }, 401); let txid = url.searchParams.get('txid'); if (!txid && url.searchParams.get('last') === '1') txid = (await redis('GET', 'swarm:pix:last_tx')).result; if (!txid) return json({ error: 'sem txid' }); const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ error: 'tx nao encontrada' }); const tx = JSON.parse(raw.result); tx.status = 'paid'; tx.paid_at = iso(); try { await v23PaymentHook({ ...tx, txid }); } catch (_) { } tx.real = true; await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await redis('INCR', 'swarm:metrics:vendas'); await txlog(txid, Math.round(parseFloat(tx.amount) * 100), tx.rail, tx.dom, tx.lead_id || '', tx.ref || ''); await tidb('UPDATE midas.transactions SET status="paid", paid_at=NOW() WHERE txid=?', [txid]); await sendEmail(`✅ PIX CONFIRMADO: R$ ${tx.amount}`, `<p>tx ${txid}</p>`); if(tx.buyer_email){ await sendEmail(`✅ Pagamento confirmado — seu acesso ChatPay`, `<p>Pagamento de R$ ${tx.amount} confirmado.</p><p>Pedido: ${txid}</p><p>Obrigado pela compra!</p>`, tx.buyer_email); } try { await saveMemory(tx.dom, 'reply_winner', tx.desc || ('Venda confirmada R$ ' + tx.amount), { txid, amount: tx.amount, rail: tx.rail }, env); } catch (_) { } try { await triggerWebhook(tx.dom, 'payment_confirmed', { txid, amount: tx.amount, rail: tx.rail }); } catch (_) { } if (!tx.swarm_paid_emitted) { tx.swarm_paid_emitted = iso(); await redis('SET', 'pix:tx:' + txid, JSON.stringify(tx)); await emitSwarmEvent({ type: 'paid', dom: tx.dom, channel: tx.channel || 'pay', user: tx.user || '', txid, ref: tx.ref || '', lead_id: tx.lead_id || '', amount: tx.amount, arm: tx.arm }); } return json({ status: 'paid', txid }); }
       if (url.pathname === '/unlock') { const txid = url.searchParams.get('txid'); const raw = await redis('GET', 'pix:tx:' + txid); if (!raw.result) return json({ error: 'not_found' }, 404); const tx = JSON.parse(raw.result); if (tx.status !== 'paid') return json({ error: 'aguardando_pagamento' }, 402); const ap = await redis('LRANGE', 'swarm:loop:approved', '0', '9'); return json({ unlocked: true, scripts: ap.result || [] }); }
       if (url.pathname === '/set-pix') { if (url.searchParams.get('key') !== CONFIG.midasSecret) return json({ error: 'unauthorized' }, 401); await redis('HSET', 'swarm:pix', 'key', url.searchParams.get('pix') || 'CONFIG.targetEmail'); await redis('HSET', 'swarm:pix', 'name', url.searchParams.get('name') || 'RONALDO LUIZ MARIN'); await redis('HSET', 'swarm:pix', 'city', url.searchParams.get('city') || 'SAO PAULO'); return json({ status: 'pix_configurado' }); }
       if (url.pathname === '/set-mp') { if (url.searchParams.get('key') !== CONFIG.midasSecret) return json({ error: 'unauthorized' }, 401); await redis('HSET', 'swarm:mp', 'token', url.searchParams.get('token') || ''); return json({ status: 'mercado_pago_configurado' }); }
-      if (url.pathname === '/pix') { const amount = url.searchParams.get('amount') || '1.00'; const demo = url.searchParams.get('demo') === '1'; const pix = await resolvePix(''); const txid = (demo ? 'MIDAS' : 'CP') + Date.now().toString().slice(-10); const payload = buildPix(pix.key || 'CONFIG.targetEmail', amount, txid, pix.name, pix.city); await redis('SET', 'pix:tx:' + txid, JSON.stringify({ amount, status: demo ? 'demo' : 'pending', demo, created: iso(), rail: 'pix_estatico' })); await redis('SET', 'swarm:pix:last_tx', txid); return json({ txid, payload, amount, rail: 'pix_estatico' }); }
+      if (url.pathname === '/pix') { if (CONFIG.sandboxMode) { await log('sandbox_would_create_payment', { channel: 'pix' }); return json({ status: 'would_create_payment', sandbox: true }, 202); } const amount = url.searchParams.get('amount') || '1.00'; const demo = url.searchParams.get('demo') === '1'; const pix = await resolvePix(''); const txid = (demo ? 'MIDAS' : 'CP') + Date.now().toString().slice(-10); const payload = buildPix(pix.key || 'CONFIG.targetEmail', amount, txid, pix.name, pix.city); await redis('SET', 'pix:tx:' + txid, JSON.stringify({ amount, status: demo ? 'demo' : 'pending', demo, created: iso(), rail: 'pix_estatico' })); await redis('SET', 'swarm:pix:last_tx', txid); return json({ txid, payload, amount, rail: 'pix_estatico' }); }
       if (url.pathname === '/seed-memory') { if (url.searchParams.get('key') !== CONFIG.midasSecret) return json({ error: 'unauthorized' }, 401); await redis('SET', 'swarm:loop:prompt_base', JSON.stringify({ success_patterns: [{ angle: 'erro_fatal', hook: 'HOOK: Pare de cortar video assim — esse erro queima sua conta em 7 dias', score: 9 }, { angle: 'ferramenta_ia_gratis', hook: 'HOOK: Essa IA gratuita edita 10 videos por dia enquanto voce trabalha', score: 8 }, { angle: 'prompt_secreto', hook: 'HOOK: O prompt de 3 linhas que faz a IA obedecer voce (ninguem mostra isso)', score: 9 }], anti_patterns: [{ angle: 'tendencia_2026', hook: 'HOOK: Voce esta preparado para o futuro?', score: 4 }] })); return json({ status: 'memoria_semeada' }); }
       if (url.pathname === '/init-loop') { await redis('SET', 'swarm:loop:iteration', '0'); await redis('SET', 'swarm:loop:phase', 'idle'); await redis('DEL', 'swarm:angle_stats'); await log('loop_initialized_v19', {}); return json({ status: 'initialized_v19' }); }
       if (url.pathname === '/loop-run') return json(await loopTick(env));
@@ -6792,6 +6927,15 @@ export default {
   },
   async scheduled(event, env, ctx) { configure(env); await redis('SET', 'swarm:heartbeat', iso()); try { await processSwarmQueue(env); } catch (e) { await log('swarm_queue_error', { msg: e.message }); } try { await processLiveBatch(env); } catch (e) { await log('live_batch_tick_error', { msg: e.message }); } try { await processEmailSequence(env); } catch (e) { await log('email_sequence_tick_error', { msg: e.message }); } try { await processRecoveries(env); } catch (e) { await log('recovery_tick_error', { msg: e.message }); } try { await processPriceWatches(); } catch (e) { await log('price_watch_tick_error', { msg: e.message }); } try { await processDelayedEvents(env); } catch (e) { await log('delayed_tick_error', { msg: e.message }); } try { await runAnalystDaily(env); } catch (e) { await log('analyst_tick_error', { msg: e.message }); } try { await runScoutDaily(); } catch (e) { await log('scout_tick_error', { msg: e.message }); } try { await loopTick(env); } catch (e) { await log('loop_tick_error', { msg: e.message }); } },
   cleanTelegramReply,
+  llm,
+  callLLM,
+  guardedFetch,
+  maskChannelSecrets,
+  resolveAIModelOrder,
+  extractAIText,
+  normalizeLLMProvider,
+  resolveProviderModel,
+  WORKERS_AI_MODELS: MODELS,
   drainTelegramQueue,
   detectaPerguntaForaDoPlaybook,
   loadStoreData,
