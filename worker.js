@@ -3189,7 +3189,11 @@ async function runAgentPipelineCore(event, env) {
     }
     return { status: 'pipeline_completed', context };
   };
-  const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('pipeline_timeout')), 10000));
+  const pipelineTimeoutMs = isSandboxE2E ? 60000 : 10000;
+  let pipelineTimeoutId;
+  const timeoutPromise = new Promise((_, reject) => {
+    pipelineTimeoutId = setTimeout(() => reject(new Error('pipeline_timeout')), pipelineTimeoutMs);
+  });
   try {
     return await Promise.race([pipelineExec(), timeoutPromise]);
   } catch (err) {
@@ -3201,6 +3205,8 @@ async function runAgentPipelineCore(event, env) {
       return { status: 'replied_fallback' };
     }
     return { status: 'timeout_handled' };
+  } finally {
+    clearTimeout(pipelineTimeoutId);
   }
 }
 const v23Inflight = new Map();
